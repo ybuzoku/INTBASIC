@@ -1,0 +1,117 @@
+
+- NASM Map file ---------------------------------------------------------------
+
+Source file:  BASIC.ASM
+Output file:  BASIC.BIN
+
+-- Program origin -------------------------------------------------------------
+
+00000000
+
+-- Sections (summary) ---------------------------------------------------------
+
+Vstart            Start             Stop              Length    Class     Name
+               0                 0                83  00000083  progbits  .text
+           3F99A                83               2CA  00000247  progbits  resSeg
+               0                 0             3F99A  0003F99A  nobits    dSeg
+
+-- Sections (detailed) --------------------------------------------------------
+
+---- Section .text ------------------------------------------------------------
+
+class:     progbits
+length:                  83
+start:                    0
+align:                    1
+follows:   not defined
+vstart:                   0
+valign:    not defined
+vfollows:  not defined
+
+---- Section resSeg -----------------------------------------------------------
+
+class:     progbits
+length:                 247
+start:                   83
+align:                    1
+follows:   .text
+vstart:               3F99A
+valign:                   1
+vfollows:  dSeg
+
+---- Section dSeg -------------------------------------------------------------
+
+class:     nobits
+length:               3F99A
+start:                    0
+align:     not defined
+follows:   not defined
+vstart:                   0
+valign:    not defined
+vfollows:  not defined
+
+-- Symbols --------------------------------------------------------------------
+
+---- No Section ---------------------------------------------------------------
+
+Value     Name
+0000001A  maxVars
+00000100  maxLineLen
+000003E8  maxProgLen
+0003E800  progSize
+
+
+---- Section .text ------------------------------------------------------------
+
+Real              Virtual           Name
+              39                39  bad
+              4D                4D  badmsg
+
+---- Section resSeg -----------------------------------------------------------
+
+Real              Virtual           Name
+              83             3F99A  start
+              D9             3F9F0  mainLoop
+              FF             3FA16  saveExecuteLine
+             122             3FA39  saveExecuteLine.store
+             128             3FA3F  executeLine
+             129             3FA40  getLineInput
+             138             3FA4F  getLineInput.getChar
+             154             3FA6B  getLineInput.glibspace
+             17D             3FA94  getLineInput.gliCheckCase
+             18C             3FAA3  getLineInput.gliccStore
+             195             3FAAC  getLineInput.gliExtendedChar
+             197             3FAAE  getLineInput.gliExit
+             1A4             3FABB  getLineInput.gliFull
+             1B0             3FAC7  criticalError
+             1C1             3FAD8  ttyOutChar
+             1C6             3FADD  ttyOutString
+             1CE             3FAE5  ttyIn
+             1D3             3FAEA  printdecimalword
+             1E2             3FAF9  printdecimalword.pdw0
+             1F8             3FB0F  printdecimalword.pdw1
+             1FF             3FB16  printdecimalword.pdw2
+             20F             3FB26  cleanProgram
+             221             3FB38  funTbl
+             252             3FB69  decimalToHex
+             264             3FB7B  decimalToHex.processDigits
+             280             3FB97  decimalToHex.exit
+             286             3FB9D  prompt
+             28B             3FBA2  mainmsg
+             2A7             3FBBE  bytemsg
+             2B5             3FBCC  crlf
+             2B8             3FBCF  errmsg
+             2C0             3FBD7  numbers
+
+---- Section dSeg -------------------------------------------------------------
+
+Real              Virtual           Name
+               0                 0  stack
+             FC0               FC0  stacktop
+             FC8               FC8  varTbl
+            1098              1098  inString
+            1198              1198  progspace
+           3F998             3F998  strLen
+           3F999             3F999  stateByte
+           3F99A             3F99A  bssLen
+

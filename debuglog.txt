@@ -1,0 +1,1837 @@
+00000000000i[      ] Bochs x86 Emulator 2.7
+00000000000i[      ]   Built from SVN snapshot on August  1, 2021
+00000000000i[      ]   Timestamp: Sun Aug  1 10:07:00 CEST 2021
+00000000000i[      ] System configuration
+00000000000i[      ]   processors: 1 (cores=1, HT threads=1)
+00000000000i[      ]   A20 line support: yes
+00000000000i[      ] IPS is set to 4000000
+00000000000i[      ] CPU configuration
+00000000000i[      ]   SMP support: no
+00000000000i[      ]   level: 6
+00000000000i[      ]   APIC support: xapic
+00000000000i[      ]   FPU support: yes
+00000000000i[      ]   MMX support: yes
+00000000000i[      ]   3dnow! support: no
+00000000000i[      ]   SEP support: yes
+00000000000i[      ]   SIMD support: sse2
+00000000000i[      ]   XSAVE support: no 
+00000000000i[      ]   AES support: no
+00000000000i[      ]   SHA support: no
+00000000000i[      ]   MOVBE support: no
+00000000000i[      ]   ADX support: no
+00000000000i[      ]   x86-64 support: yes
+00000000000i[      ]   1G paging support: no
+00000000000i[      ]   MWAIT support: yes
+00000000000i[      ]   VMX support: 1
+00000000000i[      ] Optimization configuration
+00000000000i[      ]   RepeatSpeedups support: yes
+00000000000i[      ]   Fast function calls: yes
+00000000000i[      ]   Handlers Chaining speedups: no
+00000000000i[      ] Devices configuration
+00000000000i[      ]   PCI support: i440FX i430FX i440BX
+00000000000i[      ]   Network devices support: NE2000 E1000
+00000000000i[      ]   Sound support: SB16 ES1370
+00000000000i[      ]   USB support: UHCI OHCI EHCI xHCI
+00000000000i[      ]   VGA extension support: vbe cirrus voodoo
+00000000000i[IMG   ] Disk image modules
+00000000000i[IMG   ]   flat concat sparse dll growing undoable volatile vmware3
+00000000000i[IMG   ]   vmware4 vbox vpc vvfat
+00000000000i[NETCTL] Networking modules
+00000000000i[NETCTL]   null vnet slirp socket win32
+00000000000i[SNDCTL] Sound drivers
+00000000000i[SNDCTL]   dummy file win
+00000000000i[USBCTL] Pluggable USB devices
+00000000000i[USBCTL]   floppy mouse tablet keypad keyboard hub disk cdrom
+00000000000i[USBCTL]   printer
+00000000000i[MEM0  ] allocated memory at 000001A00CEC4040. after alignment, vector=000001A00CEC5000
+00000000000i[MEM0  ] 32.00MB
+00000000000i[MEM0  ] mem block size = 0x00020000, blocks=256
+00000000000i[MEM0  ] rom at 0xfffe0000/131072 ('C:\Program Files\Bochs-2.7\BIOS-bochs-latest')
+00000000000i[DEV   ] will paste characters every 100 iodev timer ticks
+00000000000i[STIMER] using 'slowdown' timer synchronization method
+00000000000i[PLUGIN] init_dev of 'pci' plugin device by virtual method
+00000000000i[DEV   ] i440FX PMC present at device 0, function 0
+00000000000i[PLUGIN] init_dev of 'pci2isa' plugin device by virtual method
+00000000000i[DEV   ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
+00000000000i[PLUGIN] init_dev of 'cmos' plugin device by virtual method
+00000000000i[CMOS  ] Using local time for initial clock
+00000000000i[CMOS  ] Setting initial clock to: Mon Apr  4 02:39:25 2022 (time0=1649036365)
+00000000000i[PLUGIN] init_dev of 'dma' plugin device by virtual method
+00000000000i[DMA   ] channel 4 used by cascade
+00000000000i[PLUGIN] init_dev of 'pic' plugin device by virtual method
+00000000000i[PLUGIN] init_dev of 'pit' plugin device by virtual method
+00000000000i[PLUGIN] init_dev of 'vga' plugin device by virtual method
+00000000000i[MEM0  ] Register memory access handlers: 0x0000000a0000 - 0x0000000bffff
+00000000000i[VGA   ] interval=200000, mode=realtime
+00000000000i[VGA   ] VSYNC using standard mode
+00000000000i[MEM0  ] Register memory access handlers: 0x0000e0000000 - 0x0000e0ffffff
+00000000000i[BXVGA ] VBE Bochs Display Extension Enabled
+00000000000i[WINGUI] Desktop window dimensions: 1920 x 1080
+00000000000i[WINGUI] option 1: gui_debug
+00000000000i[WINGUI] Number of Mouse Buttons = 5
+00000000000i[WINGUI] IME disabled
+00000000000i[MEM0  ] rom at 0xc0000/38400 ('C:\Program Files\Bochs-2.7\VGABIOS-lgpl-latest')
+00000000000i[PLUGIN] init_dev of 'floppy' plugin device by virtual method
+00000000000i[DMA   ] channel 2 used by Floppy Drive
+00000000000i[FLOPPY] fd0: 'C:\Users\Ylli\Documents\Projects\INTBASIC\MyDisk.ima' ro=0, h=2,t=80,spt=18
+00000000000i[FLOPPY] Using boot sequence floppy, none, none
+00000000000i[FLOPPY] Floppy boot signature check is enabled
+00000000000i[PLUGIN] init_dev of 'acpi' plugin device by virtual method
+00000000000i[DEV   ] ACPI Controller present at device 1, function 3
+00000000000i[PLUGIN] init_dev of 'hpet' plugin device by virtual method
+00000000000i[HPET  ] initializing HPET
+00000000000i[MEM0  ] Register memory access handlers: 0x0000fed00000 - 0x0000fed003ff
+00000000000i[PLUGIN] init_dev of 'ioapic' plugin device by virtual method
+00000000000i[IOAPIC] initializing I/O APIC
+00000000000i[MEM0  ] Register memory access handlers: 0x0000fec00000 - 0x0000fec00fff
+00000000000i[IOAPIC] IOAPIC enabled (base address = 0xfec00000)
+00000000000i[PLUGIN] init_dev of 'keyboard' plugin device by virtual method
+00000000000i[PLUGIN] init_dev of 'harddrv' plugin device by virtual method
+00000000000i[PLUGIN] init_dev of 'pci_ide' plugin device by virtual method
+00000000000i[DEV   ] PIIX3 PCI IDE controller present at device 1, function 1
+00000000000i[PLUGIN] init_dev of 'unmapped' plugin device by virtual method
+00000000000i[PLUGIN] init_dev of 'biosdev' plugin device by virtual method
+00000000000i[PLUGIN] init_dev of 'speaker' plugin device by virtual method
+00000000000i[PCSPK ] PC speaker output disabled
+00000000000i[PLUGIN] init_dev of 'extfpuirq' plugin device by virtual method
+00000000000i[PLUGIN] init_dev of 'parallel' plugin device by virtual method
+00000000000i[PAR   ] parallel port 1 at 0x0378 irq 7
+00000000000i[PLUGIN] init_dev of 'serial' plugin device by virtual method
+00000000000i[SER   ] com1 at 0x03f8 irq 4 (mode: file)
+00000000000i[PLUGIN] init_dev of 'gameport' plugin device by virtual method
+00000000000i[PLUGIN] init_dev of 'iodebug' plugin device by virtual method
+00000000000i[PLUGIN] init_dev of 'usb_uhci' plugin device by virtual method
+00000000000i[DEV   ] USB UHCI present at device 1, function 2
+00000000000i[UHCI  ] USB UHCI initialized
+00000000000i[PLUGIN] init_dev of 'usb_ehci' plugin device by virtual method
+00000000000i[DEV   ] PCI slot #1 used by plugin 'usb_ehci'
+00000000000i[DEV   ] Experimental USB EHCI present at device 2, function 7
+00000000000i[DEV   ] USB UHCI present at device 2, function 0
+00000000000i[DEV   ] USB UHCI present at device 2, function 1
+00000000000i[DEV   ] USB UHCI present at device 2, function 2
+00000000000i[EHCI  ] USB EHCI initialized
+00000000000i[PLUGIN] init_dev of 'usb_xhci' plugin device by virtual method
+00000000000i[XHCI  ] USB xHCI disabled
+00000000000i[PLUGIN] register state of 'pci' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'pci2isa' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'cmos' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'dma' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'pic' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'pit' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'vga' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'floppy' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'unmapped' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'biosdev' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'extfpuirq' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'parallel' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'serial' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'gameport' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'iodebug' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'usb_uhci' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'usb_ehci' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'acpi' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'hpet' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'ioapic' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'keyboard' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'harddrv' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'pci_ide' plugin device by virtual method
+00000000000i[SYS   ] bx_pc_system_c::Reset(HARDWARE) called
+00000000000i[CPU0  ] cpu hardware reset
+00000000000i[APIC0 ] allocate APIC id=0 (MMIO enabled) to 0x0000fee00000
+00000000000i[CPU0  ] CPUID[0x00000000]: 00000005 756e6547 6c65746e 49656e69
+00000000000i[CPU0  ] CPUID[0x00000001]: 00000633 00010800 00002028 0fcbfbff
+00000000000i[CPU0  ] CPUID[0x00000002]: 00410601 00000000 00000000 00000000
+00000000000i[CPU0  ] CPUID[0x00000003]: 00000000 00000000 00000000 00000000
+00000000000i[CPU0  ] CPUID[0x00000004]: 00000000 00000000 00000000 00000000
+00000000000i[CPU0  ] CPUID[0x00000005]: 00000040 00000040 00000003 00000020
+00000000000i[CPU0  ] CPUID[0x80000000]: 80000008 00000000 00000000 00000000
+00000000000i[CPU0  ] CPUID[0x80000001]: 00000000 00000000 00000101 2a100000
+00000000000i[CPU0  ] CPUID[0x80000002]: 20202020 20202020 20202020 6e492020
+00000000000i[CPU0  ] CPUID[0x80000003]: 286c6574 50202952 69746e65 52286d75
+00000000000i[CPU0  ] CPUID[0x80000004]: 20342029 20555043 20202020 00202020
+00000000000i[CPU0  ] CPUID[0x80000005]: 01ff01ff 01ff01ff 40020140 40020140
+00000000000i[CPU0  ] CPUID[0x80000006]: 00000000 42004200 02008140 00000000
+00000000000i[CPU0  ] CPUID[0x80000007]: 00000000 00000000 00000000 00000000
+00000000000i[CPU0  ] CPUID[0x80000008]: 00003028 00000000 00000000 00000000
+00000000000i[CPU0  ] CPU Features supported:
+00000000000i[CPU0  ] 		x87
+00000000000i[CPU0  ] 		486ni
+00000000000i[CPU0  ] 		pentium_ni
+00000000000i[CPU0  ] 		p6ni
+00000000000i[CPU0  ] 		mmx
+00000000000i[CPU0  ] 		debugext
+00000000000i[CPU0  ] 		vme
+00000000000i[CPU0  ] 		pse
+00000000000i[CPU0  ] 		pae
+00000000000i[CPU0  ] 		pge
+00000000000i[CPU0  ] 		pse36
+00000000000i[CPU0  ] 		mtrr
+00000000000i[CPU0  ] 		pat
+00000000000i[CPU0  ] 		sysenter_sysexit
+00000000000i[CPU0  ] 		clflush
+00000000000i[CPU0  ] 		sse
+00000000000i[CPU0  ] 		sse2
+00000000000i[CPU0  ] 		mwait
+00000000000i[CPU0  ] 		vmx
+00000000000i[CPU0  ] 		longmode
+00000000000i[CPU0  ] 		lm_lahf_sahf
+00000000000i[CPU0  ] 		nx
+00000000000i[CPU0  ] 		cmpxhg16b
+00000000000i[CPU0  ] 		rdtscp
+00000000000i[CPU0  ] 		ffxsr
+00000000000i[CPU0  ] 		xapic
+00000000000i[PLUGIN] reset of 'pci' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'pci2isa' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'cmos' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'dma' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'pic' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'pit' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'vga' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'floppy' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'acpi' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'hpet' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'ioapic' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'keyboard' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'harddrv' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'pci_ide' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'unmapped' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'biosdev' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'extfpuirq' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'parallel' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'serial' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'gameport' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'iodebug' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'usb_uhci' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'usb_ehci' plugin device by virtual method
+00000000000i[EHCI  ] port #1: owner change to UHCI
+00000000000e[UHCI0 ] HC ignores device with unsupported speed
+00000000000i[EHCI  ] port #2: owner change to UHCI
+00000000000p[USBCTL] >>PANIC<< USB device 'hub' doesn't support 'high' speed
+00000000000i[UHCI0 ] port #2: connect: 4-port USB hub
+00000000000i[EHCI  ] port #3: owner change to UHCI
+00000000000i[UHCI1 ] port #1: connect: USB Mouse
+00000000000i[EHCI  ] port #4: owner change to UHCI
+00000000000i[EHCI  ] port #5: owner change to UHCI
+00000000000i[EHCI  ] port #6: owner change to UHCI
+00000000000i[WINGUI] dimension update x=720 y=400 fontheight=16 fontwidth=9 bpp=8
+00000004662i[BIOS  ] $Revision: 14314 $ $Date: 2021-07-14 18:10:19 +0200 (Wed, 14 Jul 2021) $
+00000318056i[KBD   ] reset-disable command received
+00000320838i[BIOS  ] Starting rombios32
+00000321276i[BIOS  ] Shutdown flag 0
+00000321874i[BIOS  ] ram_size=0x02000000
+00000322306i[BIOS  ] ram_end=32MB
+00000363093i[BIOS  ] Found 1 cpu(s)
+00000376746i[BIOS  ] bios_table_addr: 0x000f9d98 end=0x000fcc00
+00000704562i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
+00001032497i[P2ISA ] PCI IRQ routing: PIRQA# set to 0x0b
+00001032521i[P2ISA ] PCI IRQ routing: PIRQB# set to 0x09
+00001032545i[P2ISA ] PCI IRQ routing: PIRQC# set to 0x0b
+00001032569i[P2ISA ] PCI IRQ routing: PIRQD# set to 0x09
+00001032579i[P2ISA ] write: ELCR2 = 0x0a
+00001033348i[BIOS  ] PIIX3/PIIX4 init: elcr=00 0a
+00001034021d[EHCI  ] read  PCI register 0x00 value 0x8086 (len=2)
+00001034027d[EHCI  ] read  PCI register 0x02 value 0x24CD (len=2)
+00001034053d[EHCI  ] read  PCI register 0x00 value 0x8086 (len=2)
+00001034060d[EHCI  ] read  PCI register 0x02 value 0x24CD (len=2)
+00001047240i[BIOS  ] PCI: bus=0 devfn=0x00: vendor_id=0x8086 device_id=0x1237 class=0x0600
+00001049584i[BIOS  ] PCI: bus=0 devfn=0x08: vendor_id=0x8086 device_id=0x7000 class=0x0601
+00001051767i[BIOS  ] PCI: bus=0 devfn=0x09: vendor_id=0x8086 device_id=0x7010 class=0x0101
+00001052002i[PIDE  ] BAR #4: i/o base address = 0xc000
+00001052618i[BIOS  ] region 4: 0x0000c000
+00001054653i[BIOS  ] PCI: bus=0 devfn=0x0a: vendor_id=0x8086 device_id=0x7020 class=0x0c03
+00001054866i[UHCI  ] BAR #4: i/o base address = 0xc020
+00001055482i[BIOS  ] region 4: 0x0000c020
+00001055610i[UHCI  ] new IRQ line = 9
+00001057532i[BIOS  ] PCI: bus=0 devfn=0x0b: vendor_id=0x8086 device_id=0x7113 class=0x0680
+00001057808i[ACPI  ] new IRQ line = 11
+00001057822i[ACPI  ] new IRQ line = 9
+00001057850i[ACPI  ] new PM base address: 0xb000
+00001057864i[ACPI  ] new SM base address: 0xb100
+00001057892i[PCI   ] setting SMRAM control register to 0x4a
+00001222027i[CPU0  ] Enter to System Management Mode
+00001222027i[CPU0  ] enter_system_management_mode: temporary disable VMX while in SMM mode
+00001222037i[CPU0  ] RSM: Resuming from System Management Mode
+00001386093i[PCI   ] setting SMRAM control register to 0x0a
+00001388120i[BIOS  ] PCI: bus=0 devfn=0x10: vendor_id=0x8086 device_id=0x24c2 class=0x0c03
+00001388333i[UHCI0 ] BAR #4: i/o base address = 0xc040
+00001388949i[BIOS  ] region 4: 0x0000c040
+00001389077i[UHCI0 ] new IRQ line = 9
+00001391009i[BIOS  ] PCI: bus=0 devfn=0x11: vendor_id=0x8086 device_id=0x24c4 class=0x0c03
+00001391222i[UHCI1 ] BAR #4: i/o base address = 0xc060
+00001391838i[BIOS  ] region 4: 0x0000c060
+00001391966i[UHCI1 ] new IRQ line = 11
+00001393898i[BIOS  ] PCI: bus=0 devfn=0x12: vendor_id=0x8086 device_id=0x24c7 class=0x0c03
+00001394111i[UHCI2 ] BAR #4: i/o base address = 0xc080
+00001394727i[BIOS  ] region 4: 0x0000c080
+00001394855i[UHCI2 ] new IRQ line = 9
+00001394971d[EHCI  ] read  PCI register 0x00 value 0x8086 (len=2)
+00001394977d[EHCI  ] read  PCI register 0x02 value 0x24CD (len=2)
+00001395022d[EHCI  ] read  PCI register 0x0A value 0x0C03 (len=2)
+00001395030d[EHCI  ] read  PCI register 0x00 value 0x8086 (len=2)
+00001395037d[EHCI  ] read  PCI register 0x02 value 0x24CD (len=2)
+00001395045d[EHCI  ] read  PCI register 0x0E value 0x00 (len=1)
+00001396879i[BIOS  ] PCI: bus=0 devfn=0x17: vendor_id=0x8086 device_id=0x24cd class=0x0c03
+00001396908d[EHCI  ] read  PCI register 0x04 value 0x0000 (len=2)
+00001396916d[EHCI  ] write PCI register 0x04 value 0x0000 (len=2)
+00001396939d[EHCI  ] write PCI register 0x10 value 0xFFFFFFFF (len=4)
+00001396944d[EHCI  ] read  PCI register 0x10 value 0xFFFFFF00 (len=4)
+00001396985d[EHCI  ] write PCI register 0x10 value 0xC0000000 (len=4)
+00001396985i[MEM0  ] Register memory access handlers: 0x0000c0000000 - 0x0000c00000ff
+00001396985i[EHCI  ] BAR #0: mem base address = 0xc0000000
+00001397653i[BIOS  ] region 0: 0xc0000000
+00001397703d[EHCI  ] read  PCI register 0x14 value 0x00000000 (len=4)
+00001397730d[EHCI  ] read  PCI register 0x18 value 0x00000000 (len=4)
+00001397757d[EHCI  ] read  PCI register 0x1C value 0x00000000 (len=4)
+00001397784d[EHCI  ] read  PCI register 0x20 value 0x00000000 (len=4)
+00001397811d[EHCI  ] read  PCI register 0x24 value 0x00000000 (len=4)
+00001397834d[EHCI  ] write PCI register 0x30 value 0xFFFFFFFE (len=4)
+00001397840d[EHCI  ] read  PCI register 0x30 value 0x00000000 (len=4)
+00001397855d[EHCI  ] read  PCI register 0x04 value 0x0000 (len=2)
+00001397863d[EHCI  ] write PCI register 0x04 value 0x0003 (len=2)
+00001397869d[EHCI  ] read  PCI register 0x3D value 0x04 (len=1)
+00001397887i[EHCI  ] new IRQ line = 11
+00001410085d[EHCI  ] read  PCI register 0x00 value 0x8086 (len=2)
+00001410091d[EHCI  ] read  PCI register 0x02 value 0x24CD (len=2)
+00001410114d[EHCI  ] read  PCI register 0x0A value 0x0C03 (len=2)
+00001410122d[EHCI  ] read  PCI register 0x30 value 0x00000000 (len=4)
+00001424469i[BIOS  ] MP table addr=0x000f9e70 MPC table addr=0x000f9da0 size=0xc8
+00001426176i[BIOS  ] SMBIOS table addr=0x000f9e80
+00001428265i[BIOS  ] ACPI tables: RSDP addr=0x000f9fa0 ACPI DATA addr=0x01ff0000 size=0xff8
+00001431249i[BIOS  ] Firmware waking vector 0x1ff00cc
+00001433503i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
+00001434233i[BIOS  ] bios_table_cur_addr: 0x000f9fc4
+00001552353i[VBIOS ] VGABios $Id: vgabios.c 288 2021-05-28 19:05:28Z vruppert $
+00001552424i[BXVGA ] VBE known Display Interface b0c0
+00001552456i[BXVGA ] VBE known Display Interface b0c5
+00001555099i[VBIOS ] VBE Bios $Id: vbe.c 292 2021-06-03 12:24:22Z vruppert $
+00014034507i[BIOS  ] Booting from 0000:7c00
+00016713053i[BIOS  ] *** int 15h function AX=ec00, BX=0003 not yet supported!
+00018495804d[EHCI  ] read  PCI register 0x08 value 0x0C032010 (len=4)
+00018501909d[EHCI  ] read  PCI register 0x3C value 0x0000040B (len=4)
+00018502392d[EHCI  ] read  PCI register 0x10 value 0xC0000000 (len=4)
+00018502413d[EHCI  ] register read from offset 0x0008:  0x0000000000006871 (len=4)
+00018502428d[EHCI  ] read  PCI register 0x68 value 0x00000001 (len=4)
+00018502435d[EHCI  ] write PCI register 0x68 value 0x01000001 (len=4)
+00018502444d[EHCI  ] read  PCI register 0x68 value 0x01000001 (len=4)
+00018502455d[EHCI  ] read  PCI register 0x68 value 0x01000001 (len=4)
+00018502464d[EHCI  ] write PCI register 0x6C value 0x00000000 (len=4)
+00018502472d[EHCI  ] register read from offset 0x0000:  0x0000000001000020 (len=4)
+00018502475d[EHCI  ] register read from offset 0x0060:  0x0000000000000000 (len=4)
+00018502475d[EHCI  ] register write to  offset 0x0060:  0x0000000000000000 (len=4)
+00018522906e[UHCI0 ] HC ignores device with unsupported speed
+00018522906d[USBHUB] Reset
+00019337082i[KBD   ] keyboard: scan convert turned off
+00019337142i[KBD   ] keyboard: scan convert turned off
+00019337249i[KBD   ] keyboard: scan convert turned off
+00019340024i[KBD   ] Switched to scancode set 1
+00019344030i[KBD   ] setting typematic info
+00019344044i[KBD   ] setting delay to 250 mS (unused)
+00019344044i[KBD   ] setting repeat rate to 30.0 cps (unused)
+00019352050i[KBD   ] keyboard: scan convert turned off
+00019365937d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00019365941d[EHCI  ] register write to  offset 0x0028:  0x0000000000000000 (len=4)
+00019365942d[EHCI  ] register write to  offset 0x0024:  0x000000000000003F (len=4)
+00019365944d[EHCI  ] register read from offset 0x0020:  0x0000000000080000 (len=4)
+00019365944d[EHCI  ] register write to  offset 0x0020:  0x0000000000080000 (len=4)
+00019365947d[EHCI  ] register read from offset 0x0024:  0x000000000000103F (len=4)
+00019365949d[EHCI  ] register read from offset 0x0020:  0x0000000000080000 (len=4)
+00019365949d[EHCI  ] register write to  offset 0x0020:  0x0000000000080002 (len=4)
+00019385560d[EHCI  ] register read from offset 0x0020:  0x0000000000080000 (len=4)
+00019385584d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00019385589d[EHCI  ] register write to  offset 0x0028:  0x0000000000000000 (len=4)
+00019385590d[EHCI  ] register write to  offset 0x002C:  0x0000000000000000 (len=4)
+00019385591d[EHCI  ] register write to  offset 0x0038:  0x000000000011CCC0 (len=4)
+00019385593d[EHCI  ] register write to  offset 0x0030:  0x0000000000000000 (len=4)
+00019385597d[EHCI  ] register read from offset 0x0020:  0x0000000000080000 (len=4)
+00019385597d[EHCI  ] register write to  offset 0x0020:  0x0000000000000000 (len=4)
+00019385598d[EHCI  ] register read from offset 0x0020:  0x0000000000000000 (len=4)
+00019385601d[EHCI  ] register write to  offset 0x0020:  0x0000000000080000 (len=4)
+00019385602d[EHCI  ] register write to  offset 0x0060:  0x0000000000000001 (len=4)
+00019385602i[EHCI  ] port #1: owner change to EHCI
+00019385602i[EHCI  ] port #1: device disconnect
+00019385602i[UHCI0 ] port #1: device disconnect
+00019385602i[EHCI  ] High speed device connected to port #1
+00019385602i[IMG   ] hd_size: 1474560
+00019385602i[EHCI  ] port #1: connect: USB HD: path='C:\Users\Ylli\Documents\Projects\INTBASIC\MyDiskMSD.ima', mode='flat', sect_size=512
+00019385602i[EHCI  ] port #2: owner change to EHCI
+00019385602i[EHCI  ] port #2: device disconnect
+00019385602i[UHCI0 ] port #2: device disconnect
+00019385602i[EHCI  ] Full speed device connected to port #2
+00019385602i[EHCI  ] port #3: owner change to EHCI
+00019385602i[EHCI  ] port #3: device disconnect
+00019385602i[UHCI1 ] port #1: device disconnect
+00019385602i[EHCI  ] Full speed device connected to port #3
+00019385602i[EHCI  ] port #4: owner change to EHCI
+00019385602i[EHCI  ] port #5: owner change to EHCI
+00019385602i[EHCI  ] port #6: owner change to EHCI
+00019385623d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00019385627d[EHCI  ] register read from offset 0x0024:  0x0000000000001004 (len=4)
+00019385629d[EHCI  ] register read from offset 0x0020:  0x0000000000080000 (len=4)
+00019385629d[EHCI  ] register write to  offset 0x0020:  0x0000000000080001 (len=4)
+00019385633d[EHCI  ] register read from offset 0x0024:  0x0000000000000004 (len=4)
+00019385654d[EHCI  ] register read from offset 0x0004:  0x0000000000103206 (len=4)
+00019385685d[EHCI  ] register read from offset 0x0004:  0x0000000000103206 (len=4)
+00019385692d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00019385695d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019385695d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00019424822d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019424824d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019424824d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00019463950d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019463952d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019463952d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00019503079d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019503081d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019503081d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00019542208d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019542210d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019542210d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00019581337d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019581339d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019581339d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00019620466d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019620468d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019620468d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00019659595d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019659597d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019659597d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00019698724d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019698726d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019698726d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00019737853d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019737855d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019737855d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00019777036d[EHCI  ] register read from offset 0x0004:  0x0000000000103206 (len=4)
+00019777043d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00019777046d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019777046d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00019816173d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019816175d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019816175d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00019855302d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019855304d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019855304d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00019894430d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019894432d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019894432d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00019933559d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019933561d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019933561d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00019972688d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019972690d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00019972690d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00020011817d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00020011819d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00020011819d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00020050946d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00020050948d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00020050948d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00020090075d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00020090077d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00020090077d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00020129204d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00020129206d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00020129206d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00020168387d[EHCI  ] register read from offset 0x0004:  0x0000000000103206 (len=4)
+00020168394d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00020168397d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00020168397d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00020207524d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00020207526d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00020207526d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00020246653d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00020246655d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00020246655d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00020285782d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00020285784d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00020285784d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00020324910d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00020324912d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00020324912d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00020364039d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00020364041d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00020364041d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00020403168d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00020403170d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00020403170d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00020442297d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00020442299d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00020442299d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00020481426d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00020481428d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00020481428d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00020520555d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00020520557d[EHCI  ] register read from offset 0x0078:  0x0000000000001000 (len=4)
+00020520557d[EHCI  ] register write to  offset 0x0078:  0x0000000000001000 (len=4)
+00020559742d[EHCI  ] register read from offset 0x0004:  0x0000000000103206 (len=4)
+00020559749d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00020559752d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00020559752d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00020598879d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00020598881d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00020598881d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00020638008d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00020638010d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00020638010d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00020677137d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00020677139d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00020677139d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00020716266d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00020716268d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00020716268d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00020755394d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00020755396d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00020755396d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00020794523d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00020794525d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00020794525d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00020833652d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00020833654d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00020833654d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00020872781d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00020872783d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00020872783d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00020911910d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00020911912d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00020911912d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00020951093d[EHCI  ] register read from offset 0x0004:  0x0000000000103206 (len=4)
+00020951100d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00020951103d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00020951103d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00020990230d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00020990232d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00020990232d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00021029359d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021029361d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021029361d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00021068488d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021068490d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021068490d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00021107617d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021107619d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021107619d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00021146746d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021146748d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021146748d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00021185874d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021185876d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021185876d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00021225003d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021225005d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021225005d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00021264132d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021264134d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021264134d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00021303261d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021303263d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021303263d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00021342444d[EHCI  ] register read from offset 0x0004:  0x0000000000103206 (len=4)
+00021342451d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00021342454d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021342454d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00021381581d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021381583d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021381583d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00021420710d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021420712d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021420712d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00021459839d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021459841d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021459841d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00021498968d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021498970d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021498970d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00021538097d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021538099d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021538099d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00021577226d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021577228d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021577228d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00021616355d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021616357d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021616357d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00021655483d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021655485d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021655485d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00021694612d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021694614d[EHCI  ] register read from offset 0x0074:  0x0000000000001000 (len=4)
+00021694614d[EHCI  ] register write to  offset 0x0074:  0x0000000000001000 (len=4)
+00021733799d[EHCI  ] register read from offset 0x0004:  0x0000000000103206 (len=4)
+00021733806d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00021733809d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00021733809d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00021772936d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00021772938d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00021772938d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00021812065d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00021812067d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00021812067d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00021851194d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00021851196d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00021851196d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00021890323d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00021890325d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00021890325d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00021929452d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00021929454d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00021929454d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00021968581d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00021968583d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00021968583d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00022007710d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022007712d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022007712d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00022046839d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022046841d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022046841d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00022085967d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022085969d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022085969d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00022125150d[EHCI  ] register read from offset 0x0004:  0x0000000000103206 (len=4)
+00022125157d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00022125160d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022125160d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00022164287d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022164289d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022164289d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00022203416d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022203418d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022203418d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00022242545d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022242547d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022242547d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00022281674d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022281676d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022281676d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00022320803d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022320805d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022320805d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00022359932d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022359934d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022359934d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00022399061d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022399063d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022399063d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00022438190d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022438192d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022438192d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00022477319d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022477321d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022477321d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00022516501d[EHCI  ] register read from offset 0x0004:  0x0000000000103206 (len=4)
+00022516508d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00022516511d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022516511d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00022555638d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022555640d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022555640d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00022594767d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022594769d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022594769d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00022633896d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022633898d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022633898d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00022673025d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022673027d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022673027d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00022712154d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022712156d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022712156d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00022751283d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022751285d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022751285d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00022790412d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022790414d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022790414d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00022829541d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022829543d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022829543d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00022868670d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022868672d[EHCI  ] register read from offset 0x0070:  0x0000000000001000 (len=4)
+00022868672d[EHCI  ] register write to  offset 0x0070:  0x0000000000001000 (len=4)
+00022907857d[EHCI  ] register read from offset 0x0004:  0x0000000000103206 (len=4)
+00022907864d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00022907867d[EHCI  ] register read from offset 0x006C:  0x0000000000001803 (len=4)
+00022907867d[EHCI  ] register write to  offset 0x006C:  0x0000000000001803 (len=4)
+00022946993d[EHCI  ] register read from offset 0x006C:  0x0000000000001801 (len=4)
+00022946996d[EHCI  ] register read from offset 0x006C:  0x0000000000001801 (len=4)
+00022947005d[EHCI  ] register read from offset 0x006C:  0x0000000000001801 (len=4)
+00022947005d[EHCI  ] register write to  offset 0x006C:  0x0000000000001901 (len=4)
+00022986130d[EHCI  ] register read from offset 0x006C:  0x0000000000001901 (len=4)
+00022986134d[EHCI  ] register read from offset 0x006C:  0x0000000000001901 (len=4)
+00022986134d[EHCI  ] register write to  offset 0x006C:  0x0000000000001801 (len=4)
+00023025261d[EHCI  ] register read from offset 0x006C:  0x0000000000001801 (len=4)
+00023025264d[EHCI  ] register read from offset 0x006C:  0x0000000000001801 (len=4)
+00023025320d[EHCI  ] register read from offset 0x0004:  0x0000000000103206 (len=4)
+00023025327d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00023025330d[EHCI  ] register read from offset 0x006C:  0x0000000000001801 (len=4)
+00023025330d[EHCI  ] register write to  offset 0x006C:  0x0000000000001801 (len=4)
+00023064457d[EHCI  ] register read from offset 0x006C:  0x0000000000001801 (len=4)
+00023064460d[EHCI  ] register read from offset 0x006C:  0x0000000000001801 (len=4)
+00023064469d[EHCI  ] register read from offset 0x006C:  0x0000000000001801 (len=4)
+00023064469d[EHCI  ] register write to  offset 0x006C:  0x0000000000001901 (len=4)
+00023103594d[EHCI  ] register read from offset 0x006C:  0x0000000000001901 (len=4)
+00023103598d[EHCI  ] register read from offset 0x006C:  0x0000000000001901 (len=4)
+00023103598d[EHCI  ] register write to  offset 0x006C:  0x0000000000001801 (len=4)
+00023142725d[EHCI  ] register read from offset 0x006C:  0x0000000000001801 (len=4)
+00023142728d[EHCI  ] register read from offset 0x006C:  0x0000000000001801 (len=4)
+00023142784d[EHCI  ] register read from offset 0x0004:  0x0000000000103206 (len=4)
+00023142791d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00023142794d[EHCI  ] register read from offset 0x006C:  0x0000000000001801 (len=4)
+00023142794d[EHCI  ] register write to  offset 0x006C:  0x0000000000001801 (len=4)
+00023181921d[EHCI  ] register read from offset 0x006C:  0x0000000000001801 (len=4)
+00023181924d[EHCI  ] register read from offset 0x006C:  0x0000000000001801 (len=4)
+00023181933d[EHCI  ] register read from offset 0x006C:  0x0000000000001801 (len=4)
+00023181933d[EHCI  ] register write to  offset 0x006C:  0x0000000000001901 (len=4)
+00023221058d[EHCI  ] register read from offset 0x006C:  0x0000000000001901 (len=4)
+00023221062d[EHCI  ] register read from offset 0x006C:  0x0000000000001901 (len=4)
+00023221062d[EHCI  ] register write to  offset 0x006C:  0x0000000000001801 (len=4)
+00023260189d[EHCI  ] register read from offset 0x006C:  0x0000000000001801 (len=4)
+00023260192d[EHCI  ] register read from offset 0x006C:  0x0000000000001801 (len=4)
+00023260252d[EHCI  ] register read from offset 0x0004:  0x0000000000103206 (len=4)
+00023260259d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00023260262d[EHCI  ] register read from offset 0x0068:  0x0000000000001803 (len=4)
+00023260262d[EHCI  ] register write to  offset 0x0068:  0x0000000000001803 (len=4)
+00023299389d[EHCI  ] register read from offset 0x0068:  0x0000000000001801 (len=4)
+00023299392d[EHCI  ] register read from offset 0x0068:  0x0000000000001801 (len=4)
+00023299401d[EHCI  ] register read from offset 0x0068:  0x0000000000001801 (len=4)
+00023299401d[EHCI  ] register write to  offset 0x0068:  0x0000000000001901 (len=4)
+00023338526d[EHCI  ] register read from offset 0x0068:  0x0000000000001901 (len=4)
+00023338530d[EHCI  ] register read from offset 0x0068:  0x0000000000001901 (len=4)
+00023338530d[EHCI  ] register write to  offset 0x0068:  0x0000000000001801 (len=4)
+00023338530d[USBHUB] Reset
+00023377657d[EHCI  ] register read from offset 0x0068:  0x0000000000001801 (len=4)
+00023377660d[EHCI  ] register read from offset 0x0068:  0x0000000000001801 (len=4)
+00023377716d[EHCI  ] register read from offset 0x0004:  0x0000000000103206 (len=4)
+00023377723d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00023377726d[EHCI  ] register read from offset 0x0068:  0x0000000000001801 (len=4)
+00023377726d[EHCI  ] register write to  offset 0x0068:  0x0000000000001801 (len=4)
+00023416852d[EHCI  ] register read from offset 0x0068:  0x0000000000001801 (len=4)
+00023416855d[EHCI  ] register read from offset 0x0068:  0x0000000000001801 (len=4)
+00023416864d[EHCI  ] register read from offset 0x0068:  0x0000000000001801 (len=4)
+00023416864d[EHCI  ] register write to  offset 0x0068:  0x0000000000001901 (len=4)
+00023455989d[EHCI  ] register read from offset 0x0068:  0x0000000000001901 (len=4)
+00023455993d[EHCI  ] register read from offset 0x0068:  0x0000000000001901 (len=4)
+00023455993d[EHCI  ] register write to  offset 0x0068:  0x0000000000001801 (len=4)
+00023455993d[USBHUB] Reset
+00023495120d[EHCI  ] register read from offset 0x0068:  0x0000000000001801 (len=4)
+00023495123d[EHCI  ] register read from offset 0x0068:  0x0000000000001801 (len=4)
+00023495179d[EHCI  ] register read from offset 0x0004:  0x0000000000103206 (len=4)
+00023495186d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00023495189d[EHCI  ] register read from offset 0x0068:  0x0000000000001801 (len=4)
+00023495189d[EHCI  ] register write to  offset 0x0068:  0x0000000000001801 (len=4)
+00023534316d[EHCI  ] register read from offset 0x0068:  0x0000000000001801 (len=4)
+00023534319d[EHCI  ] register read from offset 0x0068:  0x0000000000001801 (len=4)
+00023534328d[EHCI  ] register read from offset 0x0068:  0x0000000000001801 (len=4)
+00023534328d[EHCI  ] register write to  offset 0x0068:  0x0000000000001901 (len=4)
+00023573453d[EHCI  ] register read from offset 0x0068:  0x0000000000001901 (len=4)
+00023573457d[EHCI  ] register read from offset 0x0068:  0x0000000000001901 (len=4)
+00023573457d[EHCI  ] register write to  offset 0x0068:  0x0000000000001801 (len=4)
+00023573457d[USBHUB] Reset
+00023612584d[EHCI  ] register read from offset 0x0068:  0x0000000000001801 (len=4)
+00023612587d[EHCI  ] register read from offset 0x0068:  0x0000000000001801 (len=4)
+00023612647d[EHCI  ] register read from offset 0x0004:  0x0000000000103206 (len=4)
+00023612654d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00023612657d[EHCI  ] register read from offset 0x0064:  0x000000000000100F (len=4)
+00023612657d[EHCI  ] register write to  offset 0x0064:  0x000000000000100F (len=4)
+00023651784d[EHCI  ] register read from offset 0x0064:  0x0000000000001005 (len=4)
+00023651787d[EHCI  ] register read from offset 0x0064:  0x0000000000001005 (len=4)
+00023651796d[EHCI  ] register read from offset 0x0064:  0x0000000000001005 (len=4)
+00023651796d[EHCI  ] register write to  offset 0x0064:  0x0000000000001105 (len=4)
+00023690921d[EHCI  ] register read from offset 0x0064:  0x0000000000001105 (len=4)
+00023690925d[EHCI  ] register read from offset 0x0064:  0x0000000000001105 (len=4)
+00023690925d[EHCI  ] register write to  offset 0x0064:  0x0000000000001005 (len=4)
+00023690925d[USBMSD] Reset
+00023730052d[EHCI  ] register read from offset 0x0064:  0x0000000000001005 (len=4)
+00023730055d[EHCI  ] register read from offset 0x0064:  0x0000000000001005 (len=4)
+00024511166d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00024511196d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00024511200d[EHCI  ] register write to  offset 0x0038:  0x000000000011CCC0 (len=4)
+00024511213d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00024511217d[EHCI  ] register read from offset 0x0020:  0x0000000000080001 (len=4)
+00024511217d[EHCI  ] register write to  offset 0x0020:  0x0000000000080021 (len=4)
+00024511221d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511225d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511229d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511233d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511237d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511241d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511245d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511249d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511253d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511257d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511261d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511265d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511269d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511273d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511277d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511281d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511285d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511289d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511293d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511297d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511301d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511305d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511309d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511313d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511317d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511321d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511325d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511329d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511333d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511337d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511341d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511345d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511349d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511353d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511357d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511361d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511365d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511369d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511373d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511377d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511381d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511385d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511389d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511393d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511397d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511401d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511405d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511409d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511413d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511417d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511421d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511425d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511429d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511433d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511437d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511441d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511445d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511449d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511453d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511457d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511461d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511465d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511469d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511473d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511477d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511481d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511485d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511489d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511493d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511497d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511501d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511505d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511509d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511513d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511517d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511521d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511525d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511529d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511533d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511537d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511541d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511545d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511549d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511553d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511557d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511561d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511565d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511569d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511573d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511577d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511581d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511585d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511589d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511593d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511597d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511601d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511605d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511609d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511613d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511617d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511621d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511625d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511629d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511633d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511637d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511641d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511645d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511649d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511653d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511657d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511661d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511665d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511669d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511673d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511677d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511681d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511685d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511689d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511693d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511697d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511701d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511705d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511709d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511713d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511717d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511721d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511725d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511729d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511733d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511737d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511741d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511745d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511749d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511753d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511757d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511761d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511765d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511769d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511773d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511777d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511781d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511785d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511789d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511793d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511797d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511801d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511805d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511809d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511813d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511817d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511821d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511825d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511829d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511833d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511837d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511841d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511845d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511849d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511853d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511857d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511861d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511865d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511869d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511873d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511877d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511881d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511885d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511889d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511893d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511897d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511901d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511905d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511909d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511913d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511917d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511921d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511925d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511929d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511933d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511937d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511941d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511945d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511949d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511953d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511957d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511961d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511965d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511969d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511973d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511977d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511981d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511985d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511989d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511993d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024511997d[EHCI  ] register read from offset 0x0024:  0x000000000000000C (len=4)
+00024512000d[USBMSD] packet hexdump (8 bytes)
+00024512000d[USBMSD] 80 06 00 01 00 00 08 00 
+00024512000d[USBMSD] USB_REQ_GET_DESCRIPTOR: Device
+00024512000d[EHCI  ] submit: qh 11ccc2 next 11ccc2 qtd 11cdc0 pid 2d len 8 (total 8) endp 0 ret 18
+
+00024512000d[EHCI  ] execute_complete: qhaddr 0x11ccc2, next 11ccc2, qtdaddr 0x11cdc0, status 8
+00024512000d[EHCI  ] updating tbytes to 0
+00024512000d[USBMSD] packet hexdump (8 bytes)
+00024512000d[USBMSD] 12 01 00 02 00 00 00 40 
+00024512000d[EHCI  ] submit: qh 11ccc2 next 11ccc2 qtd 11ce00 pid 69 len 64 (total 64) endp 0 ret 8
+
+00024512000d[EHCI  ] execute_complete: qhaddr 0x11ccc2, next 11ccc2, qtdaddr 0x11ce00, status 8
+00024512000d[EHCI  ] updating tbytes to 56
+00024512000d[USBMSD] packet hexdump (0 bytes)
+00024512000d[EHCI  ] submit: qh 11ccc2 next 11ccc2 qtd 11ce50 pid e1 len 0 (total 0) endp 0 ret 0
+
+00024512000d[EHCI  ] execute_complete: qhaddr 0x11ccc2, next 11ccc2, qtdaddr 0x11ce50, status 0
+00024512000d[EHCI  ] updating tbytes to 0
+00024512001d[EHCI  ] register read from offset 0x0024:  0x000000000000A00D (len=4)
+00024512015d[EHCI  ] register read from offset 0x0024:  0x000000000000A00D (len=4)
+00024512022d[EHCI  ] register read from offset 0x0024:  0x000000000000A00D (len=4)
+00024512023d[EHCI  ] register read from offset 0x0024:  0x000000000000A00D (len=4)
+00024512023d[EHCI  ] register write to  offset 0x0024:  0x000000000000A00D (len=4)
+00024512063d[EHCI  ] register read from offset 0x0020:  0x0000000000080021 (len=4)
+00024512063d[EHCI  ] register write to  offset 0x0020:  0x0000000000080061 (len=4)
+00024512065d[EHCI  ] register read from offset 0x0024:  0x000000000000A000 (len=4)
+00024516057d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024516059d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024516060d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024516060d[EHCI  ] register write to  offset 0x0024:  0x0000000000008020 (len=4)
+00024516105d[EHCI  ] register read from offset 0x0004:  0x0000000000103206 (len=4)
+00024516112d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00024516115d[EHCI  ] register read from offset 0x0064:  0x0000000000001005 (len=4)
+00024516115d[EHCI  ] register write to  offset 0x0064:  0x0000000000001005 (len=4)
+00024555242d[EHCI  ] register read from offset 0x0064:  0x0000000000001005 (len=4)
+00024555245d[EHCI  ] register read from offset 0x0064:  0x0000000000001005 (len=4)
+00024555254d[EHCI  ] register read from offset 0x0064:  0x0000000000001005 (len=4)
+00024555254d[EHCI  ] register write to  offset 0x0064:  0x0000000000001105 (len=4)
+00024594379d[EHCI  ] register read from offset 0x0064:  0x0000000000001105 (len=4)
+00024594383d[EHCI  ] register read from offset 0x0064:  0x0000000000001105 (len=4)
+00024594383d[EHCI  ] register write to  offset 0x0064:  0x0000000000001005 (len=4)
+00024594383d[USBMSD] Reset
+00024633510d[EHCI  ] register read from offset 0x0064:  0x0000000000001005 (len=4)
+00024633513d[EHCI  ] register read from offset 0x0064:  0x0000000000001005 (len=4)
+00024633768d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00024633793d[EHCI  ] register read from offset 0x0024:  0x0000000000008000 (len=4)
+00024636000d[USBMSD] packet hexdump (8 bytes)
+00024636000d[USBMSD] 00 05 01 00 00 00 00 00 
+00024636000d[EHCI  ] submit: qh 11cd42 next 11ccc2 qtd 11cdc0 pid 2d len 8 (total 8) endp 0 ret 0
+
+00024636000d[EHCI  ] execute_complete: qhaddr 0x11cd42, next 11ccc2, qtdaddr 0x11cdc0, status 0
+00024636000d[EHCI  ] updating tbytes to 0
+00024636000d[USBMSD] USB_REQ_SET_ADDRESS:
+00024636000d[USBMSD] packet hexdump (0 bytes)
+00024636000d[EHCI  ] submit: qh 11cd42 next 11ccc2 qtd 11ce00 pid 69 len 0 (total 0) endp 0 ret 0
+
+00024636000d[EHCI  ] execute_complete: qhaddr 0x11cd42, next 11ccc2, qtdaddr 0x11ce00, status 0
+00024636000d[EHCI  ] updating tbytes to 0
+00024637785d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024637792d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024637793d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024637793d[EHCI  ] register write to  offset 0x0024:  0x000000000000A001 (len=4)
+00024637834d[EHCI  ] register read from offset 0x0020:  0x0000000000080021 (len=4)
+00024637834d[EHCI  ] register write to  offset 0x0020:  0x0000000000080061 (len=4)
+00024637836d[EHCI  ] register read from offset 0x0024:  0x000000000000A000 (len=4)
+00024640000d[EHCI  ] Port 1 not enabled
+00024640000d[EHCI  ] Port 2 not enabled
+00024640000d[EHCI  ] Port 3 not enabled
+00024640000d[EHCI  ] Port 4 not enabled
+00024640000d[EHCI  ] Port 5 not enabled
+00024640000d[EHCI  ] Port 1 not enabled
+00024640000d[EHCI  ] Port 2 not enabled
+00024640000d[EHCI  ] Port 3 not enabled
+00024640000d[EHCI  ] Port 4 not enabled
+00024640000d[EHCI  ] Port 5 not enabled
+00024640000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024641828d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024641830d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024641831d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024641831d[EHCI  ] register write to  offset 0x0024:  0x0000000000008020 (len=4)
+00024644000d[EHCI  ] Port 1 not enabled
+00024644000d[EHCI  ] Port 2 not enabled
+00024644000d[EHCI  ] Port 3 not enabled
+00024644000d[EHCI  ] Port 4 not enabled
+00024644000d[EHCI  ] Port 5 not enabled
+00024644000d[EHCI  ] Port 1 not enabled
+00024644000d[EHCI  ] Port 2 not enabled
+00024644000d[EHCI  ] Port 3 not enabled
+00024644000d[EHCI  ] Port 4 not enabled
+00024644000d[EHCI  ] Port 5 not enabled
+00024644000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024648000d[EHCI  ] Port 1 not enabled
+00024648000d[EHCI  ] Port 2 not enabled
+00024648000d[EHCI  ] Port 3 not enabled
+00024648000d[EHCI  ] Port 4 not enabled
+00024648000d[EHCI  ] Port 5 not enabled
+00024648000d[EHCI  ] Port 1 not enabled
+00024648000d[EHCI  ] Port 2 not enabled
+00024648000d[EHCI  ] Port 3 not enabled
+00024648000d[EHCI  ] Port 4 not enabled
+00024648000d[EHCI  ] Port 5 not enabled
+00024648000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024652000d[EHCI  ] Port 1 not enabled
+00024652000d[EHCI  ] Port 2 not enabled
+00024652000d[EHCI  ] Port 3 not enabled
+00024652000d[EHCI  ] Port 4 not enabled
+00024652000d[EHCI  ] Port 5 not enabled
+00024652000d[EHCI  ] Port 1 not enabled
+00024652000d[EHCI  ] Port 2 not enabled
+00024652000d[EHCI  ] Port 3 not enabled
+00024652000d[EHCI  ] Port 4 not enabled
+00024652000d[EHCI  ] Port 5 not enabled
+00024652000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024656000d[EHCI  ] Port 1 not enabled
+00024656000d[EHCI  ] Port 2 not enabled
+00024656000d[EHCI  ] Port 3 not enabled
+00024656000d[EHCI  ] Port 4 not enabled
+00024656000d[EHCI  ] Port 5 not enabled
+00024656000d[EHCI  ] Port 1 not enabled
+00024656000d[EHCI  ] Port 2 not enabled
+00024656000d[EHCI  ] Port 3 not enabled
+00024656000d[EHCI  ] Port 4 not enabled
+00024656000d[EHCI  ] Port 5 not enabled
+00024656000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024660000d[EHCI  ] Port 1 not enabled
+00024660000d[EHCI  ] Port 2 not enabled
+00024660000d[EHCI  ] Port 3 not enabled
+00024660000d[EHCI  ] Port 4 not enabled
+00024660000d[EHCI  ] Port 5 not enabled
+00024660000d[EHCI  ] Port 1 not enabled
+00024660000d[EHCI  ] Port 2 not enabled
+00024660000d[EHCI  ] Port 3 not enabled
+00024660000d[EHCI  ] Port 4 not enabled
+00024660000d[EHCI  ] Port 5 not enabled
+00024660000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024664000d[EHCI  ] Port 1 not enabled
+00024664000d[EHCI  ] Port 2 not enabled
+00024664000d[EHCI  ] Port 3 not enabled
+00024664000d[EHCI  ] Port 4 not enabled
+00024664000d[EHCI  ] Port 5 not enabled
+00024664000d[EHCI  ] Port 1 not enabled
+00024664000d[EHCI  ] Port 2 not enabled
+00024664000d[EHCI  ] Port 3 not enabled
+00024664000d[EHCI  ] Port 4 not enabled
+00024664000d[EHCI  ] Port 5 not enabled
+00024664000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024668000d[EHCI  ] Port 1 not enabled
+00024668000d[EHCI  ] Port 2 not enabled
+00024668000d[EHCI  ] Port 3 not enabled
+00024668000d[EHCI  ] Port 4 not enabled
+00024668000d[EHCI  ] Port 5 not enabled
+00024668000d[EHCI  ] Port 1 not enabled
+00024668000d[EHCI  ] Port 2 not enabled
+00024668000d[EHCI  ] Port 3 not enabled
+00024668000d[EHCI  ] Port 4 not enabled
+00024668000d[EHCI  ] Port 5 not enabled
+00024668000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024672000d[EHCI  ] Port 1 not enabled
+00024672000d[EHCI  ] Port 2 not enabled
+00024672000d[EHCI  ] Port 3 not enabled
+00024672000d[EHCI  ] Port 4 not enabled
+00024672000d[EHCI  ] Port 5 not enabled
+00024672000d[EHCI  ] Port 1 not enabled
+00024672000d[EHCI  ] Port 2 not enabled
+00024672000d[EHCI  ] Port 3 not enabled
+00024672000d[EHCI  ] Port 4 not enabled
+00024672000d[EHCI  ] Port 5 not enabled
+00024672000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024676000d[EHCI  ] Port 1 not enabled
+00024676000d[EHCI  ] Port 2 not enabled
+00024676000d[EHCI  ] Port 3 not enabled
+00024676000d[EHCI  ] Port 4 not enabled
+00024676000d[EHCI  ] Port 5 not enabled
+00024676000d[EHCI  ] Port 1 not enabled
+00024676000d[EHCI  ] Port 2 not enabled
+00024676000d[EHCI  ] Port 3 not enabled
+00024676000d[EHCI  ] Port 4 not enabled
+00024676000d[EHCI  ] Port 5 not enabled
+00024676000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024680000d[EHCI  ] Port 1 not enabled
+00024680000d[EHCI  ] Port 2 not enabled
+00024680000d[EHCI  ] Port 3 not enabled
+00024680000d[EHCI  ] Port 4 not enabled
+00024680000d[EHCI  ] Port 5 not enabled
+00024680000d[EHCI  ] Port 1 not enabled
+00024680000d[EHCI  ] Port 2 not enabled
+00024680000d[EHCI  ] Port 3 not enabled
+00024680000d[EHCI  ] Port 4 not enabled
+00024680000d[EHCI  ] Port 5 not enabled
+00024680000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024681191d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00024681215d[EHCI  ] register read from offset 0x0024:  0x0000000000008000 (len=4)
+00024684000d[EHCI  ] Port 1 not enabled
+00024684000d[EHCI  ] Port 2 not enabled
+00024684000d[EHCI  ] Port 3 not enabled
+00024684000d[EHCI  ] Port 4 not enabled
+00024684000d[EHCI  ] Port 5 not enabled
+00024684000d[USBMSD] packet hexdump (8 bytes)
+00024684000d[USBMSD] 80 06 00 01 00 00 12 00 
+00024684000d[USBMSD] USB_REQ_GET_DESCRIPTOR: Device
+00024684000d[EHCI  ] submit: qh 11ccc2 next 11cd42 qtd 11cdc0 pid 2d len 8 (total 8) endp 0 ret 18
+
+00024684000d[EHCI  ] execute_complete: qhaddr 0x11ccc2, next 11cd42, qtdaddr 0x11cdc0, status 8
+00024684000d[EHCI  ] updating tbytes to 0
+00024684000d[USBMSD] packet hexdump (18 bytes)
+00024684000d[USBMSD] 12 01 00 02 00 00 00 40 00 00 00 00 00 01 01 02 
+00024684000d[USBMSD] 03 01 
+00024684000d[EHCI  ] submit: qh 11ccc2 next 11cd42 qtd 11ce00 pid 69 len 64 (total 64) endp 0 ret 18
+
+00024684000d[EHCI  ] execute_complete: qhaddr 0x11ccc2, next 11cd42, qtdaddr 0x11ce00, status 18
+00024684000d[EHCI  ] updating tbytes to 46
+00024684000d[USBMSD] packet hexdump (0 bytes)
+00024684000d[EHCI  ] submit: qh 11ccc2 next 11cd42 qtd 11ce50 pid e1 len 0 (total 0) endp 0 ret 0
+
+00024684000d[EHCI  ] execute_complete: qhaddr 0x11ccc2, next 11cd42, qtdaddr 0x11ce50, status 0
+00024684000d[EHCI  ] updating tbytes to 0
+00024685207d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024685214d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024685215d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024685215d[EHCI  ] register write to  offset 0x0024:  0x000000000000A001 (len=4)
+00024685255d[EHCI  ] register read from offset 0x0020:  0x0000000000080021 (len=4)
+00024685255d[EHCI  ] register write to  offset 0x0020:  0x0000000000080061 (len=4)
+00024685257d[EHCI  ] register read from offset 0x0024:  0x000000000000A000 (len=4)
+00024689249d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024689251d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024689252d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024689252d[EHCI  ] register write to  offset 0x0024:  0x0000000000008020 (len=4)
+00024689494d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00024689519d[EHCI  ] register read from offset 0x0024:  0x0000000000008000 (len=4)
+00024692000d[USBMSD] packet hexdump (8 bytes)
+00024692000d[USBMSD] 80 06 00 02 00 00 40 00 
+00024692000d[USBMSD] USB_REQ_GET_DESCRIPTOR: Config
+00024692000d[EHCI  ] submit: qh 11cd42 next 11ccc2 qtd 11cdc0 pid 2d len 8 (total 8) endp 0 ret 32
+
+00024692000d[EHCI  ] execute_complete: qhaddr 0x11cd42, next 11ccc2, qtdaddr 0x11cdc0, status 8
+00024692000d[EHCI  ] updating tbytes to 0
+00024692000d[USBMSD] packet hexdump (32 bytes)
+00024692000d[USBMSD] 09 02 20 00 01 01 00 C0 00 09 04 00 00 02 08 06 
+00024692000d[USBMSD] 50 00 07 05 81 02 00 02 00 07 05 02 02 00 02 00 
+00024692000d[EHCI  ] submit: qh 11cd42 next 11ccc2 qtd 11ce00 pid 69 len 64 (total 64) endp 0 ret 32
+
+00024692000d[EHCI  ] execute_complete: qhaddr 0x11cd42, next 11ccc2, qtdaddr 0x11ce00, status 32
+00024692000d[EHCI  ] updating tbytes to 32
+00024692000d[USBMSD] packet hexdump (0 bytes)
+00024692000d[EHCI  ] submit: qh 11cd42 next 11ccc2 qtd 11ce50 pid e1 len 0 (total 0) endp 0 ret 0
+
+00024692000d[EHCI  ] execute_complete: qhaddr 0x11cd42, next 11ccc2, qtdaddr 0x11ce50, status 0
+00024692000d[EHCI  ] updating tbytes to 0
+00024693511d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024693518d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024693519d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024693519d[EHCI  ] register write to  offset 0x0024:  0x000000000000A001 (len=4)
+00024693560d[EHCI  ] register read from offset 0x0020:  0x0000000000080021 (len=4)
+00024693560d[EHCI  ] register write to  offset 0x0020:  0x0000000000080061 (len=4)
+00024693562d[EHCI  ] register read from offset 0x0024:  0x000000000000A000 (len=4)
+00024696000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024697554d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024697556d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024697557d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024697557d[EHCI  ] register write to  offset 0x0024:  0x0000000000008020 (len=4)
+00024697883d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00024697907d[EHCI  ] register read from offset 0x0024:  0x0000000000008000 (len=4)
+00024700000d[USBMSD] packet hexdump (8 bytes)
+00024700000d[USBMSD] 00 09 01 00 00 00 00 00 
+00024700000d[EHCI  ] submit: qh 11ccc2 next 11cd42 qtd 11cdc0 pid 2d len 8 (total 8) endp 0 ret 0
+
+00024700000d[EHCI  ] execute_complete: qhaddr 0x11ccc2, next 11cd42, qtdaddr 0x11cdc0, status 0
+00024700000d[EHCI  ] updating tbytes to 0
+00024700000d[USBMSD] USB_REQ_SET_CONFIGURATION: value=1
+00024700000d[USBMSD] packet hexdump (0 bytes)
+00024700000d[EHCI  ] submit: qh 11ccc2 next 11cd42 qtd 11ce00 pid 69 len 0 (total 0) endp 0 ret 0
+
+00024700000d[EHCI  ] execute_complete: qhaddr 0x11ccc2, next 11cd42, qtdaddr 0x11ce00, status 0
+00024700000d[EHCI  ] updating tbytes to 0
+00024701898d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024701905d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024701906d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024701906d[EHCI  ] register write to  offset 0x0024:  0x000000000000A001 (len=4)
+00024701946d[EHCI  ] register read from offset 0x0020:  0x0000000000080021 (len=4)
+00024701946d[EHCI  ] register write to  offset 0x0020:  0x0000000000080061 (len=4)
+00024701948d[EHCI  ] register read from offset 0x0024:  0x000000000000A000 (len=4)
+00024705940d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024705942d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024705943d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024705943d[EHCI  ] register write to  offset 0x0024:  0x0000000000008020 (len=4)
+00024706182d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00024706207d[EHCI  ] register read from offset 0x0024:  0x0000000000008000 (len=4)
+00024708000d[USBMSD] packet hexdump (8 bytes)
+00024708000d[USBMSD] 80 08 00 00 00 00 01 00 
+00024708000d[USBMSD] USB_REQ_GET_CONFIGURATION:
+00024708000d[EHCI  ] submit: qh 11cd42 next 11ccc2 qtd 11cdc0 pid 2d len 8 (total 8) endp 0 ret 1
+
+00024708000d[EHCI  ] execute_complete: qhaddr 0x11cd42, next 11ccc2, qtdaddr 0x11cdc0, status 8
+00024708000d[EHCI  ] updating tbytes to 0
+00024708000d[USBMSD] packet hexdump (1 bytes)
+00024708000d[USBMSD] 01 
+00024708000d[EHCI  ] submit: qh 11cd42 next 11ccc2 qtd 11ce00 pid 69 len 64 (total 64) endp 0 ret 1
+
+00024708000d[EHCI  ] execute_complete: qhaddr 0x11cd42, next 11ccc2, qtdaddr 0x11ce00, status 1
+00024708000d[EHCI  ] updating tbytes to 63
+00024708000d[USBMSD] packet hexdump (0 bytes)
+00024708000d[EHCI  ] submit: qh 11cd42 next 11ccc2 qtd 11ce50 pid e1 len 0 (total 0) endp 0 ret 0
+
+00024708000d[EHCI  ] execute_complete: qhaddr 0x11cd42, next 11ccc2, qtdaddr 0x11ce50, status 0
+00024708000d[EHCI  ] updating tbytes to 0
+00024710199d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024710206d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024710207d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024710207d[EHCI  ] register write to  offset 0x0024:  0x000000000000A001 (len=4)
+00024710248d[EHCI  ] register read from offset 0x0020:  0x0000000000080021 (len=4)
+00024710248d[EHCI  ] register write to  offset 0x0020:  0x0000000000080061 (len=4)
+00024710250d[EHCI  ] register read from offset 0x0024:  0x000000000000A000 (len=4)
+00024712000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024714242d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024714244d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024714245d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024714245d[EHCI  ] register write to  offset 0x0024:  0x0000000000008020 (len=4)
+00024716000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024720000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024724000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024726757d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00024726781d[EHCI  ] register read from offset 0x0024:  0x0000000000008000 (len=4)
+00024728000d[USBMSD] packet hexdump (8 bytes)
+00024728000d[USBMSD] 21 FF 00 00 00 00 00 00 
+00024728000d[EHCI  ] submit: qh 11ccc2 next 11cd42 qtd 11cdc0 pid 2d len 8 (total 8) endp 0 ret 0
+
+00024728000d[EHCI  ] execute_complete: qhaddr 0x11ccc2, next 11cd42, qtdaddr 0x11cdc0, status 0
+00024728000d[EHCI  ] updating tbytes to 0
+00024728000d[USBMSD] MASS STORAGE RESET:
+00024728000d[USBMSD] packet hexdump (0 bytes)
+00024728000d[EHCI  ] submit: qh 11ccc2 next 11cd42 qtd 11ce00 pid 69 len 0 (total 0) endp 0 ret 0
+
+00024728000d[EHCI  ] execute_complete: qhaddr 0x11ccc2, next 11cd42, qtdaddr 0x11ce00, status 0
+00024728000d[EHCI  ] updating tbytes to 0
+00024730773d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024730780d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024730781d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024730781d[EHCI  ] register write to  offset 0x0024:  0x000000000000A001 (len=4)
+00024730821d[EHCI  ] register read from offset 0x0020:  0x0000000000080021 (len=4)
+00024730821d[EHCI  ] register write to  offset 0x0020:  0x0000000000080061 (len=4)
+00024730823d[EHCI  ] register read from offset 0x0024:  0x000000000000A000 (len=4)
+00024734815d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024734817d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024734818d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024734818d[EHCI  ] register write to  offset 0x0024:  0x0000000000008020 (len=4)
+00024735072d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00024735097d[EHCI  ] register read from offset 0x0024:  0x0000000000008000 (len=4)
+00024736000d[USBMSD] packet hexdump (8 bytes)
+00024736000d[USBMSD] A1 FE 00 00 00 00 01 00 
+00024736000d[USBMSD] MASS STORAGE: GET MAX LUN
+00024736000d[EHCI  ] submit: qh 11cd42 next 11ccc2 qtd 11cdc0 pid 2d len 8 (total 8) endp 0 ret 1
+
+00024736000d[EHCI  ] execute_complete: qhaddr 0x11cd42, next 11ccc2, qtdaddr 0x11cdc0, status 8
+00024736000d[EHCI  ] updating tbytes to 0
+00024736000d[USBMSD] packet hexdump (1 bytes)
+00024736000d[USBMSD] 00 
+00024736000d[EHCI  ] submit: qh 11cd42 next 11ccc2 qtd 11ce00 pid 69 len 64 (total 64) endp 0 ret 1
+
+00024736000d[EHCI  ] execute_complete: qhaddr 0x11cd42, next 11ccc2, qtdaddr 0x11ce00, status 1
+00024736000d[EHCI  ] updating tbytes to 63
+00024736000d[USBMSD] packet hexdump (0 bytes)
+00024736000d[EHCI  ] submit: qh 11cd42 next 11ccc2 qtd 11ce50 pid e1 len 0 (total 0) endp 0 ret 0
+
+00024736000d[EHCI  ] execute_complete: qhaddr 0x11cd42, next 11ccc2, qtdaddr 0x11ce50, status 0
+00024736000d[EHCI  ] updating tbytes to 0
+00024739089d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024739096d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024739097d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024739097d[EHCI  ] register write to  offset 0x0024:  0x000000000000A001 (len=4)
+00024739138d[EHCI  ] register read from offset 0x0020:  0x0000000000080021 (len=4)
+00024739138d[EHCI  ] register write to  offset 0x0020:  0x0000000000080061 (len=4)
+00024739140d[EHCI  ] register read from offset 0x0024:  0x000000000000A000 (len=4)
+00024740000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024743132d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024743134d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024743135d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024743135d[EHCI  ] register write to  offset 0x0024:  0x0000000000008020 (len=4)
+00024743342d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00024743366d[EHCI  ] register read from offset 0x0024:  0x0000000000008000 (len=4)
+00024744000d[USBMSD] packet hexdump (8 bytes)
+00024744000d[USBMSD] 21 FF 00 00 00 00 00 00 
+00024744000d[EHCI  ] submit: qh 11ccc2 next 11cd42 qtd 11cdc0 pid 2d len 8 (total 8) endp 0 ret 0
+
+00024744000d[EHCI  ] execute_complete: qhaddr 0x11ccc2, next 11cd42, qtdaddr 0x11cdc0, status 0
+00024744000d[EHCI  ] updating tbytes to 0
+00024744000d[USBMSD] MASS STORAGE RESET:
+00024744000d[USBMSD] packet hexdump (0 bytes)
+00024744000d[EHCI  ] submit: qh 11ccc2 next 11cd42 qtd 11ce00 pid 69 len 0 (total 0) endp 0 ret 0
+
+00024744000d[EHCI  ] execute_complete: qhaddr 0x11ccc2, next 11cd42, qtdaddr 0x11ce00, status 0
+00024744000d[EHCI  ] updating tbytes to 0
+00024747358d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024747365d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024747366d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024747366d[EHCI  ] register write to  offset 0x0024:  0x000000000000A001 (len=4)
+00024747406d[EHCI  ] register read from offset 0x0020:  0x0000000000080021 (len=4)
+00024747406d[EHCI  ] register write to  offset 0x0020:  0x0000000000080061 (len=4)
+00024747408d[EHCI  ] register read from offset 0x0024:  0x000000000000A000 (len=4)
+00024751400d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024751402d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024751403d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024751403d[EHCI  ] register write to  offset 0x0024:  0x0000000000008020 (len=4)
+00024751639d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00024751664d[EHCI  ] register read from offset 0x0024:  0x0000000000008000 (len=4)
+00024752000d[USBMSD] packet hexdump (31 bytes)
+00024752000d[USBMSD] 55 53 42 43 00 00 00 00 24 00 00 00 80 00 0C 12 
+00024752000d[USBMSD] 00 00 00 24 00 00 00 00 00 00 00 00 00 00 00 
+00024752000d[USBMSD] command on LUN 0
+00024752000d[USBMSD] command tag 0x0 flags 00000080 len 12 data 36
+00024752000d[SCSIHD] command: lun=0 tag=0x0 data=0x12
+00024752000d[SCSIHD] inquiry (len 36)
+00024752000d[SCSIHD] read buf_len=36
+00024752000d[EHCI  ] submit: qh 11cd42 next 11ccc2 qtd 11cdc0 pid e1 len 31 (total 31) endp 2 ret 31
+
+00024752000d[EHCI  ] execute_complete: qhaddr 0x11cd42, next 11ccc2, qtdaddr 0x11cdc0, status 31
+00024752000d[EHCI  ] updating tbytes to 0
+00024755656d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024755663d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024755664d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024755664d[EHCI  ] register write to  offset 0x0024:  0x000000000000A001 (len=4)
+00024755705d[EHCI  ] register read from offset 0x0020:  0x0000000000080021 (len=4)
+00024755705d[EHCI  ] register write to  offset 0x0020:  0x0000000000080061 (len=4)
+00024755707d[EHCI  ] register read from offset 0x0024:  0x000000000000A000 (len=4)
+00024756000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024759699d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024759701d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024759702d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024759702d[EHCI  ] register write to  offset 0x0024:  0x0000000000008020 (len=4)
+00024759899d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00024759923d[EHCI  ] register read from offset 0x0024:  0x0000000000008000 (len=4)
+00024760000d[USBMSD] data in 36/36
+00024760000d[SCSIHD] read sector_count=0
+00024760000d[SCSIHD] command complete tag=0x0 status=0 sense=0
+00024760000d[USBMSD] command complete 0
+00024760000d[USBMSD] packet hexdump (36 bytes)
+00024760000d[USBMSD] 00 00 03 02 1F 00 00 10 42 4F 43 48 53 20 20 00 
+00024760000d[USBMSD] 42 4F 43 48 53 20 48 41 52 44 44 49 53 4B 20 00 
+00024760000d[USBMSD] 31 2E 30 00 
+00024760000d[EHCI  ] submit: qh 11ccc2 next 11cd42 qtd 11ce00 pid 69 len 36 (total 36) endp 1 ret 36
+
+00024760000d[EHCI  ] execute_complete: qhaddr 0x11ccc2, next 11cd42, qtdaddr 0x11ce00, status 36
+00024760000d[EHCI  ] updating tbytes to 0
+00024760000d[USBMSD] command status 0 tag 0x0, len 13
+00024760000d[USBMSD] packet hexdump (13 bytes)
+00024760000d[USBMSD] 55 53 42 53 00 00 00 00 00 00 00 00 00 
+00024760000d[USBMSD] packet hexdump (13 bytes)
+00024760000d[USBMSD] 55 53 42 53 00 00 00 00 00 00 00 00 00 
+00024760000d[EHCI  ] submit: qh 11ccc2 next 11cd42 qtd 11ce40 pid 69 len 13 (total 13) endp 1 ret 13
+
+00024760000d[EHCI  ] execute_complete: qhaddr 0x11ccc2, next 11cd42, qtdaddr 0x11ce40, status 13
+00024760000d[EHCI  ] updating tbytes to 0
+00024763915d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024763922d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024763923d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024763923d[EHCI  ] register write to  offset 0x0024:  0x000000000000A001 (len=4)
+00024763963d[EHCI  ] register read from offset 0x0020:  0x0000000000080021 (len=4)
+00024763963d[EHCI  ] register write to  offset 0x0020:  0x0000000000080061 (len=4)
+00024763965d[EHCI  ] register read from offset 0x0024:  0x000000000000A000 (len=4)
+00024767957d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024767959d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024767960d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024767960d[EHCI  ] register write to  offset 0x0024:  0x0000000000008020 (len=4)
+00024768195d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00024768220d[EHCI  ] register read from offset 0x0024:  0x0000000000008000 (len=4)
+00024772000d[USBMSD] packet hexdump (31 bytes)
+00024772000d[USBMSD] 55 53 42 43 01 00 00 00 FC 00 00 00 80 00 0A 23 
+00024772000d[USBMSD] 00 00 00 00 00 00 00 FC 00 00 00 00 00 00 00 
+00024772000d[USBMSD] command on LUN 0
+00024772000d[USBMSD] command tag 0x1 flags 00000080 len 10 data 252
+00024772000d[SCSIHD] command: lun=0 tag=0x1 data=0x23
+00024772000i[SCSIHD] READ FORMAT CAPACITIES (MMC)
+00024772000d[SCSIHD] read buf_len=12
+00024772000d[EHCI  ] submit: qh 11cd42 next 11ccc2 qtd 11cdc0 pid e1 len 31 (total 31) endp 2 ret 31
+
+00024772000d[EHCI  ] execute_complete: qhaddr 0x11cd42, next 11ccc2, qtdaddr 0x11cdc0, status 31
+00024772000d[EHCI  ] updating tbytes to 0
+00024772212d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024772219d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024772220d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024772220d[EHCI  ] register write to  offset 0x0024:  0x000000000000A001 (len=4)
+00024772261d[EHCI  ] register read from offset 0x0020:  0x0000000000080021 (len=4)
+00024772261d[EHCI  ] register write to  offset 0x0020:  0x0000000000080061 (len=4)
+00024772263d[EHCI  ] register read from offset 0x0024:  0x000000000000A000 (len=4)
+00024776000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024776255d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024776257d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024776258d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024776258d[EHCI  ] register write to  offset 0x0024:  0x0000000000008020 (len=4)
+00024776455d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00024776479d[EHCI  ] register read from offset 0x0024:  0x0000000000008000 (len=4)
+00024780000d[USBMSD] data in 252/252
+00024780000d[SCSIHD] read sector_count=0
+00024780000d[SCSIHD] command complete tag=0x1 status=0 sense=0
+00024780000d[USBMSD] command complete 0
+00024780000d[USBMSD] packet hexdump (252 bytes)
+00024780000d[USBMSD] 00 00 00 0C 00 00 0B 3F 02 00 02 00 00 00 00 00 
+00024780000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024780000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024780000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024780000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024780000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024780000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024780000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024780000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024780000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024780000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024780000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024780000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024780000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024780000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024780000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 
+00024780000d[EHCI  ] submit: qh 11ccc2 next 11cd42 qtd 11ce00 pid 69 len 252 (total 252) endp 1 ret 252
+
+00024780000d[EHCI  ] execute_complete: qhaddr 0x11ccc2, next 11cd42, qtdaddr 0x11ce00, status 252
+00024780000d[EHCI  ] updating tbytes to 0
+00024780000d[USBMSD] command status 0 tag 0x1, len 13
+00024780000d[USBMSD] packet hexdump (13 bytes)
+00024780000d[USBMSD] 55 53 42 53 01 00 00 00 F0 00 00 00 00 
+00024780000d[USBMSD] packet hexdump (13 bytes)
+00024780000d[USBMSD] 55 53 42 53 01 00 00 00 F0 00 00 00 00 
+00024780000d[EHCI  ] submit: qh 11ccc2 next 11cd42 qtd 11ce40 pid 69 len 13 (total 13) endp 1 ret 13
+
+00024780000d[EHCI  ] execute_complete: qhaddr 0x11ccc2, next 11cd42, qtdaddr 0x11ce40, status 13
+00024780000d[EHCI  ] updating tbytes to 0
+00024780471d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024780478d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024780479d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024780479d[EHCI  ] register write to  offset 0x0024:  0x000000000000A001 (len=4)
+00024780519d[EHCI  ] register read from offset 0x0020:  0x0000000000080021 (len=4)
+00024780519d[EHCI  ] register write to  offset 0x0020:  0x0000000000080061 (len=4)
+00024780521d[EHCI  ] register read from offset 0x0024:  0x000000000000A000 (len=4)
+00024784513d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024784515d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024784516d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024784516d[EHCI  ] register write to  offset 0x0024:  0x0000000000008020 (len=4)
+00024784810d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00024784835d[EHCI  ] register read from offset 0x0024:  0x0000000000008000 (len=4)
+00024788000d[USBMSD] packet hexdump (31 bytes)
+00024788000d[USBMSD] 55 53 42 43 02 00 00 00 C0 00 00 00 80 00 06 1A 
+00024788000d[USBMSD] 00 3F 00 C0 00 00 00 00 00 00 00 00 00 00 00 
+00024788000d[USBMSD] command on LUN 0
+00024788000d[USBMSD] command tag 0x2 flags 00000080 len 6 data 192
+00024788000d[SCSIHD] command: lun=0 tag=0x2 data=0x1a
+00024788000d[SCSIHD] mode sense (page 63, len 192)
+00024788000d[SCSIHD] read buf_len=24
+00024788000d[EHCI  ] submit: qh 11cd42 next 11ccc2 qtd 11cdc0 pid e1 len 31 (total 31) endp 2 ret 31
+
+00024788000d[EHCI  ] execute_complete: qhaddr 0x11cd42, next 11ccc2, qtdaddr 0x11cdc0, status 31
+00024788000d[EHCI  ] updating tbytes to 0
+00024788827d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024788834d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024788835d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024788835d[EHCI  ] register write to  offset 0x0024:  0x000000000000A001 (len=4)
+00024788876d[EHCI  ] register read from offset 0x0020:  0x0000000000080021 (len=4)
+00024788876d[EHCI  ] register write to  offset 0x0020:  0x0000000000080061 (len=4)
+00024788878d[EHCI  ] register read from offset 0x0024:  0x000000000000A000 (len=4)
+00024792000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024792870d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024792872d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024792873d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024792873d[EHCI  ] register write to  offset 0x0024:  0x0000000000008020 (len=4)
+00024793070d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00024793094d[EHCI  ] register read from offset 0x0024:  0x0000000000008000 (len=4)
+00024796000d[USBMSD] data in 192/192
+00024796000d[SCSIHD] read sector_count=0
+00024796000d[SCSIHD] command complete tag=0x2 status=0 sense=0
+00024796000d[USBMSD] command complete 0
+00024796000d[USBMSD] packet hexdump (192 bytes)
+00024796000d[USBMSD] 14 00 00 00 08 12 04 00 00 00 00 00 00 00 00 00 
+00024796000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024796000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024796000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024796000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024796000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024796000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024796000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024796000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024796000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024796000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024796000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024796000d[EHCI  ] submit: qh 11ccc2 next 11cd42 qtd 11ce00 pid 69 len 192 (total 192) endp 1 ret 192
+
+00024796000d[EHCI  ] execute_complete: qhaddr 0x11ccc2, next 11cd42, qtdaddr 0x11ce00, status 192
+00024796000d[EHCI  ] updating tbytes to 0
+00024796000d[USBMSD] command status 0 tag 0x2, len 13
+00024796000d[USBMSD] packet hexdump (13 bytes)
+00024796000d[USBMSD] 55 53 42 53 02 00 00 00 A8 00 00 00 00 
+00024796000d[USBMSD] packet hexdump (13 bytes)
+00024796000d[USBMSD] 55 53 42 53 02 00 00 00 A8 00 00 00 00 
+00024796000d[EHCI  ] submit: qh 11ccc2 next 11cd42 qtd 11ce40 pid 69 len 13 (total 13) endp 1 ret 13
+
+00024796000d[EHCI  ] execute_complete: qhaddr 0x11ccc2, next 11cd42, qtdaddr 0x11ce40, status 13
+00024796000d[EHCI  ] updating tbytes to 0
+00024797086d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024797093d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024797094d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024797094d[EHCI  ] register write to  offset 0x0024:  0x000000000000A001 (len=4)
+00024797134d[EHCI  ] register read from offset 0x0020:  0x0000000000080021 (len=4)
+00024797134d[EHCI  ] register write to  offset 0x0020:  0x0000000000080061 (len=4)
+00024797136d[EHCI  ] register read from offset 0x0024:  0x000000000000A000 (len=4)
+00024801128d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024801130d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024801131d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024801131d[EHCI  ] register write to  offset 0x0024:  0x0000000000008020 (len=4)
+00024802145d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00024802170d[EHCI  ] register read from offset 0x0024:  0x0000000000008000 (len=4)
+00024804000d[USBMSD] packet hexdump (31 bytes)
+00024804000d[USBMSD] 55 53 42 43 03 00 00 00 08 00 00 00 80 00 0A 25 
+00024804000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024804000d[USBMSD] command on LUN 0
+00024804000d[USBMSD] command tag 0x3 flags 00000080 len 10 data 8
+00024804000d[SCSIHD] command: lun=0 tag=0x3 data=0x25
+00024804000d[SCSIHD] Read Capacity
+00024804000d[SCSIHD] read buf_len=8
+00024804000d[EHCI  ] submit: qh 11cd42 next 11ccc2 qtd 11cdc0 pid e1 len 31 (total 31) endp 2 ret 31
+
+00024804000d[EHCI  ] execute_complete: qhaddr 0x11cd42, next 11ccc2, qtdaddr 0x11cdc0, status 31
+00024804000d[EHCI  ] updating tbytes to 0
+00024806162d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024806169d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024806170d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024806170d[EHCI  ] register write to  offset 0x0024:  0x000000000000A001 (len=4)
+00024806211d[EHCI  ] register read from offset 0x0020:  0x0000000000080021 (len=4)
+00024806211d[EHCI  ] register write to  offset 0x0020:  0x0000000000080061 (len=4)
+00024806213d[EHCI  ] register read from offset 0x0024:  0x000000000000A000 (len=4)
+00024808000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024810205d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024810207d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024810208d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024810208d[EHCI  ] register write to  offset 0x0024:  0x0000000000008020 (len=4)
+00024810405d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00024810429d[EHCI  ] register read from offset 0x0024:  0x0000000000008000 (len=4)
+00024812000d[USBMSD] data in 8/8
+00024812000d[SCSIHD] read sector_count=0
+00024812000d[SCSIHD] command complete tag=0x3 status=0 sense=0
+00024812000d[USBMSD] command complete 0
+00024812000d[USBMSD] packet hexdump (8 bytes)
+00024812000d[USBMSD] 00 00 0B 3F 00 00 02 00 
+00024812000d[EHCI  ] submit: qh 11ccc2 next 11cd42 qtd 11ce00 pid 69 len 8 (total 8) endp 1 ret 8
+
+00024812000d[EHCI  ] execute_complete: qhaddr 0x11ccc2, next 11cd42, qtdaddr 0x11ce00, status 8
+00024812000d[EHCI  ] updating tbytes to 0
+00024812000d[USBMSD] command status 0 tag 0x3, len 13
+00024812000d[USBMSD] packet hexdump (13 bytes)
+00024812000d[USBMSD] 55 53 42 53 03 00 00 00 00 00 00 00 00 
+00024812000d[USBMSD] packet hexdump (13 bytes)
+00024812000d[USBMSD] 55 53 42 53 03 00 00 00 00 00 00 00 00 
+00024812000d[EHCI  ] submit: qh 11ccc2 next 11cd42 qtd 11ce40 pid 69 len 13 (total 13) endp 1 ret 13
+
+00024812000d[EHCI  ] execute_complete: qhaddr 0x11ccc2, next 11cd42, qtdaddr 0x11ce40, status 13
+00024812000d[EHCI  ] updating tbytes to 0
+00024814421d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024814428d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024814429d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024814429d[EHCI  ] register write to  offset 0x0024:  0x000000000000A001 (len=4)
+00024814469d[EHCI  ] register read from offset 0x0020:  0x0000000000080021 (len=4)
+00024814469d[EHCI  ] register write to  offset 0x0020:  0x0000000000080061 (len=4)
+00024814471d[EHCI  ] register read from offset 0x0024:  0x000000000000A000 (len=4)
+00024818463d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024818465d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024818466d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024818466d[EHCI  ] register write to  offset 0x0024:  0x0000000000008020 (len=4)
+00024829251d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00024829257d[EHCI  ] register read from offset 0x0064:  0x0000000000001005 (len=4)
+00024829550d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00024829575d[EHCI  ] register read from offset 0x0024:  0x0000000000008000 (len=4)
+00024832000d[USBMSD] packet hexdump (31 bytes)
+00024832000d[USBMSD] 55 53 42 43 04 00 00 00 00 02 00 00 80 00 0C 28 
+00024832000d[USBMSD] 00 00 00 00 58 00 00 01 00 00 00 00 00 00 00 
+00024832000d[USBMSD] command on LUN 0
+00024832000d[USBMSD] command tag 0x4 flags 00000080 len 12 data 512
+00024832000d[SCSIHD] command: lun=0 tag=0x4 data=0x28
+00024832000d[SCSIHD] Read (sector 88, count 1)
+00024832000d[SCSIHD] read sector_count=1
+00024832000d[EHCI  ] submit: qh 11cd42 next 11ccc2 qtd 11cdc0 pid e1 len 31 (total 31) endp 2 ret 31
+
+00024832000d[EHCI  ] execute_complete: qhaddr 0x11cd42, next 11ccc2, qtdaddr 0x11cdc0, status 31
+00024832000d[EHCI  ] updating tbytes to 0
+00024833567d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024833574d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024833575d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024833575d[EHCI  ] register write to  offset 0x0024:  0x000000000000A001 (len=4)
+00024833616d[EHCI  ] register read from offset 0x0020:  0x0000000000080021 (len=4)
+00024833616d[EHCI  ] register write to  offset 0x0020:  0x0000000000080061 (len=4)
+00024833618d[EHCI  ] register read from offset 0x0024:  0x000000000000A000 (len=4)
+00024836000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024837610d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024837612d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024837613d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024837613d[EHCI  ] register write to  offset 0x0024:  0x0000000000008020 (len=4)
+00024840000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024844000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024848000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024852000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024856000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024860000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024864000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024867372d[SCSIHD] data ready tag=0x4 len=512
+00024868000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024872000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024876000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024876922d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00024876946d[EHCI  ] register read from offset 0x0024:  0x0000000000008000 (len=4)
+00024880000d[USBMSD] data in 512/512
+00024880000d[SCSIHD] read sector_count=0
+00024880000d[SCSIHD] command complete tag=0x4 status=0 sense=0
+00024880000d[USBMSD] command complete 0
+00024880000d[USBMSD] packet hexdump (512 bytes)
+00024880000d[USBMSD] 55 AA B8 01 E8 00 00 CD 35 66 3D 00 08 72 2A B9 
+00024880000d[USBMSD] 00 01 00 C0 0F 32 89 D7 48 C1 E7 20 89 C7 48 89 
+00024880000d[USBMSD] F8 48 8D 35 5B 00 00 00 48 81 C7 9A F9 03 00 B9 
+00024880000d[USBMSD] 00 10 00 00 F3 48 A5 FF E0 48 8D 2D 0D 00 00 00 
+00024880000d[USBMSD] B8 04 13 00 00 CD 30 30 E4 CD 36 CD 38 4E 6F 74 
+00024880000d[USBMSD] 20 45 6E 6F 75 67 68 20 4D 65 6D 6F 72 79 2E 20 
+00024880000d[USBMSD] 50 72 65 73 73 20 61 6E 79 20 6B 65 79 20 74 6F 
+00024880000d[USBMSD] 20 65 6E 74 65 72 20 53 59 53 44 45 42 55 47 2E 
+00024880000d[USBMSD] 2E 2E 00 B8 00 05 00 00 CD 30 B4 02 31 D2 88 D7 
+00024880000d[USBMSD] CD 30 B7 07 B8 00 06 00 00 CD 30 FC E8 6E 01 00 
+00024880000d[USBMSD] 00 48 8D 2D E3 01 00 00 B8 04 13 00 00 CD 30 B8 
+00024880000d[USBMSD] 01 E8 00 00 CD 35 25 FF FF 00 00 48 C1 E0 0A E8 
+00024880000d[USBMSD] 0F 01 00 00 48 8D 2D DC 01 00 00 B8 04 13 00 00 
+00024880000d[USBMSD] CD 30 C6 05 A8 FF FF FF 00 48 8D 25 C9 15 FC FF 
+00024880000d[USBMSD] 48 8D 05 F2 FF FF FF 50 48 8D 2D 97 01 00 00 E8 
+00024880000d[USBMSD] D2 00 00 00 E8 30 00 00 00 E8 01 00 00 00 C3 48 
+00024880000d[USBMSD] 8D 3D 7B 16 FC FF 48 89 FB 8A 0D 72 FF FF FF B0 
+00024880000d[USBMSD] 20 F3 AE 8A 47 FF 48 89 DF 3C 3F 75 05 E9 8E 00 
+00024880000d[USBMSD] 00 00 B9 03 00 00 00 C3 C3 30 E4 88 25 50 FF FF 
+00024880000d[USBMSD] FF 48 8D 3D 49 16 FC FF E8 91 00 00 00 3C 0D 74 
+00024880000d[USBMSD] 56 3C 08 74 0F 80 3D 35 FF FF FF FF 74 56 84 C0 
+00024880000d[USBMSD] 74 43 EB 29 F6 05 26 FF FF FF FF 74 DB 48 FF CF 
+00024880000d[USBMSD] FE 0D 1B FF FF FF B0 08 E8 54 00 00 00 B0 20 E8 
+00024880000d[USBMSD] 4D 00 00 00 B0 08 E8 46 00 00 00 EB BB E8 3F 00 
+00024880000d[USBMSD] 00 00 3C 61 72 06 3C 7A 77 02 2C 20 AA FE 05 EE 
+00024880000d[USBMSD] FE FF FF EB A3 EB A1 48 8D 2D 17 01 00 00 E8 23 
+00024880000d[USBMSD] 00 00 00 C3 B0 07 E8 16 00 00 00 E9 88 FF FF FF 
+00024880000d[USBMSD] 48 8D 2D 01 01 00 00 E8 0A 00 00 00 E9 18 FF FF 
+00024880000d[USBMSD] FF B4 0E CD 30 C3 B8 04 13 00 00 CD 30 C3 30 E4 
+00024880000d[USBMSD] CD 36 C3 48 31 C9 31 ED 48 BB 0A 00 00 00 00 00 
+00024880000d[USBMSD] 00 00 FF C5 48 C1 E1 08 31 D2 48 F7 F3 80 C2 30 
+00024880000d[USBMSD] 80 FA 39 76 03 80 C2 07 88 D1 48 85 C0 75 E3 88 
+00024880000d[EHCI  ] submit: qh 11ccc2 next 11cd42 qtd 11ce00 pid 69 len 512 (total 512) endp 1 ret 512
+
+00024880000d[EHCI  ] execute_complete: qhaddr 0x11ccc2, next 11cd42, qtdaddr 0x11ce00, status 512
+00024880000d[EHCI  ] updating tbytes to 0
+00024880000d[USBMSD] command status 0 tag 0x4, len 13
+00024880000d[USBMSD] packet hexdump (13 bytes)
+00024880000d[USBMSD] 55 53 42 53 04 00 00 00 00 00 00 00 00 
+00024880000d[USBMSD] packet hexdump (13 bytes)
+00024880000d[USBMSD] 55 53 42 53 04 00 00 00 00 00 00 00 00 
+00024880000d[EHCI  ] submit: qh 11ccc2 next 11cd42 qtd 11ce40 pid 69 len 13 (total 13) endp 1 ret 13
+
+00024880000d[EHCI  ] execute_complete: qhaddr 0x11ccc2, next 11cd42, qtdaddr 0x11ce40, status 13
+00024880000d[EHCI  ] updating tbytes to 0
+00024880938d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024880945d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024880946d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024880946d[EHCI  ] register write to  offset 0x0024:  0x000000000000A001 (len=4)
+00024880986d[EHCI  ] register read from offset 0x0020:  0x0000000000080021 (len=4)
+00024880986d[EHCI  ] register write to  offset 0x0020:  0x0000000000080061 (len=4)
+00024880988d[EHCI  ] register read from offset 0x0024:  0x000000000000A000 (len=4)
+00024884980d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024884982d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024884983d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024884983d[EHCI  ] register write to  offset 0x0024:  0x0000000000008020 (len=4)
+00024885272d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00024885297d[EHCI  ] register read from offset 0x0024:  0x0000000000008000 (len=4)
+00024888000d[USBMSD] packet hexdump (31 bytes)
+00024888000d[USBMSD] 55 53 42 43 05 00 00 00 00 02 00 00 80 00 0C 28 
+00024888000d[USBMSD] 00 00 00 00 59 00 00 01 00 00 00 00 00 00 00 
+00024888000d[USBMSD] command on LUN 0
+00024888000d[USBMSD] command tag 0x5 flags 00000080 len 12 data 512
+00024888000d[SCSIHD] command: lun=0 tag=0x5 data=0x28
+00024888000d[SCSIHD] Read (sector 89, count 1)
+00024888000d[SCSIHD] read sector_count=1
+00024888000d[EHCI  ] submit: qh 11cd42 next 11ccc2 qtd 11cdc0 pid e1 len 31 (total 31) endp 2 ret 31
+
+00024888000d[EHCI  ] execute_complete: qhaddr 0x11cd42, next 11ccc2, qtdaddr 0x11cdc0, status 31
+00024888000d[EHCI  ] updating tbytes to 0
+00024889289d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024889296d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024889297d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024889297d[EHCI  ] register write to  offset 0x0024:  0x000000000000A001 (len=4)
+00024889338d[EHCI  ] register read from offset 0x0020:  0x0000000000080021 (len=4)
+00024889338d[EHCI  ] register write to  offset 0x0020:  0x0000000000080061 (len=4)
+00024889340d[EHCI  ] register read from offset 0x0024:  0x000000000000A000 (len=4)
+00024892000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024893332d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024893334d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024893335d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024893335d[EHCI  ] register write to  offset 0x0024:  0x0000000000008020 (len=4)
+00024896000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024900000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024904000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024904004d[SCSIHD] data ready tag=0x5 len=512
+00024908000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024912000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024916000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024920000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024924000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024928000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024932000d[EHCI  ] FETCHQH:  QH 0x0011cd42. H-bit set, reclamation status reset - done processing
+00024932644d[EHCI  ] register read from offset 0x0000:  0x0000000000000020 (len=1)
+00024932668d[EHCI  ] register read from offset 0x0024:  0x0000000000008000 (len=4)
+00024936000d[USBMSD] data in 512/512
+00024936000d[SCSIHD] read sector_count=0
+00024936000d[SCSIHD] command complete tag=0x5 status=0 sense=0
+00024936000d[USBMSD] command complete 0
+00024936000d[USBMSD] packet hexdump (512 bytes)
+00024936000d[USBMSD] C8 48 C1 E9 08 E8 B7 FF FF FF FF CD 75 F1 C3 48 
+00024936000d[USBMSD] 8D 3D 6B 16 FC FF B9 00 7D 00 00 31 C0 F3 48 AB 
+00024936000d[USBMSD] C3 04 4E 45 57 26 FB 03 00 00 00 00 00 05 4C 49 
+00024936000d[USBMSD] 53 54 04 52 55 4E 06 50 52 49 4E 54 06 49 4E 50 
+00024936000d[USBMSD] 55 54 03 49 46 05 47 4F 54 4F 07 53 59 53 54 45 
+00024936000d[USBMSD] 4D 01 53 52 57 55 FD 48 89 F7 48 01 CE 31 ED BB 
+00024936000d[USBMSD] 01 00 00 00 AC 2C 30 48 0F B6 C0 31 D2 48 F7 E3 
+00024936000d[USBMSD] 48 01 C5 FE C9 74 09 48 01 DB 48 8D 1C 9B EB E4 
+00024936000d[USBMSD] FC 5D 5F 5A 5B C3 4F 6B 0A 0D 00 53 43 52 2F 36 
+00024936000d[USBMSD] 34 20 49 6E 74 65 67 65 72 20 42 41 53 49 43 20 
+00024936000d[USBMSD] 76 30 2E 31 0A 0D 00 20 42 79 74 65 73 20 66 72 
+00024936000d[USBMSD] 65 65 0A 0D 00 0A 0D 00 45 72 72 6F 72 0A 0D 00 
+00024936000d[USBMSD] 30 31 32 33 34 35 36 37 38 39 37 38 39 00 00 CD 
+00024936000d[USBMSD] 30 C3 B9 14 00 00 00 48 F7 E1 48 05 00 80 00 00 
+00024936000d[USBMSD] C3 04 6E 65 77 02 7C 00 00 00 00 00 00 05 6C 69 
+00024936000d[USBMSD] 73 74 00 7D 00 00 00 00 00 00 04 72 75 6E 38 7E 
+00024936000d[USBMSD] 00 00 00 00 00 00 06 70 72 69 6E 74 8C 7E 00 00 
+00024936000d[USBMSD] 00 00 00 00 06 69 6E 70 75 74 2B 7D 00 00 00 00 
+00024936000d[USBMSD] 00 00 03 69 66 94 7C 00 00 00 00 00 00 05 67 6F 
+00024936000d[USBMSD] 74 6F 32 7E 00 00 00 00 00 00 07 73 79 73 74 65 
+00024936000d[USBMSD] 6D 30 7E 00 00 00 00 00 00 01 00 01 65 6D 3E 7E 
+00024936000d[USBMSD] 00 00 00 00 00 00 01 00 00 00 00 00 00 00 00 00 
+00024936000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024936000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024936000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024936000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024936000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024936000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024936000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024936000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024936000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024936000d[USBMSD] 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00024936000d[EHCI  ] submit: qh 11ccc2 next 11cd42 qtd 11ce00 pid 69 len 512 (total 512) endp 1 ret 512
+
+00024936000d[EHCI  ] execute_complete: qhaddr 0x11ccc2, next 11cd42, qtdaddr 0x11ce00, status 512
+00024936000d[EHCI  ] updating tbytes to 0
+00024936000d[USBMSD] command status 0 tag 0x5, len 13
+00024936000d[USBMSD] packet hexdump (13 bytes)
+00024936000d[USBMSD] 55 53 42 53 05 00 00 00 00 00 00 00 00 
+00024936000d[USBMSD] packet hexdump (13 bytes)
+00024936000d[USBMSD] 55 53 42 53 05 00 00 00 00 00 00 00 00 
+00024936000d[EHCI  ] submit: qh 11ccc2 next 11cd42 qtd 11ce40 pid 69 len 13 (total 13) endp 1 ret 13
+
+00024936000d[EHCI  ] execute_complete: qhaddr 0x11ccc2, next 11cd42, qtdaddr 0x11ce40, status 13
+00024936000d[EHCI  ] updating tbytes to 0
+00024936660d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024936667d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024936668d[EHCI  ] register read from offset 0x0024:  0x000000000000A001 (len=4)
+00024936668d[EHCI  ] register write to  offset 0x0024:  0x000000000000A001 (len=4)
+00024936708d[EHCI  ] register read from offset 0x0020:  0x0000000000080021 (len=4)
+00024936708d[EHCI  ] register write to  offset 0x0020:  0x0000000000080061 (len=4)
+00024936710d[EHCI  ] register read from offset 0x0024:  0x000000000000A000 (len=4)
+00024940702d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024940704d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024940705d[EHCI  ] register read from offset 0x0024:  0x0000000000008020 (len=4)
+00024940705d[EHCI  ] register write to  offset 0x0024:  0x0000000000008020 (len=4)
+00131920000p[WINGUI] >>PANIC<< POWER button turned off.
+00131920000i[CPU0  ] CPU is in long mode (active)
+00131920000i[CPU0  ] CS.mode = 64 bit
+00131920000i[CPU0  ] SS.mode = 64 bit
+00131920000i[CPU0  ] EFER   = 0x00000500
+00131920000i[CPU0  ] | RAX=0000000000000004  RBX=0000000000117050
+00131920000i[CPU0  ] | RCX=0000000000000003  RDX=0000000000000031
+00131920000i[CPU0  ] | RSP=000000000011e370  RBP=000000000015cf9d
+00131920000i[CPU0  ] | RSI=000000000000fc83  RDI=000000000011e498
+00131920000i[CPU0  ] |  R8=000000000000000d   R9=0000000000000000
+00131920000i[CPU0  ] | R10=0000000000000000  R11=0000000000000000
+00131920000i[CPU0  ] | R12=0000000000000003  R13=0000000000000000
+00131920000i[CPU0  ] | R14=0000000000000000  R15=0000000080002101
+00131920000i[CPU0  ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf ZF af PF cf
+00131920000i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
+00131920000i[CPU0  ] |  CS:0008( 0001| 0|  0) 00000000 000fffff 0 0
+00131920000i[CPU0  ] |  DS:0010( 0002| 0|  0) 00000000 000fffff 0 0
+00131920000i[CPU0  ] |  SS:0010( 0002| 0|  0) 00000000 000fffff 0 0
+00131920000i[CPU0  ] |  ES:0010( 0002| 0|  0) 00000000 000fffff 0 0
+00131920000i[CPU0  ] |  FS:0010( 0002| 0|  0) 0011d400 000fffff 0 0
+00131920000i[CPU0  ] |  GS:0010( 0002| 0|  0) 00000000 000fffff 0 0
+00131920000i[CPU0  ] |  MSR_FS_BASE:000000000011d400
+00131920000i[CPU0  ] |  MSR_GS_BASE:0000000000000000
+00131920000i[CPU0  ] | RIP=000000000011944e (000000000011944e)
+00131920000i[CPU0  ] | CR0=0xe0000011 CR2=0x0000000000000000
+00131920000i[CPU0  ] | CR3=0x0000000000111000 CR4=0x000000a0
