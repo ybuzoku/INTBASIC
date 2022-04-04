@@ -11,9 +11,13 @@ start:
     mov eax, 0600h  ;Clear whole screen
     int 30h
     cld
+    ;Memory stuff
     lea rax, section.programArea.vstart
-    mov qword [mcbChain], rax
-    mov qword [lastBlock], rax
+    mov qword [minMemAddr], rax
+    mov qword [lastBlock], rax  ;Start writing at this location
+    xor eax, eax
+    dec rax
+    mov qword [mcbChain], rax   ;-1
     lea rbp, mainmsg
     mov eax, 1304h
     int 30h

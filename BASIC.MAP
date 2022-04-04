@@ -12,9 +12,9 @@ Output file:  BASIC.BIN
 
 Vstart            Start             Stop              Length    Class     Name
                0                 0                83  00000083  progbits  .text
-            10EC                83               3AB  00000328  progbits  resSeg
-            1414               3AB               3AB  00000000  progbits  programArea
-               0                 0              10EC  000010EC  nobits    dSeg
+            10F6                83               427  000003A4  progbits  resSeg
+            149A               427               427  00000000  progbits  programArea
+               0                 0              10F6  000010F6  nobits    dSeg
 
 -- Sections (detailed) --------------------------------------------------------
 
@@ -32,11 +32,11 @@ vfollows:  not defined
 ---- Section resSeg -----------------------------------------------------------
 
 class:     progbits
-length:                 328
+length:                 3A4
 start:                   83
 align:                    1
 follows:   .text
-vstart:                10EC
+vstart:                10F6
 valign:                   1
 vfollows:  dSeg
 
@@ -44,17 +44,17 @@ vfollows:  dSeg
 
 class:     progbits
 length:                   0
-start:                  3AB
+start:                  427
 align:                    1
 follows:   resSeg
-vstart:                1414
+vstart:                149A
 valign:                   1
 vfollows:  resSeg
 
 ---- Section dSeg -------------------------------------------------------------
 
 class:     nobits
-length:                10EC
+length:                10F6
 start:                    0
 align:     not defined
 follows:   not defined
@@ -113,58 +113,63 @@ Real              Virtual           Name
 ---- Section resSeg -----------------------------------------------------------
 
 Real              Virtual           Name
-              83              10EC  start
-              E0              1149  mainLoop
-             106              116F  saveExecuteLine
-             107              1170  getLineInput
-             121              118A  getLineInput.getChar
-             13D              11A6  getLineInput.glibspace
-             166              11CF  getLineInput.gliCheckCase
-             175              11DE  getLineInput.gliccStore
-             17E              11E7  getLineInput.gliExtendedChar
-             180              11E9  getLineInput.gliExit
-             190              11F9  getLineInput.gliFull
-             19C              1205  criticalError
-             1AD              1216  ttyOutChar
-             1B2              121B  ttyOutString
-             1BA              1223  ttyIn
-             1BF              1228  printdecimalword
-             1DE              1247  printdecimalword.pdw0
-             1EE              1257  printdecimalword.pdw1
-             206              126F  funTbl
-             22F              1298  decimalToHex
-             241              12AA  decimalToHex.processDigits
-             25D              12C6  decimalToHex.exit
-             263              12CC  allocateBlock
-             289              12F2  allocateBlock.memoryFull
-             294              12FD  findVariable
-             29F              1308  findVariable.search
-             2A5              130E  findVariable.invalid
-             2B4              131D  findVariable.varFound
-             2C1              132A  findVariable.varNotFound
-             2CB              1334  findVariable.exit
-             2D0              1339  findFirstLine
-             2DF              1348  searchForProgramLine
-             2E6              134F  searchForProgramLine.search
-             2F8              1361  searchForProgramLine.lineFound
-             2F9              1362  insertProgramLine
-             304              136D  insertProgramLine.notFirst
-             305              136E  memoryDetection
-             30E              1377  memoryDetection.findStartAddr
-             315              137E  memoryDetection.fsa1
-             345              13AE  memoryDetection.exit
-             346              13AF  memoryDetection.worstCase
-             367              13D0  prompt
-             36C              13D5  mainmsg
-             388              13F1  bytemsg
-             396              13FF  crlf
-             399              1402  errmsg
-             3A1              140A  numbers
+              83              10F6  start
+              EC              115F  mainLoop
+             112              1185  saveExecuteLine
+             113              1186  getLineInput
+             12D              11A0  getLineInput.getChar
+             149              11BC  getLineInput.glibspace
+             172              11E5  getLineInput.gliCheckCase
+             181              11F4  getLineInput.gliccStore
+             18A              11FD  getLineInput.gliExtendedChar
+             18C              11FF  getLineInput.gliExit
+             19C              120F  getLineInput.gliFull
+             1A8              121B  criticalError
+             1B9              122C  ttyOutChar
+             1BE              1231  ttyOutString
+             1C6              1239  ttyIn
+             1CB              123E  printdecimalword
+             1EA              125D  printdecimalword.pdw0
+             1FA              126D  printdecimalword.pdw1
+             212              1285  funTbl
+             23B              12AE  decimalToHex
+             24D              12C0  decimalToHex.processDigits
+             269              12DC  decimalToHex.exit
+             26F              12E2  allocateBlock
+             295              1308  allocateBlock.memoryFull
+             2A0              1313  findVariable
+             2AB              131E  findVariable.search
+             2B1              1324  findVariable.invalid
+             2C0              1333  findVariable.varFound
+             2CD              1340  findVariable.varNotFound
+             2D7              134A  findVariable.exit
+             2DC              134F  findFirstLine
+             2EB              135E  searchForProgramLine
+             2F2              1365  searchForProgramLine.search
+             304              1377  searchForProgramLine.lineFound
+             305              1378  insertProgramLine
+             325              1398  insertProgramLine.walk
+             339              13AC  insertProgramLine.candidate
+             348              13BB  insertProgramLine.sort
+             35B              13CE  insertProgramLine.skipLink
+             369              13DC  insertProgramLine.first
+             37B              13EE  insertProgramLine.exit
+             381              13F4  memoryDetection
+             38A              13FD  memoryDetection.findStartAddr
+             391              1404  memoryDetection.fsa1
+             3C1              1434  memoryDetection.exit
+             3C2              1435  memoryDetection.worstCase
+             3E3              1456  prompt
+             3E8              145B  mainmsg
+             404              1477  bytemsg
+             412              1485  crlf
+             415              1488  errmsg
+             41D              1490  numbers
 
 ---- Section programArea ------------------------------------------------------
 
 Real              Virtual           Name
-             3AB              1414  ENDOFPROGRAM
+             427              149A  ENDOFPROGRAM
 
 ---- Section dSeg -------------------------------------------------------------
 
@@ -172,12 +177,14 @@ Real              Virtual           Name
                0                 0  stack
              FC0               FC0  stacktop
              FC8               FC8  inString
-            10C8              10C8  strLen
-            10C9              10C9  stateByte
-            10CA              10CA  mcbChain
-            10D2              10D2  lastBlock
-            10DA              10DA  firstLinPtr
-            10E2              10E2  firstLinNum
-            10E4              10E4  maxMemAddr
-            10EC              10EC  bssLen
+            10C8              10C8  minMemAddr
+            10D0              10D0  maxMemAddr
+            10D8              10D8  strLen
+            10D9              10D9  stateByte
+            10DA              10DA  mcbChain
+            10E2              10E2  lastBlock
+            10EA              10EA  firstLinPtr
+            10F2              10F2  firstLinNum
+            10F4              10F4  currentLine
+            10F6              10F6  bssLen
 

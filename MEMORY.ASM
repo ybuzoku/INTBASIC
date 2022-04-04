@@ -6,8 +6,8 @@ allocateBlock:
     mov byte [rbx + memBlock.bSignature], notLastMemBlock ;Make it not be the last
     movzx rdx, word [rbx + memBlock.wBlockSize] ;Goto end of block
     add rbx, rdx    ;Move rbx over the previous last block
-    cmp rbx, qword [maxMemAddr]
-    ja .memoryFull  ;Above? fail
+    cmp qword [maxMemAddr], rbx ;rbx above maxmemory? 
+    ja .memoryFull
     mov qword [lastBlock], rbx  ;New last block
     mov byte [rbx + memBlock.bSignature], lastMemBlock
     ret
@@ -58,6 +58,7 @@ findFirstLine:
     ret
 
 ;FIRST SEARCH FOR A LINE NUMBER BEFORE INSERTING IT INTO THE CHAIN
+;IF THE LINE NUMBER IS FOUND, REPLACE THE COMMAND STRING
 
 searchForProgramLine:
 ;Walk the program chain looking to see if a line number exists. If it does,
@@ -76,18 +77,60 @@ searchForProgramLine:
     ret
 
 insertProgramLine:
-;Walk the memory block chain looking for the biggest number less than our
+;Walk the program chain looking for the biggest number less than our
 ; line number. Once we have reached the end of the chain, insert the block there, or
-; if there is no block, then
+; if there is no block, then we are the last in the chain
 ;Input: rsi = New Program Block to be added
+    push rax
+    push rbx
+    push rcx
+    push rdx
+    push rdi
     call findFirstLine  ;Get start of program in rbx and line number in dx
-;First check if we should be the first line now?
-    cmp dx, word [rsi + progLineBlock.wLineNum]
-    jng .notFirst    ;If sign change, 
-.notFirst:
+;First check if we should be the first line
+    mov cx, word [rsi + progLineBlock.wLineNum] ;Save line number in cx
+    cmp rbx, -1 ;Empty program marker
+    je .first
+    cmp dx, cx  ;If cx is below dx, then our entry is first
+    jb .first    
+;Use ax as the best line number and rdi as the pointer to that block
+    mov ax, -1  ;Marker to indicate no insertion
+.walk:
+    cmp qword [rbx + progLineBlock.qPtr], -1    ;We are at the end
+    je .sort
+    mov rbx, qword [rbx + progLineBlock.qPtr] ;Walk chain in rbx
+    cmp cx, word [rbx + progLineBlock.wLineNum]
+    ja .walk    ;If line number is above my line number, keep walking
+.candidate:
+    ;If the new line number is below the old line number, reject
+    cmp ax, word [rbx + progLineBlock.wLineNum]
+    jb .walk
+    mov rdi, rbx
+    mov ax, word [rbx + progLineBlock.wLineNum]
+    jmp short .walk
+.sort:
+    inc ax  ;If no candidates, exit
+    jz .skipLink
+    ;rdi points to the previous line to link to
+    mov rdx, qword [rdi + progLineBlock.qPtr]
+    mov qword [rdi + progLineBlock.qPtr], rsi   ;Insert self here
+    mov qword [rsi + progLineBlock.qPtr], rdx   ;Link new block to next line
+    jmp short .exit
+.skipLink:
+    mov qword [rbx + progLineBlock.qPtr], rsi   ;Link rsi to last element in list
+    mov qword [rsi + progLineBlock.qPtr], -1    ;End of chain marker
+    jmp short .exit
+.first:
+    mov qword [firstLinPtr], rsi
+    mov word [firstLinNum], cx
+    mov qword [rsi + progLineBlock.qPtr], rbx   ;Put the old first line as second line
+.exit:
+    pop rdi
+    pop rdx
+    pop rcx
+    pop rbx
+    pop rax
     ret
-
-
 
 memoryDetection:
     mov eax, 0E820h
