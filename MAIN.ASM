@@ -1,4 +1,6 @@
 start:
+    mov eax, 0C501h
+    int 35h
     mov eax, 0500h  ;Set page zero as the default page
     int 30h
     mov ah, 02h
@@ -9,15 +11,13 @@ start:
     mov eax, 0600h  ;Clear whole screen
     int 30h
     cld
-    call cleanProgram
+    lea rax, section.programArea.vstart
+    mov qword [mcbChain], rax
+    mov qword [lastBlock], rax
     lea rbp, mainmsg
     mov eax, 1304h
     int 30h
-    mov eax, 0E801h
-    int 35h
-    and eax, 0FFFFh
-    shl rax, 0Ah    ;Convert Kb to bytes
-    call printdecimalword
+    call memoryDetection
     lea rbp, bytemsg
     mov eax, 1304h
     int 30h
@@ -34,34 +34,23 @@ mainLoop:
 saveExecuteLine:
 ;This function will execute the line if it is an interactive expression
 ; or store it in the program if it has a line number
-    lea rdi, inString
-    mov rbx, rdi
-    mov cl, byte [strLen]   ;Get number of chars in string
-    mov al, 20h ;Skip preceeding spaces
-    repe scasb  ;IF the first char in the string is a question mark => Interactive
-    mov al, byte [rdi - 1]  ;Get the first non-space char into al
-    mov rdi, rbx    ;Return rdi to start of line
-    cmp al, "?"
-    jne .store
-    ;Attempt to execute line as is
-    jmp criticalError
-.store:
-    ;Now look for line number, if it exists, place it at position, else error
-    mov ecx, 3  ;Line numbers can be between 0 and 999
-    ret
-executeLine:
     ret
 getLineInput:
     xor ah, ah
     mov byte [strLen], ah   ;Zero the char counter
     lea rdi, inString   ;Move to start of line
+    push rdi
+    mov ecx, maxLineLen
+    mov al, 0Dh    ;Ensure the input line is sanitised
+    rep stosb
+    pop rdi
 .getChar:
     call ttyIn
     cmp al, 0Dh ;Line Feed
     je .gliExit
     cmp al, 08h ;Bspace
     je .glibspace
-    cmp byte [strLen], -1   ;If at max length, simply beep and wait for either bspace or enter
+    cmp byte [strLen], -2   ;If at max length (255 chars), simply beep and wait for either bspace or enter
     je .gliFull 
     test al, al
     je .gliExtendedChar
@@ -96,6 +85,7 @@ getLineInput:
 .gliExit:
     lea rbp, crlf
     call ttyOutString
+    mov byte [rdi], 0   ;Null terminate string here
     ret
 .gliFull:
     mov al, 07h
@@ -126,12 +116,16 @@ ttyIn:
 
 printdecimalword:
 ;Takes the qword in rax and prints its decimal representation
-    xor rcx, rcx
-    xor ebp, ebp    ;Use bp as #of digits counter
+    push rax
+    lea rdi, inString   ;Use the default line as a buffer
+    add rdi, maxLineLen - 1 ;Go to the end of the buffer
+    std ;Reverse string ops
+    push rax
+    xor al, al  ;Place delimiter
+    stosb
+    pop rax
     mov rbx, 0Ah  ;Divide by 10
 .pdw0:
-    inc ebp
-    shl rcx, 8    ;Space for next nybble
     xor edx, edx
     div rbx
     add dl, '0'
@@ -139,13 +133,15 @@ printdecimalword:
     jbe .pdw1
     add dl, 'A'-'0'-10
 .pdw1:
-    mov cl, dl    ;Save remainder byte
+    push rax
+    mov al, dl    ;Save remainder byte
+    stosb   ;Store the byte and add one to rdi
+    pop rax
     test rax, rax
     jnz .pdw0
-.pdw2:
-    mov al, cl    ;Get most sig digit into al
-    shr rcx, 8    ;Get next digit down
-    call ttyOutChar
-    dec ebp
-    jnz .pdw2
+    cld ;Return string ops to normal
+    inc rdi ;Skip the extra 0 that was inserted
+    mov rbp, rdi    ;Point rbp to the head of the string
+    call ttyOutString
+    pop rax
     ret
