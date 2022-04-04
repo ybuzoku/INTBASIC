@@ -96,7 +96,7 @@ getLineInput:
 
 ;For any error, syntax or otherwise, come here
 criticalError:
-    lea rbp, errmsg
+;Called with rbp pointing at error message
     call ttyOutString
     jmp mainLoop    ;Trash input line, restart line input
 

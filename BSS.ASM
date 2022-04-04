@@ -4,8 +4,10 @@ stacktop    resq 1
 maxLineLen  equ 256
 inString    resb maxLineLen         ;256 character input string
 
-digitStringLen  equ 32
-digitString resb digitStringLen     ;Used for printing long numbers
+;This string is used for printing long numbers and saving
+; the variable names for string comparisons
+digitStringLen  equ 48
+digitString resb digitStringLen     
 
 minMemAddr  resq 1  ;Pointer from where to start allocating memory blocks
 maxMemAddr  resq 1  ;Pointer to the byte past which we cannot allocate anything

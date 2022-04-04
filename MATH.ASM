@@ -5,30 +5,24 @@ decimalToHex:
     ;       ecx = Number of Digits in digit string (max 255)
     ;Output: rax = Number
     push rbx
+    push rcx
     push rdx
-    push rdi
-    push rbp
-    std             ;Reverse string traversal direction
-    mov rdi, rsi    ;Save pointer in rdi
-    add rsi, rcx    ;Go to end of number string
-    xor ebp, ebp    ;Clear rbp, to store value in
-    mov ebx, 1      ;Start with ebx = 1
-.processDigits:
+    xor ebx, ebx    ;Start with rbx = 0
+.processDigits:    
     lodsb           ;Get the first digit in al
     sub al, 30h     ;Reduce to value
+    cmp al, 10      ;Digit valid?
     movzx rax, al   ;Clear upper bits
     xor edx, edx    ;Clear for multiplication
-    mul rbx         ;Multiply digit value by rbx
-    add rbp, rax    ;Add value, overflows past 64 bit integers ignored
-    dec cl          ;Decrement the number of chars left to process
-    jz .exit        ;If now zero, exit!
-    add rbx, rbx    ;Multiply by 2
-    lea rbx, qword [rbx + 4*rbx] ;Multiply by 5
+    xchg rax, rbx
+    jnc .exit       ;Digit was not valid, exit
+    mov ecx, 10     ;Multiply result by 10
+    mul rcx
+    add rbx, rax    ;Add the new digits
     jmp short .processDigits
 .exit:
-    cld             ;Return string traversal direction to normal
-    pop rbp
-    pop rdi
+    dec rsi         ;rsi points to first non-digit
     pop rdx
+    pop rcx
     pop rbx
     ret

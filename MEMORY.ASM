@@ -18,8 +18,7 @@ allocateBlock:
 findVariable:
 ;Input: rsi = Source string for variable name
 ;       ecx = Length of variable name (max 40)
-;Output: rsi = ptr to varBlock OR -1 if doesnt exist
-    push rbx
+;Output: rbx = ptr to varBlock OR -1 if doesnt exist
     push rcx
     push rdx
     push rdi
@@ -39,15 +38,14 @@ findVariable:
     lea rdi, qword [rbx + varBlock.sVarName] ;point rdi to the name string
     repe cmpsb  ;Compare one byte at a time
     jne .invalid
-    mov rsi, rbx    ;Move varblock into rsi
+    clc
     jmp short .exit
 .varNotFound:
-    mov rsi, -1
+    mov rbx, -1
 .exit:
     pop rdi
     pop rdx
     pop rcx
-    pop rbx
     ret
 
 findFirstLine:
@@ -132,6 +130,77 @@ insertProgramLine:
     pop rax
     ret
 
+makeEditVariable:
+;Will make a variable if it is a new name, or edit the value if it already exists
+;Input: rsi = Var name
+;       rax = Value/String Pointer
+    push rax
+    push rbx
+    push rcx
+
+    call getVarNameLength   ;Get the length in ecx, clear upper of rcx
+    call getVarType ;Get type in rbx
+    test ebx, ebx
+    jnz .string
+    call makeEditInteger
+    jmp short .exit
+.string:
+    call makeEditString
+.exit:
+    pop rcx
+    pop rbx
+    pop rax
+    ret
+
+makeEditInteger:
+;Will make a variable if it is new name, or edit the value if it already exists
+;Input: rsi = Var name
+;       (e)cx = Length of varname, max 40 chars
+;       rax = Value
+    call findVariable   ;rbx returned with var block or -1
+    cmp rbx, -1
+    je .newVar
+    mov qword [rbx + varBlock.qValue], rax
+    ret
+.newVar:
+    call allocateBlock
+    cmp rbx, -1
+    je .error
+    mov qword [rbx + varBlock.qValue], rax  ;Save value
+    mov word [rbx + varBlock.wBlockSize], cx    ;Save length of string
+    add word [rbx + varBlock.wBlockSize], varBlock_size ;Add full block size
+    mov byte [rbx + varBlock.bBlockType], varBlockType  ;Block type
+    push rdi
+    lea rdi, qword [rbx + varBlock.sVarName]
+    call strcpy ;Copy the string name into block buffer
+    pop rdi
+    ret
+.error:
+    lea rbp, noMem
+    jmp criticalError
+makeEditString:
+;Will make a string if it is new name, or replace the string. Strings are null termin
+;Input: rsi = Var name
+;       ecx = Length of varname
+;       rax = Ptr to string
+;FOR NOW, JUST THROW ERRORS
+    lea rbp, syntax
+    jmp criticalError
+;------------------------------------------------:
+;  The below are misc memory related functions   :
+;------------------------------------------------:
+strcpy:
+;rdi = Destination string
+;rsi = Source string
+;rcx = Number of Chars to copy
+    push rdi
+    push rsi
+    push rcx
+    rep movsb
+    pop rcx
+    pop rsi
+    pop rdi
+    ret
 memoryDetection:
     mov eax, 0E820h
     int 35h     ;rax = ptr to start, rsi = ptr to data table, each entry 24 bytes
