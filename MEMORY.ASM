@@ -150,7 +150,6 @@ memoryDetection:
     lea rdx, section.programArea.vstart
     sub rdx, rbx    ;Get the size of the interpreter and internal data area
     sub rax, rdx    ;Remove the number of bytes reserved to the interpreter
-    
     call printdecimalword
     add rbx, rax    ;Add number of bytes to start address
     mov qword [maxMemAddr], rbx ;Save this address

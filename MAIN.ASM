@@ -19,12 +19,10 @@ start:
     dec rax
     mov qword [mcbChain], rax   ;-1
     lea rbp, mainmsg
-    mov eax, 1304h
-    int 30h
+    call ttyOutString
     call memoryDetection
     lea rbp, bytemsg
-    mov eax, 1304h
-    int 30h
+    call ttyOutString
     mov byte [strLen], 0
 mainLoop:
     lea rsp, stacktop    ;Reinitialize stack pointer
@@ -121,8 +119,19 @@ ttyIn:
 printdecimalword:
 ;Takes the qword in rax and prints its decimal representation
     push rax
-    lea rdi, inString   ;Use the default line as a buffer
-    add rdi, maxLineLen - 1 ;Go to the end of the buffer
+    lea rdi, digitString   ;Use the default line as a buffer
+    ;Sanitise the digit buffer
+    push rdi
+    push rcx
+    push rax
+    xor eax, eax
+    mov ecx, digitStringLen/8
+    rep stosq
+    pop rax
+    pop rcx
+    pop rdi
+
+    add rdi, digitStringLen - 1 ;Go to the end of the buffer
     std ;Reverse string ops
     push rax
     xor al, al  ;Place delimiter
