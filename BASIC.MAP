@@ -1,0 +1,248 @@
+
+- NASM Map file ---------------------------------------------------------------
+
+Source file:  BASIC.ASM
+Output file:  BASIC.BIN
+
+-- Program origin -------------------------------------------------------------
+
+00000000
+
+-- Sections (summary) ---------------------------------------------------------
+
+Vstart            Start             Stop              Length    Class     Name
+               0                 0                83  00000083  progbits  .text
+            1126                83               711  0000068E  progbits  resSeg
+            17B4               711               711  00000000  progbits  programArea
+               0                 0              1126  00001126  nobits    dSeg
+
+-- Sections (detailed) --------------------------------------------------------
+
+---- Section .text ------------------------------------------------------------
+
+class:     progbits
+length:                  83
+start:                    0
+align:                    1
+follows:   not defined
+vstart:                   0
+valign:    not defined
+vfollows:  not defined
+
+---- Section resSeg -----------------------------------------------------------
+
+class:     progbits
+length:                 68E
+start:                   83
+align:                    1
+follows:   .text
+vstart:                1126
+valign:                   1
+vfollows:  dSeg
+
+---- Section programArea ------------------------------------------------------
+
+class:     progbits
+length:                   0
+start:                  711
+align:                    1
+follows:   resSeg
+vstart:                17B4
+valign:                   1
+vfollows:  resSeg
+
+---- Section dSeg -------------------------------------------------------------
+
+class:     nobits
+length:                1126
+start:                    0
+align:     not defined
+follows:   not defined
+vstart:                   0
+valign:    not defined
+vfollows:  not defined
+
+-- Symbols --------------------------------------------------------------------
+
+---- No Section ---------------------------------------------------------------
+
+Value     Name
+00000000  progLineBlockType
+00000001  varBlockType
+00000002  datBlockType
+00000074  notLastMemBlock
+00000072  lastMemBlock
+00000000  memBlock
+00000000  memBlock.bSignature
+00000001  memBlock.wBlockSize
+00000003  memBlock.bBlockType
+00000004  memBlock_size
+00000000  progLineBlock
+00000000  progLineBlock.bSignature
+00000001  progLineBlock.wBlockSize
+00000003  progLineBlock.bBlockType
+00000004  progLineBlock.wLineNum
+00000006  progLineBlock.qPtr
+0000000E  progLineBlock.sLine
+0000000E  progLineBlock_size
+00000000  varBlock
+00000000  varBlock.bSignature
+00000001  varBlock.wBlockSize
+00000003  varBlock.bBlockType
+00000004  varBlock.qValue
+0000000C  varBlock.sVarName
+0000000C  varBlock_size
+00000000  stringBlock
+00000000  stringBlock.bSignature
+00000001  stringBlock.wBlockSize
+00000003  stringBlock.bBlockType
+00000004  stringBlock.string
+00000104  stringBlock.sVarName
+00000104  stringBlock_size
+00000000  intEquate
+00000001  strEquate
+00000100  maxLineLen
+00000030  digitStringLen
+
+
+---- Section .text ------------------------------------------------------------
+
+Real              Virtual           Name
+              39                39  bad
+              4D                4D  badmsg
+
+---- Section resSeg -----------------------------------------------------------
+
+Real              Virtual           Name
+              83              1126  start
+              E8              118B  mainLoop
+             10D              11B0  criticalError
+             117              11BA  printdecimalword
+             146              11E9  printdecimalword.pdw0
+             156              11F9  printdecimalword.pdw1
+             16E              1211  getLineInput
+             18B              122E  getLineInput.getChar
+             1A7              124A  getLineInput.glibspace
+             1D0              1273  getLineInput.gliCheckCase
+             1DF              1282  getLineInput.gliccStore
+             1E8              128B  getLineInput.gliExtendedChar
+             1EA              128D  getLineInput.gliExit
+             1FA              129D  getLineInput.gliFull
+             206              12A9  ttyOutChar
+             20B              12AE  ttyOutString
+             213              12B6  ttyIn
+             218              12BB  saveExecuteLine
+             22B              12CE  saveExecuteLine.saveLine
+             22B              12CE  executeExpression
+             23C              12DF  executeExpression.functionFinderLoop
+             258              12FB  executeExpression.functionFound
+             258              12FB  executeExpression.exit
+             259              12FC  executeExpression.variableAssignment
+             2A3              1346  executeExpression.exitError
+             2B2              1355  executeExpression.stringAssignment
+             2B2              1355  spaceSkip
+             2BC              135F  spaceSkip.exit
+             2BD              1360  getVarNameLength
+             2C9              136C  getVarNameLength.search
+             2DA              137D  getVarNameLength.exit
+             2DE              1381  getVarType
+             2FB              139E  handleAlgebraicExpression
+             300              13A3  handleAlgebraicExpression.parseAdditiveOperators
+             314              13B7  handleAlgebraicExpression.processAdd
+             31A              13BD  handleAlgebraicExpression.processMinus
+             325              13C8  handleAlgebraicExpression.handleSecondLevelSkip
+             328              13CB  handleAlgebraicExpression.handleSecondLevel
+             32D              13D0  handleAlgebraicExpression.parseProductOperators
+             343              13E6  handleAlgebraicExpression.processDiv
+             356              13F9  handleAlgebraicExpression.handleThirdLevelSkip
+             359              13FC  handleAlgebraicExpression.handleThirdLevel
+             36F              1412  handleAlgebraicExpression.notBracket
+             373              1416  handleAlgebraicExpression.varConstCheck
+             384              1427  handleAlgebraicExpression.varOrRNDFound
+             394              1437  handleAlgebraicExpression.exponentFound
+             396              1439  handleAlgebraicExpression.varFound
+             39C              143F  handleAlgebraicExpression.closeBracket
+             3A4              1447  handleAlgebraicExpression.exit
+             3A5              1448  handleAlgebraicExpression.error
+             3B1              1454  getNumericVariable
+             3CC              146F  getNumericVariable.stringFoundError
+             3D8              147B  setNumericVariable
+             400              14A3  setNumericVariable.stringFoundError
+             40C              14AF  funTbl
+             46E              1511  newProgram
+             46E              1511  listProgram
+             46E              1511  runProgram
+             46E              1511  printStatement
+             46E              1511  getInput
+             46E              1511  handleIf
+             46E              1511  fancyJmp
+             46E              1511  returnToDOS
+             46F              1512  decimalToHex
+             474              1517  decimalToHex.processDigits
+             490              1533  decimalToHex.exit
+             497              153A  allocateBlock
+             4BD              1560  allocateBlock.memoryFull
+             4C8              156B  findVariable
+             4D3              1576  findVariable.search
+             4D9              157C  findVariable.invalid
+             4E8              158B  findVariable.varFound
+             4F3              1596  findVariable.varNotFound
+             4FD              15A0  findVariable.exit
+             502              15A5  findFirstLine
+             511              15B4  searchForProgramLine
+             518              15BB  searchForProgramLine.search
+             52A              15CD  searchForProgramLine.lineFound
+             52B              15CE  insertProgramLine
+             54B              15EE  insertProgramLine.walk
+             55F              1602  insertProgramLine.candidate
+             56E              1611  insertProgramLine.sort
+             581              1624  insertProgramLine.skipLink
+             58F              1632  insertProgramLine.first
+             5A1              1644  insertProgramLine.exit
+             5A7              164A  makeEditVariable
+             5BF              1662  makeEditVariable.string
+             5C4              1667  makeEditVariable.exit
+             5C8              166B  makeEditInteger
+             5DB              167E  makeEditInteger.newVar
+             607              16AA  makeEditInteger.error
+             613              16B6  makeEditString
+             61F              16C2  strcpy
+             628              16CB  memoryDetection
+             631              16D4  memoryDetection.findStartAddr
+             638              16DB  memoryDetection.fsa1
+             668              170B  memoryDetection.exit
+             669              170C  memoryDetection.worstCase
+             68A              172D  prompt
+             68F              1732  mainmsg
+             6A3              1746  bytemsg
+             6B1              1754  crlf
+             6B4              1757  errmsg
+             6BC              175F  numbers
+             6C6              1769  varChrs
+             6E2              1785  noMem
+             6F2              1795  syntax
+             701              17A4  typeError
+
+---- Section programArea ------------------------------------------------------
+
+Real              Virtual           Name
+             711              17B4  ENDOFPROGRAM
+
+---- Section dSeg -------------------------------------------------------------
+
+Real              Virtual           Name
+               0                 0  stack
+             FC0               FC0  stacktop
+             FC8               FC8  inString
+            10C8              10C8  digitString
+            10F8              10F8  minMemAddr
+            1100              1100  maxMemAddr
+            1108              1108  strLen
+            1109              1109  stateByte
+            110A              110A  mcbChain
+            1112              1112  lastBlock
+            111A              111A  firstLinPtr
+            1122              1122  firstLinNum
+            1124              1124  currentLine
+            1126              1126  bssLen
+

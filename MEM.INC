@@ -3,8 +3,8 @@ progLineBlockType   equ 0   ;Program Line
 varBlockType        equ 1   ;Variable block
 datBlockType        equ 2   ;Data block (i.e. a string block)
 
-notLastMemBlock equ "T" ;Used for blocks that are not the last block
-lastMemBlock    equ "R" ;Used by the last block to indicate end of chain
+notLastMemBlock equ "t" ;Used for blocks that are not the last block
+lastMemBlock    equ "r" ;Used by the last block to indicate end of chain
 
 %macro memBlockM 0 ;Memory block Macro
     .bSignature resb 1      ;Valid Signature

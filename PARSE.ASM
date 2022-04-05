@@ -54,97 +54,145 @@ getVarType:
     pop rax
     ret
 
-handleExpression:
-;    call .handleSecondLevel    ; Look for second level operations
-;.parseAdditiveOperators:    
-;    cmp byte [rsi], '-'
-;    je .processMinus
-;    cmp byte [rsi], '+'
-;    jne .exit              ;No operators, expression evaluated, exit
-;    push rax
-;    call .handleSecondLevelSkip   ;Parse second level
-;.processAdd:    
-;    pop rcx
-;    add rax, rcx           ;Add the two numbers
-;    jmp short .parseAdditiveOperators  ;Search again for + or -
-;.processMinus:
-;    push rax
-;    call .handleSecondLevelSkip   ;Parse second level
-;    neg rax              ;Change a - b to a + -b
-;    jmp short .processAdd
+handleAlgebraicExpression:
+;Input: rsi = Points to a mathematical expression
+;Output: rax = Result of said expression
+;Declares a syntax error if weird chars found
+;Declares a type error if a string variable found
+    call .handleSecondLevel
+.parseAdditiveOperators:    
+    cmp byte [rsi], '-'
+    je .processMinus
+    cmp byte [rsi], '+'
+    jne .exit              ;No operators, expression evaluated, exit
+    push rax
+    call .handleSecondLevelSkip   ;Parse second level
+.processAdd:    
+    pop rcx
+    add rax, rcx           ;Add the two numbers
+    jmp short .parseAdditiveOperators  ;Search again for + or -
+.processMinus:
+    push rax
+    call .handleSecondLevelSkip   ;Parse second level
+    neg rax              ;Change a - b to a + -b
+    jmp short .processAdd
 
 ;Level 2, Division and multiplication
 
-;.handleSecondLevelSkip:
-;    inc rsi              ;Skip the op symbol
-;.handleSecondLevel:
-;    call .handleThirdLevel      ;Call third level
-;.parseProductOperators:   
-;    cmp byte [rsi], '/'
-;    je .processDiv
-;    cmp byte [rsi], '*'
-;    jne .exit           ;Neither multiplication or division, return up a level
+.handleSecondLevelSkip:
+    inc rsi              ;Skip the op symbol
+.handleSecondLevel:
+    call .handleThirdLevel      ;Call third level
+.parseProductOperators:   
+    cmp byte [rsi], '/'
+    je .processDiv
+    cmp byte [rsi], '*'
+    jne .exit           ;Neither multiplication or division, return up a level
 
-;    push rax
-;    call .handleThirdLevelSkip   ;Call third level
-;    pop rcx
-;    imul rcx             ; Multiplication
-;    jmp short .parseProductOperators   ;Search again for * or /
+    push rax
+    call .handleThirdLevelSkip   ;Call third level
+    pop rcx
+    imul rcx             ; Multiplication
+    jmp short .parseProductOperators   ;Search again for * or /
 
-;.processDiv:
-;    push rax
-;    call .handleThirdLevelSkip   ;Call third level
-;    pop rcx
-;    xchg rax, rcx
-;    cwd                 ; Expand AX to DX:AX
-;    idiv rcx             ; Signed division
-;    jmp .parseProductOperators         ;Search again for * or /
+.processDiv:
+    push rax
+    call .handleThirdLevelSkip   ;Call third level
+    pop rcx
+    xchg rax, rcx
+    xor edx, edx         ;Clear rdx for rdx:rax
+    idiv rcx             ;Signed division
+    jmp .parseProductOperators         ;Search again for * or /
 
 ;Level 3, Brackets, numbers and vars.
 
-;.handleThirdLevelSkip:
-;    inc rsi             ;Skip the op symbol
-;.handleThirdLevel:
-;    call spaceSkip
-;    lodsb               ;Read char and adv rsi
-;    cmp al, '('
-;    jne .notBracket
-;    call handleExpression  ;Parse the inner expression
-;    cmp byte [rsi], ')'   
-;    je .closeBracket     ;If close bracket, goto skip spaces
-;    jmp short .error     ;Otherwise, error
+.handleThirdLevelSkip:
+    inc rsi             ;Skip the op symbol
+.handleThirdLevel:
+    call spaceSkip
+    lodsb               ;Read char and adv rsi
+    cmp al, '('
+    jne .notBracket
+    call handleAlgebraicExpression  ;Parse the inner expression
+    cmp byte [rsi], ')'   
+    je .closeBracket     ;If close bracket, goto skip spaces
+    jmp short .error     ;Otherwise, error
 
-;.notBracket:    
-;    cmp al, "^"
-;    je .exponentFound
-;.varConstCheck:
-;    cmp al, 0x40       ;Alphanumeric first char?
-;    jnc .varOrRNDFound      ;Yes, variable found or rnd function
-;    dec rsi            ;Else back one symbol 
-;    call decimalToHex  ;to read number into rax
-;    jmp short spaceSkip
+.notBracket:    
+    cmp al, "^"
+    je .exponentFound
+.varConstCheck:
+    cmp al, 0x40       ;Alphanumeric first char?
+    jnc .varOrRNDFound      ;Yes, variable found or rnd function
+    dec rsi            ;Else back one symbol 
+    call decimalToHex  ;to read number into rax
+    jmp spaceSkip
 
-;.varOrRNDFound:    
-;    cmp al, "r"
-;    jne .varFound
-;    cmp byte [rsi], "n" ;rsi was advanced by 1, check 
-;    jne varFound
-;    lodsw               ; Advance SI by 2
-;    in al, 0x40          ; Read timer counter 0
-;    mov ah,0       
-;    ret
-;.exponentFound:
-;   jmp short .varConstCheck
-;.varFound:    
-;    call get_variable_2 ; Get variable address
-;    xchg ax, bx
-;    mov ax, [bx]         ; Read
-;    ret                 ; Return
-;.closeBracket:
-;   inc si
-;   jmp spaceSkip
-;.exit:
-;   ret
-;.error:
-;   lea rbp, syntax
-;   jmp criticalError
+.varOrRNDFound:    
+    cmp al, "r"
+    jne .varFound
+    cmp byte [rsi], "n" ;rsi was advanced by 1, check 
+    jne .varFound
+    lodsw               ; Advance SI by 2
+    in al, 0x40          ; Read timer counter 0
+    mov ah,0       
+    ret
+.exponentFound:
+   jmp short .varConstCheck
+.varFound:    
+    call getNumericVariable ;Get variable value in rax
+    ret                 ;Return
+.closeBracket:
+    inc si
+    jmp spaceSkip
+.exit:
+    ret
+.error:
+    lea rbp, syntax
+    jmp criticalError
+
+
+getNumericVariable:
+;Gets the value stored in a variable into rax 
+;Input: rsi = Pointer to first char of a variable name
+;Output: rax = Variable Value
+;        rsi = Pointer to first char of a variable name
+    push rsi
+    push rcx
+    push rbx
+    call getVarNameLength   ;Returns the length of the var name in cx
+    call findVariable       ;Returns a pointer to the variable block in rbx
+    cmp byte [rbx + memBlock.bBlockType], varBlockType
+    jne .stringFoundError
+    mov rax, qword [rbx + varBlock.qValue]
+    pop rbx
+    pop rcx
+    pop rsi
+    ret
+.stringFoundError:
+    lea rbp, typeError
+    jmp criticalError
+
+setNumericVariable:
+;Sets the value stored in a variable
+;Input: rsi = Pointer to first char of a variable name
+;       rax = Variable value
+;Output: rsi = Pointer to first char of variable name
+    push rsi
+    push rcx
+    push rbx
+    call getVarNameLength   ;Returns the length of the var name in cx
+    call findVariable       ;Returns a pointer to the variable block in rbx
+    cmp rbx, -1             ;Variable doesnt exit?
+    je makeEditInteger      ;Make one!
+    cmp byte [rbx + memBlock.bBlockType], varBlockType
+    jne .stringFoundError
+    mov qword [rbx + varBlock.qValue], rax  ;Save value
+    pop rbx
+    pop rcx
+    pop rsi
+    ret
+
+.stringFoundError:
+    lea rbp, typeError
+    jmp criticalError
