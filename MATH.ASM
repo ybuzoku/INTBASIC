@@ -1,8 +1,7 @@
 decimalToHex:
     ;Takes ASCII encoded decimal number and 
     ;returns its hex value
-    ;Input: rsi = Start of string
-    ;       ecx = Number of Digits in digit string (max 255)
+    ;Input: rsi = Start of numeric ONLY string
     ;Output: rax = Number
     push rbx
     push rcx

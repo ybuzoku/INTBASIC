@@ -55,90 +55,96 @@ getVarType:
     ret
 
 handleExpression:
-;expr:
-;    call expr1          ; Call second tier
-;f20:    
-;    cmp byte [si],'-'   ; Subtraction operator?
-;    je f19              ; Yes, jump
-;    cmp byte [si],'+'   ; Addition operator?
-;    jne f6              ; No, return
-;    push ax
-;    call expr1_2        ; Call second tier
-;f15:    
-;    pop cx
-;    add ax,cx           ; Addition
-;    jmp f20             ; Find more operators
+;    call .handleSecondLevel    ; Look for second level operations
+;.parseAdditiveOperators:    
+;    cmp byte [rsi], '-'
+;    je .processMinus
+;    cmp byte [rsi], '+'
+;    jne .exit              ;No operators, expression evaluated, exit
+;    push rax
+;    call .handleSecondLevelSkip   ;Parse second level
+;.processAdd:    
+;    pop rcx
+;    add rax, rcx           ;Add the two numbers
+;    jmp short .parseAdditiveOperators  ;Search again for + or -
+;.processMinus:
+;    push rax
+;    call .handleSecondLevelSkip   ;Parse second level
+;    neg rax              ;Change a - b to a + -b
+;    jmp short .processAdd
 
-;f19:
-;    push ax
-;    call expr1_2        ; Call second tier
-;    neg ax              ; Negate it (a - b converted to a + -b)
-;    jmp f15
+;Level 2, Division and multiplication
 
-        ;
-        ; Handle an expression.
-        ; Second tier: division & multiplication.
-        ;
-;expr1_2:
-;    inc si              ; Avoid operator
-;expr1:
-;    call expr2          ; Call third tier
-;f21:   
-;    cmp byte [si],'/'   ; Division operator?
-;    je f23              ; Yes, jump
-;    cmp byte [si],'*'   ; Multiplication operator?
-;    jne f6              ; No, return
+;.handleSecondLevelSkip:
+;    inc rsi              ;Skip the op symbol
+;.handleSecondLevel:
+;    call .handleThirdLevel      ;Call third level
+;.parseProductOperators:   
+;    cmp byte [rsi], '/'
+;    je .processDiv
+;    cmp byte [rsi], '*'
+;    jne .exit           ;Neither multiplication or division, return up a level
 
-;    push ax
-;    call expr2_2        ; Call third tier
-;    pop cx
-;    imul cx             ; Multiplication
-;    jmp f21             ; Find more operators
+;    push rax
+;    call .handleThirdLevelSkip   ;Call third level
+;    pop rcx
+;    imul rcx             ; Multiplication
+;    jmp short .parseProductOperators   ;Search again for * or /
 
-;f23:
-;    push ax
-;    call expr2_2        ; Call third tier
-;    pop cx
-;    xchg ax,cx
+;.processDiv:
+;    push rax
+;    call .handleThirdLevelSkip   ;Call third level
+;    pop rcx
+;    xchg rax, rcx
 ;    cwd                 ; Expand AX to DX:AX
-;    idiv cx             ; Signed division
-;    jmp f21             ; Find more operators
+;    idiv rcx             ; Signed division
+;    jmp .parseProductOperators         ;Search again for * or /
 
-        ;
-        ; Handle an expression.
-        ; Third tier: parentheses, numbers and vars.
-        ;
-;expr2_2:
-;    inc si              ; Avoid operator
-;expr2:
-;    call spaces         ; Jump spaces
-;    lodsb               ; Read character
-;    cmp al,'('          ; Open parenthesis?
-;    jne f24
-;    call expr           ; Process inner expr.
-;    cmp byte [si],')'   ; Closing parenthesis?
-;    je spaces_2         ; Yes, avoid spaces
-;    jmp error           ; No, jump to error
+;Level 3, Brackets, numbers and vars.
 
-;f24:    
-;    cmp al, 0x40         ; Variable?
-;    jnc f25             ; Yes, jump
-;    dec si              ; Back one letter...
-;    call input_number   ; ...to read number
-;    jmp short spaces
+;.handleThirdLevelSkip:
+;    inc rsi             ;Skip the op symbol
+;.handleThirdLevel:
+;    call spaceSkip
+;    lodsb               ;Read char and adv rsi
+;    cmp al, '('
+;    jne .notBracket
+;    call handleExpression  ;Parse the inner expression
+;    cmp byte [rsi], ')'   
+;    je .closeBracket     ;If close bracket, goto skip spaces
+;    jmp short .error     ;Otherwise, error
 
-;f25:    
-;    cmp al,0x72
-;    jne f22
-;    cmp byte [si],0x6e
-;    jne f22
+;.notBracket:    
+;    cmp al, "^"
+;    je .exponentFound
+;.varConstCheck:
+;    cmp al, 0x40       ;Alphanumeric first char?
+;    jnc .varOrRNDFound      ;Yes, variable found or rnd function
+;    dec rsi            ;Else back one symbol 
+;    call decimalToHex  ;to read number into rax
+;    jmp short spaceSkip
+
+;.varOrRNDFound:    
+;    cmp al, "r"
+;    jne .varFound
+;    cmp byte [rsi], "n" ;rsi was advanced by 1, check 
+;    jne varFound
 ;    lodsw               ; Advance SI by 2
-;    in al,0x40          ; Read timer counter 0
+;    in al, 0x40          ; Read timer counter 0
 ;    mov ah,0       
 ;    ret
-
-;f22:    
+;.exponentFound:
+;   jmp short .varConstCheck
+;.varFound:    
 ;    call get_variable_2 ; Get variable address
-;    xchg ax,bx
-;    mov ax,[bx]         ; Read
+;    xchg ax, bx
+;    mov ax, [bx]         ; Read
 ;    ret                 ; Return
+;.closeBracket:
+;   inc si
+;   jmp spaceSkip
+;.exit:
+;   ret
+;.error:
+;   lea rbp, syntax
+;   jmp criticalError

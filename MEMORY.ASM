@@ -21,6 +21,7 @@ findVariable:
 ;Output: rbx = ptr to varBlock OR -1 if doesnt exist
     push rcx
     push rdx
+    push rsi
     push rdi
     mov rbx, qword [mcbChain]   ;Start of the chain
 .search:
@@ -44,6 +45,7 @@ findVariable:
     mov rbx, -1
 .exit:
     pop rdi
+    pop rsi
     pop rdx
     pop rcx
     ret
