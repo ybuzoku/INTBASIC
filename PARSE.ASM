@@ -209,3 +209,15 @@ setNumericVariable:
 .stringFoundError:
     lea rbp, typeError
     jmp criticalError
+
+findOtherExpressionsOnLine:
+;Input: rsi = start of line portion
+;Output: rsi = points to first char after first ":" found
+;         al = : if it was found or 00 if not
+    lodsb
+    cmp al, 0   ;Null hit, RIP procedure
+    je .exit
+    cmp al, ":" ;Strings can be terminated with a :
+    jne findOtherExpressionsOnLine
+.exit:
+    ret

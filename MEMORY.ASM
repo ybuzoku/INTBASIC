@@ -81,6 +81,8 @@ searchForProgramLine:
 ;Input: dx = Line number
 ;Output: rbx = Pointer to program block 
     mov rbx, qword [firstLinPtr]
+    cmp rbx, -1
+    je .lineFound
 .search:
     cmp word [rbx + progLineBlock.wLineNum], dx ;Equal line numbers?
     je .lineFound
@@ -219,6 +221,23 @@ strcpy:
     pop rsi
     pop rdi
     ret
+strlen:
+;Input: rsi = String start
+;Output: rsi = String start
+;        ecx = String length, inclusive of NULL char
+    push rax
+    push rsi
+    xor ecx, ecx    ;Clear counter
+.search:
+    lodsb
+    inc ecx
+    test al, al ;Is this a null char?
+    jnz .search ;Null not found
+.exit:
+    pop rsi
+    pop rax
+    ret
+
 memoryDetection:
     mov eax, 0E820h
     int 35h     ;rax = ptr to start, rsi = ptr to data table, each entry 24 bytes

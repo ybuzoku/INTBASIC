@@ -16,61 +16,47 @@ mainLoop:
     push rax    ;Save address on stack
     lea rbp, prompt
     call ttyOutString
+.ml0:
+;This section will execute an input line if it is an interactive expression
+; or store it in the program if it has a line number.
+;It will keep accepting lines until a line is entered without a line number
     call getLineInput
-    jmp saveExecuteLine
-
-
+    call decimalToHex   ;Check to see if we have a valid line number
+    xchg bx, bx
+    test ax, ax
+    jnz .saveLine
+;Here we execute the line
+    call executeExpression
+    ret
+.saveLine:
+    ;ax has the line number
+    mov dx, ax
+    call searchForProgramLine
+    cmp rbx, -1
+    jne .commonProc ;If not equal, line must exist, continue
+    call spaceSkip  ;Skip all the prceeding spaces
+    cmp byte [rsi], 0  ;Is the first non space char the end of the string?
+    je .lineDoesntExist
+    ;So we have a new line that isn't empty, allocate a new block for this line
+    call allocateBlock  ;Return a default block in rbx
+    mov byte [rbx + progLineBlock.bBlockType], progLineBlockType
+    mov word [rbx + progLineBlock.wLineNum], ax
+    mov word [rbx + progLineBlock.wBlockSize], progLineBlock_size
+.commonProc:
+    ;If the line already exists, simply override the stored string
+    ;rbx has a pointer to the block
+    call strlen ;Get the string length
+    lea rdi, qword [rbx + progLineBlock.sLine]  ;Get address here
+    call strcpy ;Copy the program string to the program block
+    push rsi
+    mov rsi, rbx    ;Move the block into rsi
+    call insertProgramLine
+    pop rsi
+    jmp short .ml0
+.lineDoesntExist:
+    lea rbp, lineNoXist
 ;For any error, syntax or otherwise, come here
 criticalError:
 ;Called with rbp pointing at error message
     call ttyOutString
     jmp mainLoop    ;Trash input line, restart line input
-
-;-------------------------------:
-;---------Misc routines---------:
-;-------------------------------:
-
-printdecimalword:
-;Takes the qword in rax and prints its decimal representation
-    push rax
-    push rbx
-    lea rdi, digitString   ;Use the default line as a buffer
-    ;Sanitise the digit buffer
-    push rdi
-    push rcx
-    push rax
-    xor eax, eax
-    mov ecx, digitStringLen/8
-    rep stosq
-    pop rax
-    pop rcx
-    pop rdi
-
-    add rdi, digitStringLen - 1 ;Go to the end of the buffer
-    std ;Reverse string ops
-    push rax
-    xor al, al  ;Place delimiter
-    stosb
-    pop rax
-    mov rbx, 0Ah  ;Divide by 10
-.pdw0:
-    xor edx, edx
-    div rbx
-    add dl, '0'
-    cmp dl, '9'
-    jbe .pdw1
-    add dl, 'A'-'0'-10
-.pdw1:
-    push rax
-    mov al, dl    ;Save remainder byte
-    stosb   ;Store the byte and add one to rdi
-    pop rax
-    test rax, rax
-    jnz .pdw0
-    cld ;Return string ops to normal
-    inc rdi ;Skip the extra 0 that was inserted
-    mov rbp, rdi    ;Point rbp to the head of the string
-    call ttyOutString
-    pop rbx
-    pop rax
-    ret

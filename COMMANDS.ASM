@@ -57,6 +57,7 @@ listProgram:
     ret
 runProgram:
 ;Go to each line, one at a time, skip the line number and execute the expr
+;First thing it does, takes the first line number and moves it to current line number
     mov al, 3
     ret
 printStatement:

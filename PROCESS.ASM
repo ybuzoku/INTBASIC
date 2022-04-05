@@ -1,14 +1,3 @@
-saveExecuteLine:
-;This function will execute the line if it is an interactive expression
-; or store it in the program if it has a line number
-    call decimalToHex   ;Check to see if we have a valid line number
-    test ax, ax
-    jnz .saveLine
-;Here we execute the line
-    call executeExpression
-    ret
-.saveLine:
-    ret
 executeExpression:
 ;rsi must point to the start of the portion of the line to execute
     call spaceSkip  ;Skip any leading spaces
@@ -36,7 +25,6 @@ executeExpression:
     ;Function found! Execute!
     ;rsi points to start of expression to evaluate for function
     ;rdi points to table entry
-    xchg bx, bx
     lea rbx, funTbl         ;Get table address
     movzx rdx, byte [rdi]   ;Get pascal string length
     movzx edx, word [rdi + rdx]    ;Add pascal strlen to table entry and get ptr
@@ -69,6 +57,10 @@ executeExpression:
     call handleAlgebraicExpression  ;Get the result of the expression into rax
     mov rsi, rdi    ;Return the start of the string into rsi
     call setNumericVariable
+    ;Now see if the line has any more expressions
+    call findOtherExpressionsOnLine
+    test al, al ;If al is null, no more expressions on the line
+    jz executeExpression    ;Execute portion
     ret
 
 .exitError:

@@ -20,7 +20,8 @@ struc progLineBlock
     memBlockM               ;Common memory block header
     .wLineNum   resw 1      ;Line number, up to 65535
     .qPtr       resq 1      ;Pointer to the next line, or -1 if last line
-    .sLine:                 ;Maximum length 255, keep null char
+    .sLine      resb maxLineLen  ;Maximum length 255, keep null char but 
+    ;                             NOT LINE NUMBER OR PRECEEDING SPACES
 endstruc
 
 struc varBlock
