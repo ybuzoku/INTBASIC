@@ -1,30 +1,16 @@
 start:
     mov eax, 0C501h
-    int 35h
-    mov eax, 0500h  ;Set page zero as the default page
-    int 30h
-    mov ah, 02h
-    xor edx, edx    ;Set screen cursor to top right corner
-    mov bh, dl      ;Set cursor for page 0
-    int 30h
-    mov bh, 07h     ;Grey/Black attribs
-    mov eax, 0600h  ;Clear whole screen
-    int 30h
-    cld
+    int 35h         ;Connect the debugger
+    call ttyClear   ;Clear the teletype
     ;Memory stuff
-    lea rax, section.programArea.vstart
-    mov qword [minMemAddr], rax
-    mov qword [lastBlock], rax  ;Start writing at this location
-    xor eax, eax
-    dec rax
-    mov qword [mcbChain], rax   ;-1
     lea rbp, mainmsg
     call ttyOutString
     call memoryDetection
     lea rbp, bytemsg
     call ttyOutString
-    mov byte [strLen], 0
+    call newProgram         ;Use this to reset program pointers
 mainLoop:
+    cld                 ;Set default string op direction
     lea rsp, stacktop    ;Reinitialize stack pointer
     lea rax, mainLoop
     push rax    ;Save address on stack

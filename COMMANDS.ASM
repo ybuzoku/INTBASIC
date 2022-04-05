@@ -30,11 +30,26 @@ funTbl:
     db 4,"FOR"
     dw forLoop - funTbl
 
+    db 4, "CLS"
+    dw cls - funTbl
+
     db -1    ;Demarkate the end of the table
 
 newProgram: 
 ;Simply reset the program pointers
-    mov al, 1
+    lea rax, section.programArea.vstart
+    mov qword [minMemAddr], rax
+    mov qword [lastBlock], rax  ;Start writing at this location
+    mov qword [mcbChain], rax   ;Create a mock MCB here
+    mov byte [rax + memBlock.bSignature], lastMemBlock
+    mov word [rax + memBlock.wBlockSize], 0 ;Dummy block, no size, gets overwritten
+    xor eax, eax
+    mov byte [strLen], al
+    lea rdi, inString
+    mov ecx, maxLineLen
+    rep stosb
+    mov byte [currentLine], 10  ;Default to line 10
+    mov qword [firstLinPtr], -1 ;No program in memory
     ret
 listProgram:
 ;Go line by line and echo the program lines, inserting a crlf after each
@@ -54,6 +69,7 @@ getInput:
     ret
 handleIf:
 ;Evaluate the string after IF is greater than 0, THEN goto line x
+;IF exp1 THEN exp2
     mov al, 6
     ret
 fancyJmp:
@@ -66,3 +82,5 @@ returnToDOS:
 forLoop:
     mov al, 9
     ret
+cls:
+    jmp ttyClear

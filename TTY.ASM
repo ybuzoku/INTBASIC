@@ -71,3 +71,14 @@ ttyIn:
     xor ah, ah
     int 36h
     ret
+ttyClear:
+    mov eax, 0500h  ;Set page zero as the default page
+    int 30h
+    mov ah, 02h
+    xor edx, edx    ;Set screen cursor to top right corner
+    mov bh, dl      ;Set cursor for page 0
+    int 30h
+    mov bh, 07h     ;Grey/Black attribs
+    mov eax, 0600h  ;Clear whole screen
+    int 30h
+    ret

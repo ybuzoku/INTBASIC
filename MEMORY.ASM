@@ -19,7 +19,7 @@ allocateBlock:
     ret
 .firstAllocation:
 ;Deal with first allocation
-    lea rbx, ENDOFPROGRAM   ;Get this as the head of the chain
+    lea rbx, section.programArea.vstart   ;Get this as the head of the chain
     mov qword [lastBlock], rbx
     mov qword [mcbChain], rbx
     mov byte [rbx + memBlock.bSignature], lastMemBlock
