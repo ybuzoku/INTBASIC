@@ -47,6 +47,7 @@ criticalError:
 printdecimalword:
 ;Takes the qword in rax and prints its decimal representation
     push rax
+    push rbx
     lea rdi, digitString   ;Use the default line as a buffer
     ;Sanitise the digit buffer
     push rdi
@@ -84,5 +85,6 @@ printdecimalword:
     inc rdi ;Skip the extra 0 that was inserted
     mov rbp, rdi    ;Point rbp to the head of the string
     call ttyOutString
+    pop rbx
     pop rax
     ret

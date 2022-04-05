@@ -4,28 +4,28 @@ funTbl:
 ;All function pointers are saved as distances from the head
 ; of the function table
     db 4,"NEW"
-    dq funTbl - newProgram
+    dq newProgram - funTbl 
 
     db 5,"LIST"
-    dq funTbl - listProgram
+    dq listProgram - funTbl 
 
     db 4,"RUN"
-    db funTbl - runProgram
+    dq runProgram - funTbl
 
     db 6,"PRINT"
-    dq funTbl - printStatement
+    dq printStatement - funTbl
 
     db 6,"INPUT"
-    dq funTbl - getInput
+    dq getInput - funTbl
 
     db 3,"IF"
-    dq funTbl - handleIf
+    dq handleIf - funTbl
 
     db 5,"GOTO"
-    dq funTbl - fancyJmp
+    dq fancyJmp - funTbl
 
     db 7,"SYSTEM"
-    dq funTbl - returnToDOS
+    dq returnToDOS - funTbl
 
     db -1    ;Demarkate the end of the table
 

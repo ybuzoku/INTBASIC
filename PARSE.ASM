@@ -15,23 +15,29 @@ spaceSkip:
 getVarNameLength:
 ;Input: rsi = Start of var name
 ;Output: ecx = Length of varname
+    push rax
     push rsi
     push rdi
     push rbx
-    xor ecx, ecx    ;Clear counter of chars
+    push rdx
+    xor edx, edx    ;Clear counter of chars
     lea rbx, varChrs    ;Get the list of valid variable name chars
 .search:
     mov rdi, rbx    ;Save pointer in rbx
     lodsb       ;Get the first char into al
-    scasb       ;Look for char in the valid chars list
+    mov ecx, numVarChars
+    repne scasb       ;Look for char in the valid chars list
     jne .exit   ;Char not found, drop it
-    inc ecx     ;Add one to number of chars found
-    cmp ecx, 40 ;At position for char 40?
+    inc edx     ;Add one to number of chars found
+    cmp edx, 40 ;At position for char 40?
     jb .search  ;Whilst below, keep going
 .exit:
+    mov ecx, edx
+    pop rdx
     pop rbx
     pop rdi
     pop rsi
+    pop rax
     ret
 
 getVarType:
@@ -122,7 +128,7 @@ handleAlgebraicExpression:
     cmp al, "^"
     je .exponentFound
 .varConstCheck:
-    cmp al, 0x40       ;Alphanumeric first char?
+    cmp al, 40h       ;Alphanumeric first char?
     jnc .varOrRNDFound      ;Yes, variable found or rnd function
     dec rsi            ;Else back one symbol 
     call decimalToHex  ;to read number into rax
@@ -133,9 +139,12 @@ handleAlgebraicExpression:
     jne .varFound
     cmp byte [rsi], "n" ;rsi was advanced by 1, check 
     jne .varFound
-    lodsw               ; Advance SI by 2
-    in al, 0x40          ; Read timer counter 0
-    mov ah,0       
+    cmp byte [rsi+1], "d"
+    jne .varFound
+    lodsw               ;Advance rsi by 3
+    lodsb
+    in al, 40h         ;Read timer counter 0
+    movzx rax, al
     ret
 .exponentFound:
    jmp short .varConstCheck
@@ -181,18 +190,22 @@ setNumericVariable:
     push rsi
     push rcx
     push rbx
+    xchg bx, bx
     call getVarNameLength   ;Returns the length of the var name in cx
     call findVariable       ;Returns a pointer to the variable block in rbx
     cmp rbx, -1             ;Variable doesnt exit?
-    je makeEditInteger      ;Make one!
+    je .makeEditInteger      ;Make one!
     cmp byte [rbx + memBlock.bBlockType], varBlockType
     jne .stringFoundError
     mov qword [rbx + varBlock.qValue], rax  ;Save value
+.exit:
     pop rbx
     pop rcx
     pop rsi
     ret
-
+.makeEditInteger:
+    call makeEditInteger
+    jmp short .exit
 .stringFoundError:
     lea rbp, typeError
     jmp criticalError

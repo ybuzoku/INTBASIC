@@ -2,7 +2,6 @@ saveExecuteLine:
 ;This function will execute the line if it is an interactive expression
 ; or store it in the program if it has a line number
     call decimalToHex   ;Check to see if we have a valid line number
-    xchg bx, bx
     test ax, ax
     jnz .saveLine
 ;Here we execute the line
@@ -18,16 +17,20 @@ executeExpression:
     ;rsi now points to function
     lea rdi, funTbl     ;Point rdi to the function table
 .functionFinderLoop:
-    mov cl, byte [rdi]  ;Get the string length  
+    movzx ecx, byte [rdi]  ;Get the string length  
     cmp cl, -1  ;-1 is the end of table marker, either Var assignment or error
     je .variableAssignment 
     push rsi    ;Save ptr to start of string on stack 
-    movzx ecx, cl
+    push rdi
     inc rdi             ;Goto first char in function name
-    rep cmpsb
-    je .functionFound
-    add rdi, 8  ;Skip unnecessary function pointer
+    repe cmpsb
+    pop rdi
     pop rsi     ;Return ptr to start of string pointer from stack
+    test cl, cl ;Did all the chars match?
+    jz .functionFound
+    movzx rax, byte [rdi]    ;Skip unnecessary function pointer
+    add rax, 8  ;Add 8 to skip pointer
+    add rdi, rax
     jmp short .functionFinderLoop
 .functionFound:
     ;Function found! Execute!
@@ -56,13 +59,7 @@ executeExpression:
     call spaceSkip  ;Skip any spaces
     inc rsi         ;Go past the equality sign
     call spaceSkip  ;Skip any spaces
-    lodsb           ;Get first symbol after equality into al
-    dec rsi         ;Go back to the start of the string
-    cmp al, "0" 
-    jb .exitError   ;Are we a bona-fide digit?
-    cmp al, "9"
-    ja .exitError
-    call decimalToHex   ;Get the value in rax
+    call handleAlgebraicExpression  ;Get the result of the expression into rax
     mov rsi, rdi    ;Return the start of the string into rsi
     call setNumericVariable
     ret

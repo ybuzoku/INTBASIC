@@ -3,10 +3,13 @@ allocateBlock:
 ;Output: rbx = Pointer to generic memory block, or -1 if memory full
 ;       Caller needs to fill in, block size, block type and specifics
     mov rbx, qword [lastBlock]    ;Get the last block in the chain
+    cmp rbx, -1 ;First allocation?
+    je .firstAllocation
     mov byte [rbx + memBlock.bSignature], notLastMemBlock ;Make it not be the last
     movzx rdx, word [rbx + memBlock.wBlockSize] ;Goto end of block
     add rbx, rdx    ;Move rbx over the previous last block
-    cmp qword [maxMemAddr], rbx ;rbx above maxmemory? 
+    mov rdx, qword [maxMemAddr]
+    cmp rbx, rdx ;rbx above maxmemory? 
     ja .memoryFull
     mov qword [lastBlock], rbx  ;New last block
     mov byte [rbx + memBlock.bSignature], lastMemBlock
@@ -14,16 +17,27 @@ allocateBlock:
 .memoryFull:
     mov rbx, -1
     ret
+.firstAllocation:
+;Deal with first allocation
+    lea rbx, ENDOFPROGRAM   ;Get this as the head of the chain
+    mov qword [lastBlock], rbx
+    mov qword [mcbChain], rbx
+    mov byte [rbx + memBlock.bSignature], lastMemBlock
+    mov word [rbx + memBlock.wBlockSize], 0 ;Dummy block
+    ret
 
 findVariable:
 ;Input: rsi = Source string for variable name
 ;       ecx = Length of variable name (max 40)
 ;Output: rbx = ptr to varBlock OR -1 if doesnt exist
+    push rax
     push rcx
     push rdx
     push rsi
     push rdi
     mov rbx, qword [mcbChain]   ;Start of the chain
+    cmp rbx, -1 ;Chain empty?
+    je .exit
 .search:
     cmp byte [rbx + memBlock.bBlockType], varBlockType
     je .varFound    ;We found a variable
@@ -48,6 +62,7 @@ findVariable:
     pop rsi
     pop rdx
     pop rcx
+    pop rax
     ret
 
 findFirstLine:
@@ -165,6 +180,7 @@ makeEditInteger:
     mov qword [rbx + varBlock.qValue], rax
     ret
 .newVar:
+    xchg bx, bx
     call allocateBlock
     cmp rbx, -1
     je .error
