@@ -190,7 +190,7 @@ setNumericVariable:
     push rsi
     push rcx
     push rbx
-    xchg bx, bx
+
     call getVarNameLength   ;Returns the length of the var name in cx
     call findVariable       ;Returns a pointer to the variable block in rbx
     cmp rbx, -1             ;Variable doesnt exit?

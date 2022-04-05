@@ -180,12 +180,12 @@ makeEditInteger:
     mov qword [rbx + varBlock.qValue], rax
     ret
 .newVar:
-    xchg bx, bx
+    nop
     call allocateBlock
     cmp rbx, -1
     je .error
     mov qword [rbx + varBlock.qValue], rax  ;Save value
-    mov word [rbx + varBlock.wBlockSize], cx    ;Save length of string
+    mov word [rbx + varBlock.wBlockSize], cx    ;Save length of name
     add word [rbx + varBlock.wBlockSize], varBlock_size ;Add full block size
     mov byte [rbx + varBlock.bBlockType], varBlockType  ;Block type
     push rdi

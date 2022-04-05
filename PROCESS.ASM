@@ -65,7 +65,7 @@ executeExpression:
     ret
 
 .exitError:
-    mov rbp, syntax ;Syntax error, keyword a bit confused
+    lea rbp, syntax ;Syntax error, keyword a bit confused
     jmp criticalError
 
 .stringAssignment:
