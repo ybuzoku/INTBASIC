@@ -4,44 +4,65 @@ funTbl:
 ;All function pointers are saved as distances from the head
 ; of the function table
     db 4,"NEW"
-    dq newProgram - funTbl 
+    dw newProgram - funTbl 
 
     db 5,"LIST"
-    dq listProgram - funTbl 
+    dw listProgram - funTbl 
 
     db 4,"RUN"
-    dq runProgram - funTbl
+    dw runProgram - funTbl
 
     db 6,"PRINT"
-    dq printStatement - funTbl
+    dw printStatement - funTbl
 
     db 6,"INPUT"
-    dq getInput - funTbl
+    dw getInput - funTbl
 
     db 3,"IF"
-    dq handleIf - funTbl
+    dw handleIf - funTbl
 
     db 5,"GOTO"
-    dq fancyJmp - funTbl
+    dw fancyJmp - funTbl
 
     db 7,"SYSTEM"
-    dq returnToDOS - funTbl
+    dw returnToDOS - funTbl
+
+    db 4,"FOR"
+    dw forLoop - funTbl
 
     db -1    ;Demarkate the end of the table
 
 newProgram: 
 ;Simply reset the program pointers
+    mov al, 1
+    ret
 listProgram:
 ;Go line by line and echo the program lines, inserting a crlf after each
+    mov al, 2
+    ret
 runProgram:
 ;Go to each line, one at a time, skip the line number and execute the expr
+    mov al, 3
+    ret
 printStatement:
 ;String must be "" delimited
+    mov al, 4
+    ret
 getInput:
 ;Take a string as a prompt
+    mov al, 5
+    ret
 handleIf:
 ;Evaluate the string after IF is greater than 0, THEN goto line x
+    mov al, 6
+    ret
 fancyJmp:
 ;GOTO, the hell of every dumb high level programmer
+    mov al, 7
+    ret
 returnToDOS:
+    mov al, 8
+    ret
+forLoop:
+    mov al, 9
     ret

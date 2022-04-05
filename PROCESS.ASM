@@ -8,7 +8,7 @@ saveExecuteLine:
     call executeExpression
     ret
 .saveLine:
-
+    ret
 executeExpression:
 ;rsi must point to the start of the portion of the line to execute
     call spaceSkip  ;Skip any leading spaces
@@ -29,14 +29,21 @@ executeExpression:
     test cl, cl ;Did all the chars match?
     jz .functionFound
     movzx rax, byte [rdi]    ;Skip unnecessary function pointer
-    add rax, 8  ;Add 8 to skip pointer
+    add rax, 2      ;Add 2 to skip relative pointer
     add rdi, rax
     jmp short .functionFinderLoop
 .functionFound:
     ;Function found! Execute!
     ;rsi points to start of expression to evaluate for function
-    ;rdi points to function pointer
+    ;rdi points to table entry
+    xchg bx, bx
+    lea rbx, funTbl         ;Get table address
+    movzx rdx, byte [rdi]   ;Get pascal string length
+    movzx edx, word [rdi + rdx]    ;Add pascal strlen to table entry and get ptr
+    add rbx, rdx    ;Add word offset to table base
+    jmp rbx ;Goto function pointer in rbx
 
+    
 .exit:
     ret
 
