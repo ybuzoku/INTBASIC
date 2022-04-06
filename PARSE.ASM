@@ -210,13 +210,18 @@ getNumericVariable:
     xchg bx, bx
     call getVarNameLength   ;Returns the length of the var name in cx
     call findVariable       ;Returns a pointer to the variable block in rbx
+    cmp rbx, -1 ;Variable doesnt exist? Pretend it is 0
     cmp byte [rbx + memBlock.bBlockType], varBlockType
     jne .stringFoundError
     mov rax, qword [rbx + varBlock.qValue]
+.exit:
     pop rbx
     pop rcx
     pop rsi
     ret
+.noVar:
+    xor eax, eax
+    jmp short .exit
 .stringFoundError:
     lea rbp, typeError
     jmp criticalError
