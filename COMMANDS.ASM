@@ -3,6 +3,8 @@ funTbl:
 ;Use PASCAL strings to know how long the comparisons need to be
 ;All function pointers are saved as distances from the head
 ; of the function table
+    db 4, "LET"     ;DONE
+    dw oldSchoolAssignemnt - funTbl
     db 4, "NEW"     ;DONE
     dw newProgram - funTbl 
 
@@ -40,7 +42,12 @@ funTbl:
     dw dbgr - funTbl
 
     db -1    ;Demarkate the end of the table
-
+oldSchoolAssignemnt:
+;
+    movzx ecx, byte [rdi]
+    add rsi, rcx
+    call spaceSkip  ;Goto var assignment as if at start of line
+    jmp executeExpression.variableAssignment
 newProgram: 
 ;Simply reset the program pointers
     lea rax, section.programArea.vstart
