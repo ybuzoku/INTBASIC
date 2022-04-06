@@ -48,10 +48,10 @@ funTbl:
     db 6, "DEBUG"   ;DONE
     dw dbgr - funTbl
 thenStr:
-    db 4, "THEN"
+    db 5, "THEN"
     dw badCmd - funTbl
 elseStr:
-    db 4, "ELSE"
+    db 5, "ELSE"
     dw badCmd - funTbl
 
     db -1    ;Demarkate the end of the table
@@ -121,39 +121,15 @@ runProgram:
     mov word [currentLine], ax  ;Gone to new line
     lea rsi, qword [rbx + progLineBlock.sLine]  ;Point to the instruction
     call spaceSkip  ;Goto first char
-.rl0: 
-;Sort out GOTO later
-    test byte [stateByte], 1 ;Is break set before exec?
-    jnz .break
-    push rbx
-    call executeExpression
-    pop rbx
-    test byte [stateByte], 1 ;Is break set after exec?
-    jnz .break
-    ;Now see if the line has any more expressions by checking for :
-    call findOtherExpressionsOnLine
-    test al, al ;If al is null, no more expressions on the line
-    jnz .rl0    ;Execute portion
-
+    call mainProcessing
     mov rbx, qword [rbx + progLineBlock.qPtr]   ;Walk list of program lines
     jmp short .runLines
 .exit:
     ret
-.break:
-    lea rbp, breakmsg
-    call ttyOutString
-    xor eax, eax
-    mov ax, word [currentLine]
-    call printdecimalword
-    lea rbp, crlf
-    call ttyOutString
-    jmp mainLoop    ;Exit processing
-
 
 printStatement:
 ;Strings must be "" delimited or a string variable must be used
 ;rdi points to the command length
-    xchg bx, bx
     movzx ecx, byte [rdi]
     dec ecx ;This gives instruction name + 1
     add rsi, rcx
@@ -228,7 +204,11 @@ handleIf:
     movzx ecx, byte [rdi]
     dec ecx
     add rsi, rcx
-
+    call spaceSkip
+    call handleAlgebraicExpression
+    test rax, rax  ;If this is 0, go to the else
+    jnz .else
+.else:
     ret
 
 fancyJmp:

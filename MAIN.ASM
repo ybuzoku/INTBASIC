@@ -32,11 +32,7 @@ mainLoop:
     jnz .saveLine
 ;Here we execute the line
 .ml1:
-    call executeExpression
-    ;Now see if the line has any more expressions by checking for :
-    call findOtherExpressionsOnLine
-    test al, al ;If al is null, no more expressions on the line
-    jnz .ml1    ;Execute portion
+    call mainProcessing
     ret
 .saveLine:
     ;ax has the line number

@@ -85,3 +85,28 @@ executeExpression:
     lea rbp, typeError
     jmp criticalError
 
+mainProcessing:
+    ;rsi points to string to begin processing
+    test byte [stateByte], 1 ;Is break set before exec?
+    jnz .break
+    push rbx
+    call executeExpression
+    pop rbx
+    test byte [stateByte], 1 ;Is break set after exec?
+    jnz .break
+    ;Now see if the line has any more expressions by checking for :
+    call findOtherExpressionsOnLine
+    test al, al ;If al is null, no more expressions on the line
+    jnz mainProcessing    ;Execute portion again
+    ret
+.break:
+    lea rbp, breakmsg
+    call ttyOutString
+    xor eax, eax
+    mov ax, word [currentLine]
+    call printdecimalword
+    lea rbp, crlf
+    call ttyOutString
+    jmp mainLoop    ;Exit processing
+
+
