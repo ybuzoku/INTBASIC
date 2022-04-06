@@ -5,7 +5,11 @@ funTbl:
 ; of the function table
     db 4, "LET"     ;DONE
     dw oldSchoolAssignemnt - funTbl
+
     db 4, "NEW"     ;DONE
+    dw newProgram - funTbl 
+
+    db 6, "CLEAR"   ;DONE
     dw newProgram - funTbl 
 
     db 5, "LIST"
@@ -14,10 +18,13 @@ funTbl:
     db 4, "RUN"
     dw runProgram - funTbl
 
-    db 6, "PRINT"    ;ALMOST DONE
+    db 7, "PRINT$"    ;Not implemented yet
     dw printStatement - funTbl
 
-    db 2, "?"        ;ALMOST DONE
+    db 6, "PRINT"    ;DONE
+    dw printStatement - funTbl
+
+    db 2, "?"        ;DONE, alias Print
     dw printStatement - funTbl
 
     db 6, "INPUT"
@@ -76,13 +83,62 @@ newProgram:
 listProgram:
 ;Go line by line and echo the program lines, inserting a crlf after each
 ;First print the line number, then add a space
-    mov al, 2
+    mov rbx, qword [firstLinPtr]    ;Get a pointer to the first program line
+.printLines:
+    lea rbp, crlf           ;New line
+    call ttyOutString
+    cmp rbx, -1
+    je .exit
+    movzx eax, word [rbx + progLineBlock.wLineNum]
+    call printdecimalword
+    mov al, " "
+    call ttyOutChar ;Print a space
+    lea rbp, qword [rbx + progLineBlock.sLine]  ;Null terminated string
+    call ttyOutString
+    mov rbx, qword [rbx + progLineBlock.qPtr]   ;Walk list of program lines
+    jmp short .printLines
+.exit:
     ret
 runProgram:
 ;Go to each line, one at a time, skip the line number and execute the expr
 ;First thing it does, takes the first line number and moves it to current line number
-    mov al, 3
+    mov rbx, qword [firstLinPtr]    ;Get a pointer to the first program line
+.runLines:
+    cmp rbx, -1 ;Are we at the end?
+    je .exit    ;Yes, return to the prompt
+    movzx eax, word [rbx + progLineBlock.wLineNum]
+    mov word [currentLine], ax  ;Gone to new line
+    lea rsi, qword [rbx + progLineBlock.sLine]  ;Point to the instruction
+    call spaceSkip  ;Goto first char
+.rl0: 
+;Sort out GOTO later
+    test byte [stateByte], 1 ;Is break set before exec?
+    jnz .break
+    push rbx
+    call executeExpression
+    pop rbx
+    test byte [stateByte], 1 ;Is break set after exec?
+    jnz .break
+    ;Now see if the line has any more expressions by checking for :
+    call findOtherExpressionsOnLine
+    test al, al ;If al is null, no more expressions on the line
+    jnz .rl0    ;Execute portion
+
+    mov rbx, qword [rbx + progLineBlock.qPtr]   ;Walk list of program lines
+    jmp short .runLines
+.exit:
     ret
+.break:
+    lea rbp, breakmsg
+    call ttyOutString
+    xor eax, eax
+    mov ax, word [currentLine]
+    call printdecimalword
+    lea rbp, crlf
+    call ttyOutString
+    jmp mainLoop    ;Exit processing
+
+
 printStatement:
 ;Strings must be "" delimited or a string variable must be used
 ;rdi points to the command length
@@ -142,7 +198,7 @@ printStatement:
     call spaceSkip
     jmp short .stringPrint
 .continue:
-    xchg bx, bx
+    call spaceSkip
     jmp .printStart
 getInput:
 ;Take a string as a prompt
@@ -155,8 +211,24 @@ handleIf:
     ret
 fancyJmp:
 ;GOTO, the hell of every dumb high level programmer
-    mov al, 7
-    ret
+;rsi, rdi points just past the end of the command line
+    movzx ecx, byte [rdi]
+    add rsi, rcx
+    call spaceSkip  ;Skip all preceeding spaces
+    call handleAlgebraicExpression  ;Turn the expression into a number in ax
+    movzx edx, ax   ;Line number into dx
+    call searchForProgramLine   ;Get pointer to line in rbx
+    cmp rbx, -1
+    je .unknownLineNumber
+
+    lea rdx, runProgram.runLines    ;New line pointer in rbx
+    mov qword [rsp], rdx    ;Run lines return address
+    ;xchg bx, bx
+    ret 8  ;pop one qword off of the stack (old rbx)
+.unknownLineNumber:
+    lea rbp, lineNoXist
+    call ttyOutString
+    jmp mainLoop
 forLoop:
     mov al, 9
     ret

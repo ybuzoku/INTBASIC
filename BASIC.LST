@@ -130,25 +130,25 @@
     18 00000015 E8BE000000          <1>     call setHandler
     19                              <1> 
     20                              <1>     ;Memory stuff
-    21 0000001A 488D2D4B090000      <1>     lea rbp, mainmsg
+    21 0000001A 488D2D490A0000      <1>     lea rbp, mainmsg
     22 00000021 E86F010000          <1>     call ttyOutString
-    23 00000026 E8DA080000          <1>     call memoryDetection
-    24 0000002B 488D2D4E090000      <1>     lea rbp, bytemsg
+    23 00000026 E8D8090000          <1>     call memoryDetection
+    24 0000002B 488D2D4C0A0000      <1>     lea rbp, bytemsg
     25 00000032 E85E010000          <1>     call ttyOutString
-    26 00000037 E8A4040000          <1>     call newProgram         ;Use this to reset program pointers
+    26 00000037 E8B5040000          <1>     call newProgram         ;Use this to reset program pointers
     27                              <1> mainLoop:
     28 0000003C FC                  <1>     cld                 ;Set default string op direction
     29 0000003D 488D25(C00F0000)    <1>     lea rsp, stacktop    ;Reinitialize stack pointer
     30 00000044 488D05F1FFFFFF      <1>     lea rax, mainLoop
     31 0000004B 50                  <1>     push rax    ;Save address on stack
-    32 0000004C 488D2D14090000      <1>     lea rbp, prompt
+    32 0000004C 488D2D120A0000      <1>     lea rbp, prompt
     33 00000053 E83D010000          <1>     call ttyOutString
     34                              <1> .ml0:
     35                              <1> ;This section will execute an input line if it is an interactive expression
     36                              <1> ; or store it in the program if it has a line number.
     37                              <1> ;It will keep accepting lines until a line is entered without a line number
     38 00000058 E89B000000          <1>     call getLineInput
-    39 0000005D E8E3050000          <1>     call decimalToHex   ;Check to see if we have a valid line number
+    39 0000005D E8E1060000          <1>     call decimalToHex   ;Check to see if we have a valid line number
     40 00000062 6685C0              <1>     test ax, ax
     41 00000065 750F                <1>     jnz .saveLine
     42                              <1> ;Here we execute the line
@@ -162,30 +162,30 @@
     50                              <1> .saveLine:
     51                              <1>     ;ax has the line number
     52 00000076 6689C2              <1>     mov dx, ax
-    53 00000079 E818070000          <1>     call searchForProgramLine
+    53 00000079 E816080000          <1>     call searchForProgramLine
     54 0000007E 4881FBFFFFFFFF      <1>     cmp rbx, -1
     55 00000085 751D                <1>     jne .commonProc ;If not equal, line must exist, continue
     56 00000087 E8F7010000          <1>     call spaceSkip  ;Skip all the prceeding spaces
     57 0000008C 803E00              <1>     cmp byte [rsi], 0  ;Is the first non space char the end of the string?
     58 0000008F 742D                <1>     je .lineDoesntExist
     59                              <1>     ;So we have a new line that isn't empty, allocate a new block for this line
-    60 00000091 E830060000          <1>     call allocateBlock  ;Return a default block in rbx
+    60 00000091 E82E070000          <1>     call allocateBlock  ;Return a default block in rbx
     61 00000096 C6430300            <1>     mov byte [rbx + progLineBlock.bBlockType], progLineBlockType
     62 0000009A 66894304            <1>     mov word [rbx + progLineBlock.wLineNum], ax
     63 0000009E 66C743010E01        <1>     mov word [rbx + progLineBlock.wBlockSize], progLineBlock_size
     64                              <1> .commonProc:
     65                              <1>     ;If the line already exists, simply override the stored string
     66                              <1>     ;rbx has a pointer to the block
-    67 000000A4 E84E080000          <1>     call strlen ;Get the string length
+    67 000000A4 E84C090000          <1>     call strlen ;Get the string length
     68 000000A9 488D7B0E            <1>     lea rdi, qword [rbx + progLineBlock.sLine]  ;Get address here
-    69 000000AD E83C080000          <1>     call strcpy ;Copy the program string to the program block
+    69 000000AD E83A090000          <1>     call strcpy ;Copy the program string to the program block
     70 000000B2 56                  <1>     push rsi
     71 000000B3 4889DE              <1>     mov rsi, rbx    ;Move the block into rsi
-    72 000000B6 E8FF060000          <1>     call insertProgramLine
+    72 000000B6 E8FD070000          <1>     call insertProgramLine
     73 000000BB 5E                  <1>     pop rsi
     74 000000BC EB9A                <1>     jmp short .ml0
     75                              <1> .lineDoesntExist:
-    76 000000BE 488D2D33090000      <1>     lea rbp, lineNoXist
+    76 000000BE 488D2D310A0000      <1>     lea rbp, lineNoXist
     77                              <1> ;For any error, syntax or otherwise, come here
     78                              <1> criticalError:
     79                              <1> ;Called with rbp pointing at error message
@@ -193,33 +193,26 @@
     81 000000CA E96DFFFFFF          <1>     jmp mainLoop    ;Trash input line, restart line input
     82                              <1> 
     83                              <1> ctrlBreakHandler:
-    84                              <1>     ;lea rbp, breakmsg
-    85                              <1>     ;call ttyOutString
-    86                              <1>     ;xor eax, eax
-    87                              <1>     ;mov ax, word [currentLine]
-    88                              <1>     ;call printdecimalword
-    89                              <1>     ;lea rbp, crlf
-    90                              <1>     ;call ttyOutString
-    91 000000CF 800D(09110000)01    <1>     or byte [stateByte], 1  ;Set the byte
-    92 000000D6 48CF                <1>     iretq
-    93                              <1> setHandler:
-    94                              <1> ;Called with:
-    95                              <1> ;   rdi = Pointer to interrupt handler
-    96                              <1> ;   al = Interrupt number
-    97 000000D8 89C5                <1>     mov ebp, eax    ;al has interrupt number which we need to save
-    98 000000DA 81E5FF000000        <1>     and ebp, 0FFh   ;Zero everything but the bottom byte
-    99                              <1> ;First call to get default BIOS segement selector and attribute word
-   100 000000E0 88C3                <1>     mov bl, al  ;Set interrupt number 
-   101 000000E2 B807F00000          <1>     mov eax, 0F007h ;Get the descriptor
-   102 000000E7 CD35                <1>     int 35h
-   103 000000E9 89C6                <1>     mov esi, eax    ;Move segment selector info to esi
-   104 000000EB 89E9                <1>     mov ecx, ebp    ;Get the interrupt number into cl
-   105                              <1> ;dx preserves the attribute word
-   106 000000ED 4889FB              <1>     mov rbx, rdi  ;Pointer passed in rdi
-   107 000000F0 B808F00000          <1>     mov eax, 0F008h ;Set descriptor
-   108 000000F5 CD35                <1>     int 35h
-   109                              <1>     
-   110 000000F7 C3                  <1>     ret
+    84 000000CF 800D(09110000)01    <1>     or byte [stateByte], 1  ;Set the byte
+    85 000000D6 48CF                <1>     iretq
+    86                              <1> setHandler:
+    87                              <1> ;Called with:
+    88                              <1> ;   rdi = Pointer to interrupt handler
+    89                              <1> ;   al = Interrupt number
+    90 000000D8 89C5                <1>     mov ebp, eax    ;al has interrupt number which we need to save
+    91 000000DA 81E5FF000000        <1>     and ebp, 0FFh   ;Zero everything but the bottom byte
+    92                              <1> ;First call to get default BIOS segement selector and attribute word
+    93 000000E0 88C3                <1>     mov bl, al  ;Set interrupt number 
+    94 000000E2 B807F00000          <1>     mov eax, 0F007h ;Get the descriptor
+    95 000000E7 CD35                <1>     int 35h
+    96 000000E9 89C6                <1>     mov esi, eax    ;Move segment selector info to esi
+    97 000000EB 89E9                <1>     mov ecx, ebp    ;Get the interrupt number into cl
+    98                              <1> ;dx preserves the attribute word
+    99 000000ED 4889FB              <1>     mov rbx, rdi  ;Pointer passed in rdi
+   100 000000F0 B808F00000          <1>     mov eax, 0F008h ;Set descriptor
+   101 000000F5 CD35                <1>     int 35h
+   102                              <1>     
+   103 000000F7 C3                  <1>     ret
     11                                  %include "TTY.ASM"
     12                              <1> getLineInput:
     13                              <1>     ;Sets rsi to the inputstring
@@ -273,7 +266,7 @@
     61                              <1>     ; and arrow key support
     62 00000172 EBA1                <1>     jmp short .getChar
     63                              <1> .gliExit:
-    64 00000174 488D2D13080000      <1>     lea rbp, crlf
+    64 00000174 488D2D11090000      <1>     lea rbp, crlf
     65 0000017B E815000000          <1>     call ttyOutString
     66 00000180 C60700              <1>     mov byte [rdi], 0   ;Null terminate string here
     67 00000183 C3                  <1>     ret
@@ -387,10 +380,10 @@
     91 0000026A C3                  <1>     ret
     92                              <1> 
     93                              <1> .syntaxError:
-    94 0000026B 488D2D67070000      <1>     lea rbp, syntax ;Syntax error, keyword a bit confused
+    94 0000026B 488D2D65080000      <1>     lea rbp, syntax ;Syntax error, keyword a bit confused
     95 00000272 E94EFEFFFF          <1>     jmp criticalError
     96                              <1> .typError:
-    97 00000277 488D2D6A070000      <1>     lea rbp, typeError
+    97 00000277 488D2D68080000      <1>     lea rbp, typeError
     98 0000027E E942FEFFFF          <1>     jmp criticalError
     99                              <1> 
     13                                  %include "PARSE.ASM"
@@ -418,7 +411,7 @@
     35 00000291 53                  <1>     push rbx
     36 00000292 52                  <1>     push rdx
     37 00000293 31D2                <1>     xor edx, edx    ;Clear counter of chars
-    38 00000295 488D1D07070000      <1>     lea rbx, varChrs    ;Get the list of valid variable name chars
+    38 00000295 488D1D05080000      <1>     lea rbx, varChrs    ;Get the list of valid variable name chars
     39                              <1> .search:
     40 0000029C 4889DF              <1>     mov rdi, rbx    ;Save pointer in rbx
     41 0000029F AC                  <1>     lodsb       ;Get the first char into al
@@ -446,7 +439,7 @@
     63 000002BB 50                  <1>     push rax
     64 000002BC 51                  <1>     push rcx
     65 000002BD 56                  <1>     push rsi
-    66 000002BE E863040000          <1>     call findVariable
+    66 000002BE E861050000          <1>     call findVariable
     67 000002C3 4881FBFFFFFFFF      <1>     cmp rbx, -1
     68 000002CA 7406                <1>     je .exit
     69 000002CC 0FB65B03            <1>     movzx ebx, byte [rbx + memBlock.bBlockType]
@@ -572,7 +565,7 @@
    189 0000039C 3C41                <1>     cmp al, "A"       ;Alphabetical first char?
    190 0000039E 730D                <1>     jae .varOrRNDFound      ;Yes, variable found or rnd function or error
    191 000003A0 48FFCE              <1>     dec rsi            ;Else back one symbol 
-   192 000003A3 E89D020000          <1>     call decimalToHex  ;to read number into rax
+   192 000003A3 E89B030000          <1>     call decimalToHex  ;to read number into rax
    193 000003A8 E9D6FEFFFF          <1>     jmp spaceSkip
    194                              <1> 
    195                              <1> .varOrRNDFound:
@@ -605,7 +598,7 @@
    222 000003E3 48FFC6              <1>     inc rsi
    223 000003E6 E998FEFFFF          <1>     jmp spaceSkip
    224                              <1> .error:
-   225 000003EB 488D2DE7050000      <1>     lea rbp, syntax
+   225 000003EB 488D2DE5060000      <1>     lea rbp, syntax
    226 000003F2 E9CEFCFFFF          <1>     jmp criticalError
    227                              <1> 
    228                              <1> 
@@ -618,7 +611,7 @@
    235 000003F8 51                  <1>     push rcx
    236 000003F9 53                  <1>     push rbx
    237 000003FA E88FFEFFFF          <1>     call getVarNameLength   ;Returns the length of the var name in cx
-   238 000003FF E822030000          <1>     call findVariable       ;Returns a pointer to the variable block in rbx
+   238 000003FF E820040000          <1>     call findVariable       ;Returns a pointer to the variable block in rbx
    239 00000404 4881FBFFFFFFFF      <1>     cmp rbx, -1 ;Variable doesnt exist? Pretend it is 0
    240 0000040B 740E                <1>     je .noVar
    241 0000040D 807B0301            <1>     cmp byte [rbx + memBlock.bBlockType], varBlockType
@@ -633,7 +626,7 @@
    250 0000041B 31C0                <1>     xor eax, eax
    251 0000041D EBF8                <1>     jmp short .exit
    252                              <1> .stringFoundError:
-   253 0000041F 488D2DC2050000      <1>     lea rbp, typeError
+   253 0000041F 488D2DC0060000      <1>     lea rbp, typeError
    254 00000426 E99AFCFFFF          <1>     jmp criticalError
    255                              <1> 
    256                              <1> setNumericVariable:
@@ -646,7 +639,7 @@
    263 0000042D 53                  <1>     push rbx
    264                              <1> 
    265 0000042E E85BFEFFFF          <1>     call getVarNameLength   ;Returns the length of the var name in cx
-   266 00000433 E8EE020000          <1>     call findVariable       ;Returns a pointer to the variable block in rbx
+   266 00000433 E8EC030000          <1>     call findVariable       ;Returns a pointer to the variable block in rbx
    267 00000438 4881FBFFFFFFFF      <1>     cmp rbx, -1             ;Variable doesnt exit?
    268 0000043F 740E                <1>     je .makeEditInteger      ;Make one!
    269 00000441 807B0301            <1>     cmp byte [rbx + memBlock.bBlockType], varBlockType
@@ -658,10 +651,10 @@
    275 0000044D 5E                  <1>     pop rsi
    276 0000044E C3                  <1>     ret
    277                              <1> .makeEditInteger:
-   278 0000044F E8E2030000          <1>     call makeEditInteger
+   278 0000044F E8E0040000          <1>     call makeEditInteger
    279 00000454 EBF5                <1>     jmp short .exit
    280                              <1> .stringFoundError:
-   281 00000456 488D2D8B050000      <1>     lea rbp, typeError
+   281 00000456 488D2D89060000      <1>     lea rbp, typeError
    282 0000045D E963FCFFFF          <1>     jmp criticalError
    283                              <1> 
    284                              <1> setStringVariable:
@@ -673,7 +666,7 @@
    290                              <1> ;Adds a 0 to the end
    291 00000462 51                  <1>     push rcx
    292 00000463 E826FEFFFF          <1>     call getVarNameLength   ;Gets the length of the var name in cx
-   293 00000468 E814040000          <1>     call makeEditString     ;Returns a ptr to the var block in rbx
+   293 00000468 E812050000          <1>     call makeEditString     ;Returns a ptr to the var block in rbx
    294 0000046D 59                  <1>     pop rcx
    295 0000046E C3                  <1>     ret
    296                              <1> 
@@ -695,199 +688,271 @@
     18                              <1> ;All function pointers are saved as distances from the head
     19                              <1> ; of the function table
     20 00000479 044C4554            <1>     db 4, "LET"     ;DONE
-    21 0000047D 5700                <1>     dw oldSchoolAssignemnt - funTbl
-    22 0000047F 044E4557            <1>     db 4, "NEW"     ;DONE
-    23 00000483 6700                <1>     dw newProgram - funTbl 
-    24                              <1> 
-    25 00000485 054C495354          <1>     db 5, "LIST"
-    26 0000048A C900                <1>     dw listProgram - funTbl 
-    27                              <1> 
-    28 0000048C 0452554E            <1>     db 4, "RUN"
-    29 00000490 CC00                <1>     dw runProgram - funTbl
-    30                              <1> 
-    31 00000492 065052494E54        <1>     db 6, "PRINT"    ;ALMOST DONE
-    32 00000498 CF00                <1>     dw printStatement - funTbl
-    33                              <1> 
-    34 0000049A 023F                <1>     db 2, "?"        ;ALMOST DONE
-    35 0000049C CF00                <1>     dw printStatement - funTbl
-    36                              <1> 
-    37 0000049E 06494E505554        <1>     db 6, "INPUT"
-    38 000004A4 6601                <1>     dw getInput - funTbl
-    39                              <1> 
-    40 000004A6 034946              <1>     db 3, "IF"
-    41 000004A9 6901                <1>     dw handleIf - funTbl
-    42                              <1> 
-    43 000004AB 05474F544F          <1>     db 5, "GOTO"
-    44 000004B0 6C01                <1>     dw fancyJmp - funTbl
-    45                              <1> 
-    46 000004B2 0753595354454D      <1>     db 7, "SYSTEM"
-    47 000004B9 7201                <1>     dw returnToDOS - funTbl
-    48                              <1> 
-    49 000004BB 04464F52            <1>     db 4, "FOR"
-    50 000004BF 6F01                <1>     dw forLoop - funTbl
-    51                              <1> 
-    52 000004C1 04434C53            <1>     db 4, "CLS"     ;DONE
-    53 000004C5 7E01                <1>     dw cls - funTbl
-    54                              <1> 
-    55 000004C7 064445425547        <1>     db 6, "DEBUG"
-    56 000004CD 8301                <1>     dw dbgr - funTbl
-    57                              <1> 
-    58 000004CF FF                  <1>     db -1    ;Demarkate the end of the table
-    59                              <1> oldSchoolAssignemnt:
-    60                              <1> ;
-    61 000004D0 0FB60F              <1>     movzx ecx, byte [rdi]
-    62 000004D3 4801CE              <1>     add rsi, rcx
-    63 000004D6 E8A8FDFFFF          <1>     call spaceSkip  ;Goto var assignment as if at start of line
-    64 000004DB E925FDFFFF          <1>     jmp executeExpression.variableAssignment
-    65                              <1> newProgram: 
-    66                              <1> ;Simply reset the program pointers
-    67 000004E0 488D05(00000000)    <1>     lea rax, section.programArea.vstart
-    68 000004E7 488905(F8100000)    <1>     mov qword [minMemAddr], rax
-    69 000004EE 488905(12110000)    <1>     mov qword [lastBlock], rax  ;Start writing at this location
-    70 000004F5 488905(0A110000)    <1>     mov qword [mcbChain], rax   ;Create a mock MCB here
-    71                              <1> 
-    72 000004FC 4889C2              <1>     mov rdx, rax
-    73 000004FF 668B4801            <1>     mov cx, word [rax + memBlock.wBlockSize]
-    74 00000503 4889C7              <1>     mov rdi, rax
-    75 00000506 30C0                <1>     xor al, al
-    76 00000508 F3AA                <1>     rep stosb   ;Sanitise the old first allocation
-    77                              <1> 
-    78 0000050A C60272              <1>     mov byte [rdx + memBlock.bSignature], lastMemBlock
-    79 0000050D 66C742010000        <1>     mov word [rdx + memBlock.wBlockSize], 0 ;Dummy block, no size, gets overwritten
-    80 00000513 31C0                <1>     xor eax, eax
-    81 00000515 8805(08110000)      <1>     mov byte [strLen], al
-    82 0000051B 488D3D(C80F0000)    <1>     lea rdi, inString
-    83 00000522 B900010000          <1>     mov ecx, maxLineLen
-    84 00000527 F3AA                <1>     rep stosb
-    85 00000529 C605(24110000)0A    <1>     mov byte [currentLine], 10  ;Default to line 10
-    86 00000530 48FFC8              <1>     dec rax ;rax = -1
-    87 00000533 488905(1A110000)    <1>     mov qword [firstLinPtr], rax ;No program in memory
-    88 0000053A 668905(22110000)    <1>     mov word [firstLinNum], ax
-    89 00000541 C3                  <1>     ret
-    90                              <1> listProgram:
-    91                              <1> ;Go line by line and echo the program lines, inserting a crlf after each
-    92                              <1> ;First print the line number, then add a space
-    93 00000542 B002                <1>     mov al, 2
-    94 00000544 C3                  <1>     ret
-    95                              <1> runProgram:
-    96                              <1> ;Go to each line, one at a time, skip the line number and execute the expr
-    97                              <1> ;First thing it does, takes the first line number and moves it to current line number
-    98 00000545 B003                <1>     mov al, 3
-    99 00000547 C3                  <1>     ret
-   100                              <1> printStatement:
-   101                              <1> ;Strings must be "" delimited or a string variable must be used
-   102                              <1> ;rdi points to the command length
-   103 00000548 0FB60F              <1>     movzx ecx, byte [rdi]
-   104 0000054B 4801CE              <1>     add rsi, rcx
-   105                              <1> .printStart:
-   106 0000054E E830FDFFFF          <1>     call spaceSkip  ;move rsi to the start of the expression
-   107 00000553 AC                  <1>     lodsb
-   108 00000554 84C0                <1>     test al, al     ;Is this a null string?
-   109 00000556 746B                <1>     jz .psvexit
-   110 00000558 3C22                <1>     cmp al, 022h    ;22h = ASCII Speechmarks
-   111 0000055A 744F                <1>     je .stringPrint
-   112                              <1>     ;Here we check if the first char is ASCII, if it is, check if its a string var
-   113 0000055C 3C41                <1>     cmp al, "A"
-   114 0000055E 7204                <1>     jb .printExpr
-   115 00000560 3C5A                <1>     cmp al, "Z"
-   116 00000562 721A                <1>     jb .printStringVar
-   117                              <1> .printExpr:
-   118 00000564 48FFCE              <1>     dec rsi ;Return to the start of the string
-   119                              <1> .printExpr1:    ;Return without dec rsi
-   120 00000567 E86AFDFFFF          <1>     call handleAlgebraicExpression ;Gets value of a var and/or algebraic operation
-   121 0000056C E8FC000000          <1>     call printdecimalword
-   122 00000571 488D2D16040000      <1>     lea rbp, crlf
-   123 00000578 E818FCFFFF          <1>     call ttyOutString
-   124 0000057D C3                  <1>     ret
-   125                              <1> .printStringVar:
-   126                              <1>     ;Check if it is a string var
-   127 0000057E 48FFCE              <1>     dec rsi
-   128 00000581 E808FDFFFF          <1>     call getVarNameLength
-   129 00000586 E830FDFFFF          <1>     call getVarType
-   130 0000058B 81FB01000000        <1>     cmp ebx, strEquate
-   131 00000591 75D4                <1>     jne .printExpr1  ;rsi points to the same point as initially
-   132 00000593 E88E010000          <1>     call findVariable   ;ecx has string length, get block ptr in rbx
-   133 00000598 55                  <1>     push rbp
-   134 00000599 488D6B04            <1>     lea rbp, qword [rbx + stringBlock.string]
-   135 0000059D E8F3FBFFFF          <1>     call ttyOutString
-   136 000005A2 5D                  <1>     pop rbp
-   137 000005A3 4801CE              <1>     add rsi, rcx    ;Go past variable
-   138 000005A6 E8D8FCFFFF          <1>     call spaceSkip
-   139                              <1> .stringPrint:
-   140 000005AB AC                  <1>     lodsb
-   141 000005AC 3C00                <1>     cmp al, 0
-   142 000005AE 7413                <1>     je .psvexit
-   143 000005B0 3C3A                <1>     cmp al, ":"
-   144 000005B2 740F                <1>     je .psvexit
-   145 000005B4 3C22                <1>     cmp al, 022h    ;Close Speech marks, check next char
-   146 000005B6 7418                <1>     je .closespeechmarks
-   147 000005B8 3C3B                <1>     cmp al, ";"     ;Semicolon means print next section on same line
-   148 000005BA 741B                <1>     je .continue
-   149 000005BC E8CFFBFFFF          <1>     call ttyOutChar
-   150 000005C1 EBE8                <1>     jmp short .stringPrint
-   151                              <1> .psvexit:
-   152 000005C3 488D2DC4030000      <1>     lea rbp, crlf
-   153 000005CA E8C6FBFFFF          <1>     call ttyOutString
-   154 000005CF C3                  <1>     ret
-   155                              <1> .closespeechmarks:
-   156 000005D0 E8AEFCFFFF          <1>     call spaceSkip
-   157 000005D5 EBD4                <1>     jmp short .stringPrint
-   158                              <1> .continue:
-   159 000005D7 6687DB              <1>     xchg bx, bx
-   160 000005DA E96FFFFFFF          <1>     jmp .printStart
-   161                              <1> getInput:
-   162                              <1> ;Take a string as a prompt
-   163 000005DF B005                <1>     mov al, 5
-   164 000005E1 C3                  <1>     ret
-   165                              <1> handleIf:
-   166                              <1> ;Evaluate the string after IF is greater than 0, THEN goto line x
-   167                              <1> ;IF exp1 THEN exp2
-   168 000005E2 B006                <1>     mov al, 6
-   169 000005E4 C3                  <1>     ret
-   170                              <1> fancyJmp:
-   171                              <1> ;GOTO, the hell of every dumb high level programmer
-   172 000005E5 B007                <1>     mov al, 7
-   173 000005E7 C3                  <1>     ret
-   174                              <1> forLoop:
-   175 000005E8 B009                <1>     mov al, 9
-   176 000005EA C3                  <1>     ret
-   177                              <1> ;==========================================================:
-   178                              <1> ;==========================================================:
-   179                              <1> ;==========================================================:
-   180                              <1> ;          Functions Related to Program Management         :
-   181                              <1> ;==========================================================:
-   182                              <1> ;==========================================================:
-   183                              <1> ;==========================================================:
-   184                              <1> returnToDOS:
-   185 000005EB B007                <1>     mov al, 07h
-   186 000005ED E89EFBFFFF          <1>     call ttyOutChar
-   187 000005F2 E909FAFFFF          <1>     jmp start   ;Reset the interpreter
-   188                              <1> cls:
-   189 000005F7 E9A6FBFFFF          <1>     jmp ttyClear
-   190                              <1> dbgr:
-   191                              <1>     ;Hook int 40h to main prog EP to allow returning 
-   192                              <1> ;First call to get default BIOS segement selector and attribute word
-   193 000005FC B340                <1>     mov bl, 40h
-   194 000005FE B807F00000          <1>     mov eax, 0F007h ;Get the descriptor
-   195 00000603 CD35                <1>     int 35h
-   196 00000605 89C6                <1>     mov esi, eax    ;Move segment selector info to esi
-   197 00000607 B940000000          <1>     mov ecx, 40h    ;Interrupt number
-   198                              <1> ;dx preserves the attribute word
-   199 0000060C 488D1D09000000      <1>     lea rbx, .farReturn  ;Pointer passed in
-   200 00000613 B808F00000          <1>     mov eax, 0F008h ;Set descriptor
-   201 00000618 CD35                <1>     int 35h
-   202 0000061A CD38                <1>     int 38h ;Call debugger
-   203                              <1> .farReturn:
-   204                              <1>     ;Reconnect CTRL+BREAK handler
-   205 0000061C 48BC-               <1>     mov rsp, stacktop   ;Immediately reset stack
-   205 0000061E [C00F000000000000]  <1>
-   206 00000626 488D3DA2FAFFFF      <1>     lea rdi, ctrlBreakHandler
-   207 0000062D B03B                <1>     mov al, 3Bh
-   208 0000062F E8A4FAFFFF          <1>     call setHandler
-   209                              <1>     
-   210 00000634 488D2D53030000      <1>     lea rbp, crlf
-   211 0000063B E855FBFFFF          <1>     call ttyOutString
-   212 00000640 E9F7F9FFFF          <1>     jmp mainLoop
+    21 0000047D 6800                <1>     dw oldSchoolAssignemnt - funTbl
+    22                              <1> 
+    23 0000047F 044E4557            <1>     db 4, "NEW"     ;DONE
+    24 00000483 7800                <1>     dw newProgram - funTbl 
+    25                              <1> 
+    26 00000485 06434C454152        <1>     db 6, "CLEAR"   ;DONE
+    27 0000048B 7800                <1>     dw newProgram - funTbl 
+    28                              <1> 
+    29 0000048D 054C495354          <1>     db 5, "LIST"
+    30 00000492 DA00                <1>     dw listProgram - funTbl 
+    31                              <1> 
+    32 00000494 0452554E            <1>     db 4, "RUN"
+    33 00000498 1601                <1>     dw runProgram - funTbl
+    34                              <1> 
+    35 0000049A 075052494E5424      <1>     db 7, "PRINT$"    ;Not implemented yet
+    36 000004A1 8E01                <1>     dw printStatement - funTbl
+    37                              <1> 
+    38 000004A3 065052494E54        <1>     db 6, "PRINT"    ;DONE
+    39 000004A9 8E01                <1>     dw printStatement - funTbl
+    40                              <1> 
+    41 000004AB 023F                <1>     db 2, "?"        ;DONE, alias Print
+    42 000004AD 8E01                <1>     dw printStatement - funTbl
+    43                              <1> 
+    44 000004AF 06494E505554        <1>     db 6, "INPUT"
+    45 000004B5 2702                <1>     dw getInput - funTbl
+    46                              <1> 
+    47 000004B7 034946              <1>     db 3, "IF"
+    48 000004BA 2A02                <1>     dw handleIf - funTbl
+    49                              <1> 
+    50 000004BC 05474F544F          <1>     db 5, "GOTO"
+    51 000004C1 2D02                <1>     dw fancyJmp - funTbl
+    52                              <1> 
+    53 000004C3 0753595354454D      <1>     db 7, "SYSTEM"
+    54 000004CA 7002                <1>     dw returnToDOS - funTbl
+    55                              <1> 
+    56 000004CC 04464F52            <1>     db 4, "FOR"
+    57 000004D0 6D02                <1>     dw forLoop - funTbl
+    58                              <1> 
+    59 000004D2 04434C53            <1>     db 4, "CLS"     ;DONE
+    60 000004D6 7C02                <1>     dw cls - funTbl
+    61                              <1> 
+    62 000004D8 064445425547        <1>     db 6, "DEBUG"
+    63 000004DE 8102                <1>     dw dbgr - funTbl
+    64                              <1> 
+    65 000004E0 FF                  <1>     db -1    ;Demarkate the end of the table
+    66                              <1> oldSchoolAssignemnt:
+    67                              <1> ;
+    68 000004E1 0FB60F              <1>     movzx ecx, byte [rdi]
+    69 000004E4 4801CE              <1>     add rsi, rcx
+    70 000004E7 E897FDFFFF          <1>     call spaceSkip  ;Goto var assignment as if at start of line
+    71 000004EC E914FDFFFF          <1>     jmp executeExpression.variableAssignment
+    72                              <1> newProgram: 
+    73                              <1> ;Simply reset the program pointers
+    74 000004F1 488D05(00000000)    <1>     lea rax, section.programArea.vstart
+    75 000004F8 488905(F8100000)    <1>     mov qword [minMemAddr], rax
+    76 000004FF 488905(12110000)    <1>     mov qword [lastBlock], rax  ;Start writing at this location
+    77 00000506 488905(0A110000)    <1>     mov qword [mcbChain], rax   ;Create a mock MCB here
+    78                              <1> 
+    79 0000050D 4889C2              <1>     mov rdx, rax
+    80 00000510 668B4801            <1>     mov cx, word [rax + memBlock.wBlockSize]
+    81 00000514 4889C7              <1>     mov rdi, rax
+    82 00000517 30C0                <1>     xor al, al
+    83 00000519 F3AA                <1>     rep stosb   ;Sanitise the old first allocation
+    84                              <1> 
+    85 0000051B C60272              <1>     mov byte [rdx + memBlock.bSignature], lastMemBlock
+    86 0000051E 66C742010000        <1>     mov word [rdx + memBlock.wBlockSize], 0 ;Dummy block, no size, gets overwritten
+    87 00000524 31C0                <1>     xor eax, eax
+    88 00000526 8805(08110000)      <1>     mov byte [strLen], al
+    89 0000052C 488D3D(C80F0000)    <1>     lea rdi, inString
+    90 00000533 B900010000          <1>     mov ecx, maxLineLen
+    91 00000538 F3AA                <1>     rep stosb
+    92 0000053A C605(24110000)0A    <1>     mov byte [currentLine], 10  ;Default to line 10
+    93 00000541 48FFC8              <1>     dec rax ;rax = -1
+    94 00000544 488905(1A110000)    <1>     mov qword [firstLinPtr], rax ;No program in memory
+    95 0000054B 668905(22110000)    <1>     mov word [firstLinNum], ax
+    96 00000552 C3                  <1>     ret
+    97                              <1> listProgram:
+    98                              <1> ;Go line by line and echo the program lines, inserting a crlf after each
+    99                              <1> ;First print the line number, then add a space
+   100 00000553 488B1D(1A110000)    <1>     mov rbx, qword [firstLinPtr]    ;Get a pointer to the first program line
+   101                              <1> .printLines:
+   102 0000055A 488D2D2B050000      <1>     lea rbp, crlf           ;New line
+   103 00000561 E82FFCFFFF          <1>     call ttyOutString
+   104 00000566 4881FBFFFFFFFF      <1>     cmp rbx, -1
+   105 0000056D 741F                <1>     je .exit
+   106 0000056F 0FB74304            <1>     movzx eax, word [rbx + progLineBlock.wLineNum]
+   107 00000573 E8F3010000          <1>     call printdecimalword
+   108 00000578 B020                <1>     mov al, " "
+   109 0000057A E811FCFFFF          <1>     call ttyOutChar ;Print a space
+   110 0000057F 488D6B0E            <1>     lea rbp, qword [rbx + progLineBlock.sLine]  ;Null terminated string
+   111 00000583 E80DFCFFFF          <1>     call ttyOutString
+   112 00000588 488B5B06            <1>     mov rbx, qword [rbx + progLineBlock.qPtr]   ;Walk list of program lines
+   113 0000058C EBCC                <1>     jmp short .printLines
+   114                              <1> .exit:
+   115 0000058E C3                  <1>     ret
+   116                              <1> runProgram:
+   117                              <1> ;Go to each line, one at a time, skip the line number and execute the expr
+   118                              <1> ;First thing it does, takes the first line number and moves it to current line number
+   119 0000058F 488B1D(1A110000)    <1>     mov rbx, qword [firstLinPtr]    ;Get a pointer to the first program line
+   120                              <1> .runLines:
+   121 00000596 4881FBFFFFFFFF      <1>     cmp rbx, -1 ;Are we at the end?
+   122 0000059D 743C                <1>     je .exit    ;Yes, return to the prompt
+   123 0000059F 0FB74304            <1>     movzx eax, word [rbx + progLineBlock.wLineNum]
+   124 000005A3 668905(24110000)    <1>     mov word [currentLine], ax  ;Gone to new line
+   125 000005AA 488D730E            <1>     lea rsi, qword [rbx + progLineBlock.sLine]  ;Point to the instruction
+   126 000005AE E8D0FCFFFF          <1>     call spaceSkip  ;Goto first char
+   127                              <1> .rl0: 
+   128                              <1> ;Sort out GOTO later
+   129 000005B3 F605(09110000)01    <1>     test byte [stateByte], 1 ;Is break set before exec?
+   130 000005BA 7520                <1>     jnz .break
+   131 000005BC 53                  <1>     push rbx
+   132 000005BD E8F9FBFFFF          <1>     call executeExpression
+   133 000005C2 5B                  <1>     pop rbx
+   134 000005C3 F605(09110000)01    <1>     test byte [stateByte], 1 ;Is break set after exec?
+   135 000005CA 7510                <1>     jnz .break
+   136                              <1>     ;Now see if the line has any more expressions by checking for :
+   137 000005CC E89EFEFFFF          <1>     call findOtherExpressionsOnLine
+   138 000005D1 84C0                <1>     test al, al ;If al is null, no more expressions on the line
+   139 000005D3 75DE                <1>     jnz .rl0    ;Execute portion
+   140                              <1> 
+   141 000005D5 488B5B06            <1>     mov rbx, qword [rbx + progLineBlock.qPtr]   ;Walk list of program lines
+   142 000005D9 EBBB                <1>     jmp short .runLines
+   143                              <1> .exit:
+   144 000005DB C3                  <1>     ret
+   145                              <1> .break:
+   146 000005DC 488D2D2B050000      <1>     lea rbp, breakmsg
+   147 000005E3 E8ADFBFFFF          <1>     call ttyOutString
+   148 000005E8 31C0                <1>     xor eax, eax
+   149 000005EA 668B05(24110000)    <1>     mov ax, word [currentLine]
+   150 000005F1 E875010000          <1>     call printdecimalword
+   151 000005F6 488D2D8F040000      <1>     lea rbp, crlf
+   152 000005FD E893FBFFFF          <1>     call ttyOutString
+   153 00000602 E935FAFFFF          <1>     jmp mainLoop    ;Exit processing
+   154                              <1> 
+   155                              <1> 
+   156                              <1> printStatement:
+   157                              <1> ;Strings must be "" delimited or a string variable must be used
+   158                              <1> ;rdi points to the command length
+   159 00000607 0FB60F              <1>     movzx ecx, byte [rdi]
+   160 0000060A 4801CE              <1>     add rsi, rcx
+   161                              <1> .printStart:
+   162 0000060D E871FCFFFF          <1>     call spaceSkip  ;move rsi to the start of the expression
+   163 00000612 AC                  <1>     lodsb
+   164 00000613 84C0                <1>     test al, al     ;Is this a null string?
+   165 00000615 746B                <1>     jz .psvexit
+   166 00000617 3C22                <1>     cmp al, 022h    ;22h = ASCII Speechmarks
+   167 00000619 744F                <1>     je .stringPrint
+   168                              <1>     ;Here we check if the first char is ASCII, if it is, check if its a string var
+   169 0000061B 3C41                <1>     cmp al, "A"
+   170 0000061D 7204                <1>     jb .printExpr
+   171 0000061F 3C5A                <1>     cmp al, "Z"
+   172 00000621 721A                <1>     jb .printStringVar
+   173                              <1> .printExpr:
+   174 00000623 48FFCE              <1>     dec rsi ;Return to the start of the string
+   175                              <1> .printExpr1:    ;Return without dec rsi
+   176 00000626 E8ABFCFFFF          <1>     call handleAlgebraicExpression ;Gets value of a var and/or algebraic operation
+   177 0000062B E83B010000          <1>     call printdecimalword
+   178 00000630 488D2D55040000      <1>     lea rbp, crlf
+   179 00000637 E859FBFFFF          <1>     call ttyOutString
+   180 0000063C C3                  <1>     ret
+   181                              <1> .printStringVar:
+   182                              <1>     ;Check if it is a string var
+   183 0000063D 48FFCE              <1>     dec rsi
+   184 00000640 E849FCFFFF          <1>     call getVarNameLength
+   185 00000645 E871FCFFFF          <1>     call getVarType
+   186 0000064A 81FB01000000        <1>     cmp ebx, strEquate
+   187 00000650 75D4                <1>     jne .printExpr1  ;rsi points to the same point as initially
+   188 00000652 E8CD010000          <1>     call findVariable   ;ecx has string length, get block ptr in rbx
+   189 00000657 55                  <1>     push rbp
+   190 00000658 488D6B04            <1>     lea rbp, qword [rbx + stringBlock.string]
+   191 0000065C E834FBFFFF          <1>     call ttyOutString
+   192 00000661 5D                  <1>     pop rbp
+   193 00000662 4801CE              <1>     add rsi, rcx    ;Go past variable
+   194 00000665 E819FCFFFF          <1>     call spaceSkip
+   195                              <1> .stringPrint:
+   196 0000066A AC                  <1>     lodsb
+   197 0000066B 3C00                <1>     cmp al, 0
+   198 0000066D 7413                <1>     je .psvexit
+   199 0000066F 3C3A                <1>     cmp al, ":"
+   200 00000671 740F                <1>     je .psvexit
+   201 00000673 3C22                <1>     cmp al, 022h    ;Close Speech marks, check next char
+   202 00000675 7418                <1>     je .closespeechmarks
+   203 00000677 3C3B                <1>     cmp al, ";"     ;Semicolon means print next section on same line
+   204 00000679 741B                <1>     je .continue
+   205 0000067B E810FBFFFF          <1>     call ttyOutChar
+   206 00000680 EBE8                <1>     jmp short .stringPrint
+   207                              <1> .psvexit:
+   208 00000682 488D2D03040000      <1>     lea rbp, crlf
+   209 00000689 E807FBFFFF          <1>     call ttyOutString
+   210 0000068E C3                  <1>     ret
+   211                              <1> .closespeechmarks:
+   212 0000068F E8EFFBFFFF          <1>     call spaceSkip
+   213 00000694 EBD4                <1>     jmp short .stringPrint
+   214                              <1> .continue:
+   215 00000696 E8E8FBFFFF          <1>     call spaceSkip
+   216 0000069B E96DFFFFFF          <1>     jmp .printStart
+   217                              <1> getInput:
+   218                              <1> ;Take a string as a prompt
+   219 000006A0 B005                <1>     mov al, 5
+   220 000006A2 C3                  <1>     ret
+   221                              <1> handleIf:
+   222                              <1> ;Evaluate the string after IF is greater than 0, THEN goto line x
+   223                              <1> ;IF exp1 THEN exp2
+   224 000006A3 B006                <1>     mov al, 6
+   225 000006A5 C3                  <1>     ret
+   226                              <1> fancyJmp:
+   227                              <1> ;GOTO, the hell of every dumb high level programmer
+   228                              <1> ;rsi, rdi points just past the end of the command line
+   229 000006A6 0FB60F              <1>     movzx ecx, byte [rdi]
+   230 000006A9 4801CE              <1>     add rsi, rcx
+   231 000006AC E8D2FBFFFF          <1>     call spaceSkip  ;Skip all preceeding spaces
+   232 000006B1 E820FCFFFF          <1>     call handleAlgebraicExpression  ;Turn the expression into a number in ax
+   233 000006B6 0FB7D0              <1>     movzx edx, ax   ;Line number into dx
+   234 000006B9 E8D6010000          <1>     call searchForProgramLine   ;Get pointer to line in rbx
+   235 000006BE 4881FBFFFFFFFF      <1>     cmp rbx, -1
+   236 000006C5 740E                <1>     je .unknownLineNumber
+   237                              <1> 
+   238 000006C7 488D15C8FEFFFF      <1>     lea rdx, runProgram.runLines    ;New line pointer in rbx
+   239 000006CE 48891424            <1>     mov qword [rsp], rdx    ;Run lines return address
+   240                              <1>     ;xchg bx, bx
+   241 000006D2 C20800              <1>     ret 8  ;pop one qword off of the stack (old rbx)
+   242                              <1> .unknownLineNumber:
+   243 000006D5 488D2D1A040000      <1>     lea rbp, lineNoXist
+   244 000006DC E8B4FAFFFF          <1>     call ttyOutString
+   245 000006E1 E956F9FFFF          <1>     jmp mainLoop
+   246                              <1> forLoop:
+   247 000006E6 B009                <1>     mov al, 9
+   248 000006E8 C3                  <1>     ret
+   249                              <1> ;==========================================================:
+   250                              <1> ;==========================================================:
+   251                              <1> ;==========================================================:
+   252                              <1> ;          Functions Related to Program Management         :
+   253                              <1> ;==========================================================:
+   254                              <1> ;==========================================================:
+   255                              <1> ;==========================================================:
+   256                              <1> returnToDOS:
+   257 000006E9 B007                <1>     mov al, 07h
+   258 000006EB E8A0FAFFFF          <1>     call ttyOutChar
+   259 000006F0 E90BF9FFFF          <1>     jmp start   ;Reset the interpreter
+   260                              <1> cls:
+   261 000006F5 E9A8FAFFFF          <1>     jmp ttyClear
+   262                              <1> dbgr:
+   263                              <1>     ;Hook int 40h to main prog EP to allow returning 
+   264                              <1> ;First call to get default BIOS segement selector and attribute word
+   265 000006FA B340                <1>     mov bl, 40h
+   266 000006FC B807F00000          <1>     mov eax, 0F007h ;Get the descriptor
+   267 00000701 CD35                <1>     int 35h
+   268 00000703 89C6                <1>     mov esi, eax    ;Move segment selector info to esi
+   269 00000705 B940000000          <1>     mov ecx, 40h    ;Interrupt number
+   270                              <1> ;dx preserves the attribute word
+   271 0000070A 488D1D09000000      <1>     lea rbx, .farReturn  ;Pointer passed in
+   272 00000711 B808F00000          <1>     mov eax, 0F008h ;Set descriptor
+   273 00000716 CD35                <1>     int 35h
+   274 00000718 CD38                <1>     int 38h ;Call debugger
+   275                              <1> .farReturn:
+   276                              <1>     ;Reconnect CTRL+BREAK handler
+   277 0000071A 48BC-               <1>     mov rsp, stacktop   ;Immediately reset stack
+   277 0000071C [C00F000000000000]  <1>
+   278 00000724 488D3DA4F9FFFF      <1>     lea rdi, ctrlBreakHandler
+   279 0000072B B03B                <1>     mov al, 3Bh
+   280 0000072D E8A6F9FFFF          <1>     call setHandler
+   281                              <1>     
+   282 00000732 488D2D53030000      <1>     lea rbp, crlf
+   283 00000739 E857FAFFFF          <1>     call ttyOutString
+   284 0000073E E9F9F8FFFF          <1>     jmp mainLoop
     15                                  %include "MATH.ASM"
     16                              <1> decimalToHex:
     17                              <1>     ;Takes ASCII encoded decimal number and 
@@ -895,170 +960,170 @@
     19                              <1>     ;Input: rsi = Start of numeric ONLY string
     20                              <1>     ;Output: rax = Number
     21                              <1>     ;        rsi = First non-numeric char past end of number
-    22 00000645 53                  <1>     push rbx
-    23 00000646 51                  <1>     push rcx
-    24 00000647 52                  <1>     push rdx
-    25 00000648 31DB                <1>     xor ebx, ebx    ;Start with rbx = 0
+    22 00000743 53                  <1>     push rbx
+    23 00000744 51                  <1>     push rcx
+    24 00000745 52                  <1>     push rdx
+    25 00000746 31DB                <1>     xor ebx, ebx    ;Start with rbx = 0
     26                              <1> .processDigits:    
-    27 0000064A AC                  <1>     lodsb           ;Get the first digit in al
-    28 0000064B 2C30                <1>     sub al, 30h     ;Reduce to value
-    29 0000064D 31D2                <1>     xor edx, edx    ;Clear for multiplication
-    30 0000064F 3C0A                <1>     cmp al, 10      ;Digit valid? Propagte CF
-    31 00000651 480FB6C0            <1>     movzx rax, al   ;Clear upper bits
-    32 00000655 4893                <1>     xchg rax, rbx
-    33 00000657 730D                <1>     jnc .exit       ;Digit was not valid, exit
-    34 00000659 B90A000000          <1>     mov ecx, 10     ;Multiply result by 10
-    35 0000065E 48F7E1              <1>     mul rcx
-    36 00000661 4801C3              <1>     add rbx, rax    ;Add the new digits
-    37 00000664 EBE4                <1>     jmp short .processDigits
+    27 00000748 AC                  <1>     lodsb           ;Get the first digit in al
+    28 00000749 2C30                <1>     sub al, 30h     ;Reduce to value
+    29 0000074B 31D2                <1>     xor edx, edx    ;Clear for multiplication
+    30 0000074D 3C0A                <1>     cmp al, 10      ;Digit valid? Propagte CF
+    31 0000074F 480FB6C0            <1>     movzx rax, al   ;Clear upper bits
+    32 00000753 4893                <1>     xchg rax, rbx
+    33 00000755 730D                <1>     jnc .exit       ;Digit was not valid, exit
+    34 00000757 B90A000000          <1>     mov ecx, 10     ;Multiply result by 10
+    35 0000075C 48F7E1              <1>     mul rcx
+    36 0000075F 4801C3              <1>     add rbx, rax    ;Add the new digits
+    37 00000762 EBE4                <1>     jmp short .processDigits
     38                              <1> .exit:
-    39 00000666 48FFCE              <1>     dec rsi         ;rsi points to first non-digit
-    40 00000669 5A                  <1>     pop rdx
-    41 0000066A 59                  <1>     pop rcx
-    42 0000066B 5B                  <1>     pop rbx
-    43 0000066C C3                  <1>     ret
+    39 00000764 48FFCE              <1>     dec rsi         ;rsi points to first non-digit
+    40 00000767 5A                  <1>     pop rdx
+    41 00000768 59                  <1>     pop rcx
+    42 00000769 5B                  <1>     pop rbx
+    43 0000076A C3                  <1>     ret
     44                              <1> 
     45                              <1> printdecimalword:
     46                              <1> ;Takes the qword in rax and prints its decimal representation
-    47 0000066D 50                  <1>     push rax
-    48 0000066E 53                  <1>     push rbx
-    49 0000066F 488D3D(C8100000)    <1>     lea rdi, digitString   ;Use the default line as a buffer
+    47 0000076B 50                  <1>     push rax
+    48 0000076C 53                  <1>     push rbx
+    49 0000076D 488D3D(C8100000)    <1>     lea rdi, digitString   ;Use the default line as a buffer
     50                              <1>     ;Sanitise the digit buffer
-    51 00000676 57                  <1>     push rdi
-    52 00000677 51                  <1>     push rcx
-    53 00000678 50                  <1>     push rax
-    54 00000679 31C0                <1>     xor eax, eax
-    55 0000067B B906000000          <1>     mov ecx, digitStringLen/8
-    56 00000680 F348AB              <1>     rep stosq
-    57 00000683 58                  <1>     pop rax
-    58 00000684 59                  <1>     pop rcx
-    59 00000685 5F                  <1>     pop rdi
+    51 00000774 57                  <1>     push rdi
+    52 00000775 51                  <1>     push rcx
+    53 00000776 50                  <1>     push rax
+    54 00000777 31C0                <1>     xor eax, eax
+    55 00000779 B906000000          <1>     mov ecx, digitStringLen/8
+    56 0000077E F348AB              <1>     rep stosq
+    57 00000781 58                  <1>     pop rax
+    58 00000782 59                  <1>     pop rcx
+    59 00000783 5F                  <1>     pop rdi
     60                              <1> 
-    61 00000686 4881C72F000000      <1>     add rdi, digitStringLen - 1 ;Go to the end of the buffer
-    62 0000068D FD                  <1>     std ;Reverse string ops
-    63 0000068E 50                  <1>     push rax
-    64 0000068F 30C0                <1>     xor al, al  ;Place delimiter
-    65 00000691 AA                  <1>     stosb
-    66 00000692 58                  <1>     pop rax
-    67 00000693 48BB0A000000000000- <1>     mov rbx, 0Ah  ;Divide by 10
-    67 0000069C 00                  <1>
+    61 00000784 4881C72F000000      <1>     add rdi, digitStringLen - 1 ;Go to the end of the buffer
+    62 0000078B FD                  <1>     std ;Reverse string ops
+    63 0000078C 50                  <1>     push rax
+    64 0000078D 30C0                <1>     xor al, al  ;Place delimiter
+    65 0000078F AA                  <1>     stosb
+    66 00000790 58                  <1>     pop rax
+    67 00000791 48BB0A000000000000- <1>     mov rbx, 0Ah  ;Divide by 10
+    67 0000079A 00                  <1>
     68                              <1> .pdw0:
-    69 0000069D 31D2                <1>     xor edx, edx
-    70 0000069F 48F7F3              <1>     div rbx
-    71 000006A2 80C230              <1>     add dl, '0'
-    72 000006A5 80FA39              <1>     cmp dl, '9'
-    73 000006A8 7603                <1>     jbe .pdw1
-    74 000006AA 80C207              <1>     add dl, 'A'-'0'-10
+    69 0000079B 31D2                <1>     xor edx, edx
+    70 0000079D 48F7F3              <1>     div rbx
+    71 000007A0 80C230              <1>     add dl, '0'
+    72 000007A3 80FA39              <1>     cmp dl, '9'
+    73 000007A6 7603                <1>     jbe .pdw1
+    74 000007A8 80C207              <1>     add dl, 'A'-'0'-10
     75                              <1> .pdw1:
-    76 000006AD 50                  <1>     push rax
-    77 000006AE 88D0                <1>     mov al, dl    ;Save remainder byte
-    78 000006B0 AA                  <1>     stosb   ;Store the byte and add one to rdi
-    79 000006B1 58                  <1>     pop rax
-    80 000006B2 4885C0              <1>     test rax, rax
-    81 000006B5 75E6                <1>     jnz .pdw0
-    82 000006B7 FC                  <1>     cld ;Return string ops to normal
-    83 000006B8 48FFC7              <1>     inc rdi ;Skip the extra 0 that was inserted
-    84 000006BB 4889FD              <1>     mov rbp, rdi    ;Point rbp to the head of the string
-    85 000006BE E8D2FAFFFF          <1>     call ttyOutString
-    86 000006C3 5B                  <1>     pop rbx
-    87 000006C4 58                  <1>     pop rax
-    88 000006C5 C3                  <1>     ret
+    76 000007AB 50                  <1>     push rax
+    77 000007AC 88D0                <1>     mov al, dl    ;Save remainder byte
+    78 000007AE AA                  <1>     stosb   ;Store the byte and add one to rdi
+    79 000007AF 58                  <1>     pop rax
+    80 000007B0 4885C0              <1>     test rax, rax
+    81 000007B3 75E6                <1>     jnz .pdw0
+    82 000007B5 FC                  <1>     cld ;Return string ops to normal
+    83 000007B6 48FFC7              <1>     inc rdi ;Skip the extra 0 that was inserted
+    84 000007B9 4889FD              <1>     mov rbp, rdi    ;Point rbp to the head of the string
+    85 000007BC E8D4F9FFFF          <1>     call ttyOutString
+    86 000007C1 5B                  <1>     pop rbx
+    87 000007C2 58                  <1>     pop rax
+    88 000007C3 C3                  <1>     ret
     16                                  %include "MEMORY.ASM"
     17                              <1> allocateBlock:
     18                              <1> ;Allocates a program memory block, the caller then fixes the specifics
     19                              <1> ;Output: rbx = Pointer to generic memory block, or -1 if memory full
     20                              <1> ;       Caller needs to fill in, block size, block type and specifics
-    21 000006C6 52                  <1>     push rdx
+    21 000007C4 52                  <1>     push rdx
     22                              <1> .ab0:
-    23 000006C7 488B1D(12110000)    <1>     mov rbx, qword [lastBlock]    ;Get the last block in the chain
-    24 000006CE 4881FBFFFFFFFF      <1>     cmp rbx, -1 ;First allocation?
-    25 000006D5 742F                <1>     je .firstAllocation
-    26 000006D7 C60374              <1>     mov byte [rbx + memBlock.bSignature], notLastMemBlock ;Make it not be the last
-    27 000006DA 480FB75301          <1>     movzx rdx, word [rbx + memBlock.wBlockSize] ;Goto end of block
-    28 000006DF 4801D3              <1>     add rbx, rdx    ;Move rbx over the previous last block
-    29 000006E2 488B15(00110000)    <1>     mov rdx, qword [maxMemAddr]
-    30 000006E9 4839D3              <1>     cmp rbx, rdx ;rbx above maxmemory? 
-    31 000006EC 770C                <1>     ja .memoryFull
-    32 000006EE 48891D(12110000)    <1>     mov qword [lastBlock], rbx  ;New last block
-    33 000006F5 C60372              <1>     mov byte [rbx + memBlock.bSignature], lastMemBlock
+    23 000007C5 488B1D(12110000)    <1>     mov rbx, qword [lastBlock]    ;Get the last block in the chain
+    24 000007CC 4881FBFFFFFFFF      <1>     cmp rbx, -1 ;First allocation?
+    25 000007D3 742F                <1>     je .firstAllocation
+    26 000007D5 C60374              <1>     mov byte [rbx + memBlock.bSignature], notLastMemBlock ;Make it not be the last
+    27 000007D8 480FB75301          <1>     movzx rdx, word [rbx + memBlock.wBlockSize] ;Goto end of block
+    28 000007DD 4801D3              <1>     add rbx, rdx    ;Move rbx over the previous last block
+    29 000007E0 488B15(00110000)    <1>     mov rdx, qword [maxMemAddr]
+    30 000007E7 4839D3              <1>     cmp rbx, rdx ;rbx above maxmemory? 
+    31 000007EA 770C                <1>     ja .memoryFull
+    32 000007EC 48891D(12110000)    <1>     mov qword [lastBlock], rbx  ;New last block
+    33 000007F3 C60372              <1>     mov byte [rbx + memBlock.bSignature], lastMemBlock
     34                              <1> .exit:
-    35 000006F8 5A                  <1>     pop rdx
-    36 000006F9 C3                  <1>     ret
+    35 000007F6 5A                  <1>     pop rdx
+    36 000007F7 C3                  <1>     ret
     37                              <1> .memoryFull:
-    38 000006FA 48BBFFFFFFFFFFFFFF- <1>     mov rbx, -1
-    38 00000703 FF                  <1>
-    39 00000704 EBF2                <1>     jmp short .exit
+    38 000007F8 48BBFFFFFFFFFFFFFF- <1>     mov rbx, -1
+    38 00000801 FF                  <1>
+    39 00000802 EBF2                <1>     jmp short .exit
     40                              <1> .firstAllocation:
     41                              <1> ;Deal with first allocation
-    42 00000706 488D1D(00000000)    <1>     lea rbx, section.programArea.vstart   ;Get this as the head of the chain
-    43 0000070D 48891D(12110000)    <1>     mov qword [lastBlock], rbx
-    44 00000714 48891D(0A110000)    <1>     mov qword [mcbChain], rbx
-    45 0000071B C60372              <1>     mov byte [rbx + memBlock.bSignature], lastMemBlock
-    46 0000071E 66C743010000        <1>     mov word [rbx + memBlock.wBlockSize], 0 ;Dummy block
-    47 00000724 EBD2                <1>     jmp short .exit
+    42 00000804 488D1D(00000000)    <1>     lea rbx, section.programArea.vstart   ;Get this as the head of the chain
+    43 0000080B 48891D(12110000)    <1>     mov qword [lastBlock], rbx
+    44 00000812 48891D(0A110000)    <1>     mov qword [mcbChain], rbx
+    45 00000819 C60372              <1>     mov byte [rbx + memBlock.bSignature], lastMemBlock
+    46 0000081C 66C743010000        <1>     mov word [rbx + memBlock.wBlockSize], 0 ;Dummy block
+    47 00000822 EBD2                <1>     jmp short .exit
     48                              <1> 
     49                              <1> findVariable:
     50                              <1> ;Input: rsi = Source string for variable name
     51                              <1> ;       ecx = Length of variable name (max 40)
     52                              <1> ;Output: rbx = ptr to varBlock/strBlock OR -1 if doesnt exist
-    53 00000726 50                  <1>     push rax
-    54 00000727 51                  <1>     push rcx
-    55 00000728 52                  <1>     push rdx
-    56 00000729 56                  <1>     push rsi
-    57 0000072A 57                  <1>     push rdi
-    58 0000072B 488B1D(0A110000)    <1>     mov rbx, qword [mcbChain]   ;Start of the chain
-    59 00000732 4881FBFFFFFFFF      <1>     cmp rbx, -1 ;Chain empty?
-    60 00000739 7446                <1>     je .exit
+    53 00000824 50                  <1>     push rax
+    54 00000825 51                  <1>     push rcx
+    55 00000826 52                  <1>     push rdx
+    56 00000827 56                  <1>     push rsi
+    57 00000828 57                  <1>     push rdi
+    58 00000829 488B1D(0A110000)    <1>     mov rbx, qword [mcbChain]   ;Start of the chain
+    59 00000830 4881FBFFFFFFFF      <1>     cmp rbx, -1 ;Chain empty?
+    60 00000837 7446                <1>     je .exit
     61                              <1> .search:
-    62 0000073B 807B0301            <1>     cmp byte [rbx + memBlock.bBlockType], varBlockType
-    63 0000073F 7415                <1>     je .varFound    ;We found a numerical variable
-    64 00000741 807B0302            <1>     cmp byte [rbx + memBlock.bBlockType], datBlockType
-    65 00000745 741E                <1>     je .datFound    ;We found a string variable
+    62 00000839 807B0301            <1>     cmp byte [rbx + memBlock.bBlockType], varBlockType
+    63 0000083D 7415                <1>     je .varFound    ;We found a numerical variable
+    64 0000083F 807B0302            <1>     cmp byte [rbx + memBlock.bBlockType], datBlockType
+    65 00000843 741E                <1>     je .datFound    ;We found a string variable
     66                              <1> .invalid:
     67                              <1>     ;Are we at the end of the chain?
-    68 00000747 803B72              <1>     cmp byte [rbx + memBlock.bSignature], lastMemBlock
-    69 0000074A 742B                <1>     je .varNotFound ;At the end of the chain and var not found? Error!
-    70 0000074C 480FB75301          <1>     movzx rdx, word [rbx + memBlock.wBlockSize]
-    71 00000751 4801D3              <1>     add rbx, rdx    ;Goto next block
-    72 00000754 EBE5                <1>     jmp short .search
+    68 00000845 803B72              <1>     cmp byte [rbx + memBlock.bSignature], lastMemBlock
+    69 00000848 742B                <1>     je .varNotFound ;At the end of the chain and var not found? Error!
+    70 0000084A 480FB75301          <1>     movzx rdx, word [rbx + memBlock.wBlockSize]
+    71 0000084F 4801D3              <1>     add rbx, rdx    ;Goto next block
+    72 00000852 EBE5                <1>     jmp short .search
     73                              <1> .varFound:
     74                              <1>     ;Compare to see the var is our var
-    75 00000756 488D7B0C            <1>     lea rdi, qword [rbx + varBlock.sVarName] ;point rdi to the name string
-    76 0000075A 51                  <1>     push rcx
-    77 0000075B 56                  <1>     push rsi
-    78 0000075C F3A6                <1>     repe cmpsb  ;Compare one byte at a time
-    79 0000075E 5E                  <1>     pop rsi
-    80 0000075F 59                  <1>     pop rcx
-    81 00000760 75E5                <1>     jne .invalid
-    82 00000762 F8                  <1>     clc
-    83 00000763 EB1C                <1>     jmp short .exit
+    75 00000854 488D7B0C            <1>     lea rdi, qword [rbx + varBlock.sVarName] ;point rdi to the name string
+    76 00000858 51                  <1>     push rcx
+    77 00000859 56                  <1>     push rsi
+    78 0000085A F3A6                <1>     repe cmpsb  ;Compare one byte at a time
+    79 0000085C 5E                  <1>     pop rsi
+    80 0000085D 59                  <1>     pop rcx
+    81 0000085E 75E5                <1>     jne .invalid
+    82 00000860 F8                  <1>     clc
+    83 00000861 EB1C                <1>     jmp short .exit
     84                              <1> .datFound:
-    85 00000765 488DBB04010000      <1>     lea rdi, qword [rbx + stringBlock.sVarName] ;point rdi to the name string
-    86 0000076C 51                  <1>     push rcx
-    87 0000076D 56                  <1>     push rsi
-    88 0000076E F3A6                <1>     repe cmpsb  ;Compare one byte at a time
-    89 00000770 5E                  <1>     pop rsi
-    90 00000771 59                  <1>     pop rcx
-    91 00000772 75D3                <1>     jne .invalid
-    92 00000774 F8                  <1>     clc
-    93 00000775 EB0A                <1>     jmp short .exit
+    85 00000863 488DBB04010000      <1>     lea rdi, qword [rbx + stringBlock.sVarName] ;point rdi to the name string
+    86 0000086A 51                  <1>     push rcx
+    87 0000086B 56                  <1>     push rsi
+    88 0000086C F3A6                <1>     repe cmpsb  ;Compare one byte at a time
+    89 0000086E 5E                  <1>     pop rsi
+    90 0000086F 59                  <1>     pop rcx
+    91 00000870 75D3                <1>     jne .invalid
+    92 00000872 F8                  <1>     clc
+    93 00000873 EB0A                <1>     jmp short .exit
     94                              <1> .varNotFound:
-    95 00000777 48BBFFFFFFFFFFFFFF- <1>     mov rbx, -1
-    95 00000780 FF                  <1>
+    95 00000875 48BBFFFFFFFFFFFFFF- <1>     mov rbx, -1
+    95 0000087E FF                  <1>
     96                              <1> .exit:
-    97 00000781 5F                  <1>     pop rdi
-    98 00000782 5E                  <1>     pop rsi
-    99 00000783 5A                  <1>     pop rdx
-   100 00000784 59                  <1>     pop rcx
-   101 00000785 58                  <1>     pop rax
-   102 00000786 C3                  <1>     ret
+    97 0000087F 5F                  <1>     pop rdi
+    98 00000880 5E                  <1>     pop rsi
+    99 00000881 5A                  <1>     pop rdx
+   100 00000882 59                  <1>     pop rcx
+   101 00000883 58                  <1>     pop rax
+   102 00000884 C3                  <1>     ret
    103                              <1> 
    104                              <1> findFirstLine:
    105                              <1> ;Output: rbx = Pointer to the first program block
    106                              <1> ;         dx = Number of the first line
-   107 00000787 488B1D(1A110000)    <1>     mov rbx, qword [firstLinPtr]
-   108 0000078E 668B15(22110000)    <1>     mov dx, word [firstLinNum]
-   109 00000795 C3                  <1>     ret
+   107 00000885 488B1D(1A110000)    <1>     mov rbx, qword [firstLinPtr]
+   108 0000088C 668B15(22110000)    <1>     mov dx, word [firstLinNum]
+   109 00000893 C3                  <1>     ret
    110                              <1> 
    111                              <1> ;FIRST SEARCH FOR A LINE NUMBER BEFORE INSERTING IT INTO THE CHAIN
    112                              <1> ;IF THE LINE NUMBER IS FOUND, REPLACE THE COMMAND STRING
@@ -1068,135 +1133,135 @@
    116                              <1> ; return a pointer to the block in rbx. If it doesn't, return -1 in rbx
    117                              <1> ;Input: dx = Line number
    118                              <1> ;Output: rbx = Pointer to program block 
-   119 00000796 488B1D(1A110000)    <1>     mov rbx, qword [firstLinPtr]
-   120 0000079D 4881FBFFFFFFFF      <1>     cmp rbx, -1
-   121 000007A4 7413                <1>     je .lineFound
+   119 00000894 488B1D(1A110000)    <1>     mov rbx, qword [firstLinPtr]
+   120 0000089B 4881FBFFFFFFFF      <1>     cmp rbx, -1
+   121 000008A2 7413                <1>     je .lineFound
    122                              <1> .search:
-   123 000007A6 66395304            <1>     cmp word [rbx + progLineBlock.wLineNum], dx ;Equal line numbers?
-   124 000007AA 740D                <1>     je .lineFound
-   125 000007AC 488B5B06            <1>     mov rbx, qword [rbx + progLineBlock.qPtr]   ;Walk chain
-   126 000007B0 4881FBFFFFFFFF      <1>     cmp rbx, -1
-   127 000007B7 75ED                <1>     jne .search ;Not -1? Keep searching
+   123 000008A4 66395304            <1>     cmp word [rbx + progLineBlock.wLineNum], dx ;Equal line numbers?
+   124 000008A8 740D                <1>     je .lineFound
+   125 000008AA 488B5B06            <1>     mov rbx, qword [rbx + progLineBlock.qPtr]   ;Walk chain
+   126 000008AE 4881FBFFFFFFFF      <1>     cmp rbx, -1
+   127 000008B5 75ED                <1>     jne .search ;Not -1? Keep searching
    128                              <1> .lineFound:
-   129 000007B9 C3                  <1>     ret
+   129 000008B7 C3                  <1>     ret
    130                              <1> 
    131                              <1> insertProgramLine:
    132                              <1> ;Walk the program chain looking for the biggest number less than our
    133                              <1> ; line number. Once we have reached the end of the chain, insert the block there, or
    134                              <1> ; if there is no block, then we are the last in the chain
    135                              <1> ;Input: rsi = New Program Block to be added
-   136 000007BA 50                  <1>     push rax
-   137 000007BB 53                  <1>     push rbx
-   138 000007BC 51                  <1>     push rcx
-   139 000007BD 52                  <1>     push rdx
-   140 000007BE 57                  <1>     push rdi
-   141 000007BF E8C3FFFFFF          <1>     call findFirstLine  ;Get start of program in rbx and line number in dx
+   136 000008B8 50                  <1>     push rax
+   137 000008B9 53                  <1>     push rbx
+   138 000008BA 51                  <1>     push rcx
+   139 000008BB 52                  <1>     push rdx
+   140 000008BC 57                  <1>     push rdi
+   141 000008BD E8C3FFFFFF          <1>     call findFirstLine  ;Get start of program in rbx and line number in dx
    142                              <1> ;First check if we should be the first line
    143                              <1> 
-   144 000007C4 668B4E04            <1>     mov cx, word [rsi + progLineBlock.wLineNum] ;Save line number in cx
-   145 000007C8 4881FBFFFFFFFF      <1>     cmp rbx, -1 ;Empty program marker
-   146 000007CF 744D                <1>     je .first
-   147 000007D1 6639D1              <1>     cmp cx, dx  ;If cx is below dx, then our entry is first
-   148 000007D4 7248                <1>     jb .first    
+   144 000008C2 668B4E04            <1>     mov cx, word [rsi + progLineBlock.wLineNum] ;Save line number in cx
+   145 000008C6 4881FBFFFFFFFF      <1>     cmp rbx, -1 ;Empty program marker
+   146 000008CD 744D                <1>     je .first
+   147 000008CF 6639D1              <1>     cmp cx, dx  ;If cx is below dx, then our entry is first
+   148 000008D2 7248                <1>     jb .first    
    149                              <1> ;Use ax as the best line number and rdi as the pointer to that block
-   150 000007D6 66B8FFFF            <1>     mov ax, -1  ;Marker to indicate no insertion
+   150 000008D4 66B8FFFF            <1>     mov ax, -1  ;Marker to indicate no insertion
    151                              <1> .walk:
-   152 000007DA 48817B06FFFFFFFF    <1>     cmp qword [rbx + progLineBlock.qPtr], -1    ;We are at the end
-   153 000007E2 7419                <1>     je .sort
-   154 000007E4 488B5B06            <1>     mov rbx, qword [rbx + progLineBlock.qPtr] ;Walk chain in rbx
-   155 000007E8 663B4B04            <1>     cmp cx, word [rbx + progLineBlock.wLineNum]
-   156 000007EC 77EC                <1>     ja .walk    ;If line number is above my line number, keep walking
+   152 000008D8 48817B06FFFFFFFF    <1>     cmp qword [rbx + progLineBlock.qPtr], -1    ;We are at the end
+   153 000008E0 7419                <1>     je .sort
+   154 000008E2 488B5B06            <1>     mov rbx, qword [rbx + progLineBlock.qPtr] ;Walk chain in rbx
+   155 000008E6 663B4B04            <1>     cmp cx, word [rbx + progLineBlock.wLineNum]
+   156 000008EA 77EC                <1>     ja .walk    ;If line number is above my line number, keep walking
    157                              <1> .candidate:
    158                              <1>     ;If the new line number is below the old line number, reject
-   159 000007EE 663B4304            <1>     cmp ax, word [rbx + progLineBlock.wLineNum]
-   160 000007F2 72E6                <1>     jb .walk
-   161 000007F4 4889DF              <1>     mov rdi, rbx
-   162 000007F7 668B4304            <1>     mov ax, word [rbx + progLineBlock.wLineNum]
-   163 000007FB EBDD                <1>     jmp short .walk
+   159 000008EC 663B4304            <1>     cmp ax, word [rbx + progLineBlock.wLineNum]
+   160 000008F0 72E6                <1>     jb .walk
+   161 000008F2 4889DF              <1>     mov rdi, rbx
+   162 000008F5 668B4304            <1>     mov ax, word [rbx + progLineBlock.wLineNum]
+   163 000008F9 EBDD                <1>     jmp short .walk
    164                              <1> .sort:
-   165 000007FD 66FFC0              <1>     inc ax  ;If no candidates, exit
-   166 00000800 740E                <1>     jz .skipLink
+   165 000008FB 66FFC0              <1>     inc ax  ;If no candidates, exit
+   166 000008FE 740E                <1>     jz .skipLink
    167                              <1>     ;rdi points to the previous line to link to
-   168 00000802 488B5706            <1>     mov rdx, qword [rdi + progLineBlock.qPtr]
-   169 00000806 48897706            <1>     mov qword [rdi + progLineBlock.qPtr], rsi   ;Insert self here
-   170 0000080A 48895606            <1>     mov qword [rsi + progLineBlock.qPtr], rdx   ;Link new block to next line
-   171 0000080E EB20                <1>     jmp short .exit
+   168 00000900 488B5706            <1>     mov rdx, qword [rdi + progLineBlock.qPtr]
+   169 00000904 48897706            <1>     mov qword [rdi + progLineBlock.qPtr], rsi   ;Insert self here
+   170 00000908 48895606            <1>     mov qword [rsi + progLineBlock.qPtr], rdx   ;Link new block to next line
+   171 0000090C EB20                <1>     jmp short .exit
    172                              <1> .skipLink:
-   173 00000810 48897306            <1>     mov qword [rbx + progLineBlock.qPtr], rsi   ;Link rsi to last element in list
-   174 00000814 48C74606FFFFFFFF    <1>     mov qword [rsi + progLineBlock.qPtr], -1    ;End of chain marker
-   175 0000081C EB12                <1>     jmp short .exit
+   173 0000090E 48897306            <1>     mov qword [rbx + progLineBlock.qPtr], rsi   ;Link rsi to last element in list
+   174 00000912 48C74606FFFFFFFF    <1>     mov qword [rsi + progLineBlock.qPtr], -1    ;End of chain marker
+   175 0000091A EB12                <1>     jmp short .exit
    176                              <1> .first:
-   177 0000081E 488935(1A110000)    <1>     mov qword [firstLinPtr], rsi
-   178 00000825 66890D(22110000)    <1>     mov word [firstLinNum], cx
-   179 0000082C 48895E06            <1>     mov qword [rsi + progLineBlock.qPtr], rbx   ;Put the old first line as second line
+   177 0000091C 488935(1A110000)    <1>     mov qword [firstLinPtr], rsi
+   178 00000923 66890D(22110000)    <1>     mov word [firstLinNum], cx
+   179 0000092A 48895E06            <1>     mov qword [rsi + progLineBlock.qPtr], rbx   ;Put the old first line as second line
    180                              <1> .exit:
-   181 00000830 5F                  <1>     pop rdi
-   182 00000831 5A                  <1>     pop rdx
-   183 00000832 59                  <1>     pop rcx
-   184 00000833 5B                  <1>     pop rbx
-   185 00000834 58                  <1>     pop rax
-   186 00000835 C3                  <1>     ret
+   181 0000092E 5F                  <1>     pop rdi
+   182 0000092F 5A                  <1>     pop rdx
+   183 00000930 59                  <1>     pop rcx
+   184 00000931 5B                  <1>     pop rbx
+   185 00000932 58                  <1>     pop rax
+   186 00000933 C3                  <1>     ret
    187                              <1> 
    188                              <1> makeEditInteger:
    189                              <1> ;Will make a variable if it is new name, or edit the value if it already exists
    190                              <1> ;Input: rsi = Var name
    191                              <1> ;       (e)cx = Length of varname, max 40 chars
    192                              <1> ;       rax = Value
-   193 00000836 E8EBFEFFFF          <1>     call findVariable   ;rbx returned with var block or -1
-   194 0000083B 4881FBFFFFFFFF      <1>     cmp rbx, -1
-   195 00000842 7405                <1>     je .newVar
-   196 00000844 48894304            <1>     mov qword [rbx + varBlock.qValue], rax
-   197 00000848 C3                  <1>     ret
+   193 00000934 E8EBFEFFFF          <1>     call findVariable   ;rbx returned with var block or -1
+   194 00000939 4881FBFFFFFFFF      <1>     cmp rbx, -1
+   195 00000940 7405                <1>     je .newVar
+   196 00000942 48894304            <1>     mov qword [rbx + varBlock.qValue], rax
+   197 00000946 C3                  <1>     ret
    198                              <1> .newVar:
-   199 00000849 E878FEFFFF          <1>     call allocateBlock
-   200 0000084E 4881FBFFFFFFFF      <1>     cmp rbx, -1
-   201 00000855 741E                <1>     je .error
-   202 00000857 48894304            <1>     mov qword [rbx + varBlock.qValue], rax  ;Save value
-   203 0000085B 66894B01            <1>     mov word [rbx + varBlock.wBlockSize], cx    ;Save length of name
-   204 0000085F 668143010C00        <1>     add word [rbx + varBlock.wBlockSize], varBlock_size ;Add full block size
-   205 00000865 C6430301            <1>     mov byte [rbx + varBlock.bBlockType], varBlockType  ;Block type
-   206 00000869 57                  <1>     push rdi
-   207 0000086A 488D7B0C            <1>     lea rdi, qword [rbx + varBlock.sVarName]
-   208 0000086E E87B000000          <1>     call strcpy ;Copy the string name into block buffer
-   209 00000873 5F                  <1>     pop rdi
-   210 00000874 C3                  <1>     ret
+   199 00000947 E878FEFFFF          <1>     call allocateBlock
+   200 0000094C 4881FBFFFFFFFF      <1>     cmp rbx, -1
+   201 00000953 741E                <1>     je .error
+   202 00000955 48894304            <1>     mov qword [rbx + varBlock.qValue], rax  ;Save value
+   203 00000959 66894B01            <1>     mov word [rbx + varBlock.wBlockSize], cx    ;Save length of name
+   204 0000095D 668143010C00        <1>     add word [rbx + varBlock.wBlockSize], varBlock_size ;Add full block size
+   205 00000963 C6430301            <1>     mov byte [rbx + varBlock.bBlockType], varBlockType  ;Block type
+   206 00000967 57                  <1>     push rdi
+   207 00000968 488D7B0C            <1>     lea rdi, qword [rbx + varBlock.sVarName]
+   208 0000096C E87B000000          <1>     call strcpy ;Copy the string name into block buffer
+   209 00000971 5F                  <1>     pop rdi
+   210 00000972 C3                  <1>     ret
    211                              <1> .error:
-   212 00000875 488D2D4D010000      <1>     lea rbp, noMem
-   213 0000087C E944F8FFFF          <1>     jmp criticalError
+   212 00000973 488D2D4D010000      <1>     lea rbp, noMem
+   213 0000097A E946F7FFFF          <1>     jmp criticalError
    214                              <1> makeEditString:
    215                              <1> ;Will make a string if it is new name, or replace the string. Strings are null termin
    216                              <1> ;Input: rsi = Var name
    217                              <1> ;       ecx = Length of varname, max 40 chars
    218                              <1> ;       rdx = Ptr to string itself
-   219 00000881 57                  <1>     push rdi
-   220 00000882 56                  <1>     push rsi
-   221 00000883 50                  <1>     push rax
-   222 00000884 53                  <1>     push rbx
-   223 00000885 E89CFEFFFF          <1>     call findVariable   ;rbx returned with string block or -1
-   224 0000088A 4881FBFFFFFFFF      <1>     cmp rbx, -1
-   225 00000891 7528                <1>     jne .strcopy
-   226 00000893 E82EFEFFFF          <1>     call allocateBlock
-   227 00000898 4881FBFFFFFFFF      <1>     cmp rbx, -1
-   228 0000089F 742E                <1>     je .error
-   229 000008A1 66894B01            <1>     mov word [rbx + stringBlock.wBlockSize], cx    ;Save length of name
-   230 000008A5 668143010401        <1>     add word [rbx + stringBlock.wBlockSize], stringBlock_size ;Add full block size
-   231 000008AB C6430302            <1>     mov byte [rbx + stringBlock.bBlockType], datBlockType  ;Block type
-   232 000008AF 488DBB04010000      <1>     lea rdi, qword [rbx + stringBlock.sVarName]
-   233 000008B6 E833000000          <1>     call strcpy ;Copy the string name into block buffer
+   219 0000097F 57                  <1>     push rdi
+   220 00000980 56                  <1>     push rsi
+   221 00000981 50                  <1>     push rax
+   222 00000982 53                  <1>     push rbx
+   223 00000983 E89CFEFFFF          <1>     call findVariable   ;rbx returned with string block or -1
+   224 00000988 4881FBFFFFFFFF      <1>     cmp rbx, -1
+   225 0000098F 7528                <1>     jne .strcopy
+   226 00000991 E82EFEFFFF          <1>     call allocateBlock
+   227 00000996 4881FBFFFFFFFF      <1>     cmp rbx, -1
+   228 0000099D 742E                <1>     je .error
+   229 0000099F 66894B01            <1>     mov word [rbx + stringBlock.wBlockSize], cx    ;Save length of name
+   230 000009A3 668143010401        <1>     add word [rbx + stringBlock.wBlockSize], stringBlock_size ;Add full block size
+   231 000009A9 C6430302            <1>     mov byte [rbx + stringBlock.bBlockType], datBlockType  ;Block type
+   232 000009AD 488DBB04010000      <1>     lea rdi, qword [rbx + stringBlock.sVarName]
+   233 000009B4 E833000000          <1>     call strcpy ;Copy the string name into block buffer
    234                              <1> .strcopy:
-   235 000008BB 488D7B04            <1>     lea rdi, qword [rbx + stringBlock.string]   ;point to string space
-   236 000008BF 4889D6              <1>     mov rsi, rdx    ;Point rsi to the string itself
-   237 000008C2 E814000000          <1>     call terminatedstrcpy
-   238 000008C7 30C0                <1>     xor al, al
-   239 000008C9 AA                  <1>     stosb   ;Store the null delimiter
-   240 000008CA 5B                  <1>     pop rbx
-   241 000008CB 58                  <1>     pop rax
-   242 000008CC 5E                  <1>     pop rsi
-   243 000008CD 5F                  <1>     pop rdi
-   244 000008CE C3                  <1>     ret
+   235 000009B9 488D7B04            <1>     lea rdi, qword [rbx + stringBlock.string]   ;point to string space
+   236 000009BD 4889D6              <1>     mov rsi, rdx    ;Point rsi to the string itself
+   237 000009C0 E814000000          <1>     call terminatedstrcpy
+   238 000009C5 30C0                <1>     xor al, al
+   239 000009C7 AA                  <1>     stosb   ;Store the null delimiter
+   240 000009C8 5B                  <1>     pop rbx
+   241 000009C9 58                  <1>     pop rax
+   242 000009CA 5E                  <1>     pop rsi
+   243 000009CB 5F                  <1>     pop rdi
+   244 000009CC C3                  <1>     ret
    245                              <1> .error:
-   246 000008CF 488D2DF3000000      <1>     lea rbp, noMem
-   247 000008D6 E9EAF7FFFF          <1>     jmp criticalError
+   246 000009CD 488D2DF3000000      <1>     lea rbp, noMem
+   247 000009D4 E9ECF6FFFF          <1>     jmp criticalError
    248                              <1> ;------------------------------------------------:
    249                              <1> ;  The below are misc memory related functions   :
    250                              <1> ;------------------------------------------------:
@@ -1204,101 +1269,101 @@
    252                              <1> ;rdi = Destination String
    253                              <1> ;rsi = Source String
    254                              <1> ;Copy a terminated string
-   255 000008DB 50                  <1>     push rax
+   255 000009D9 50                  <1>     push rax
    256                              <1> .copy:
-   257 000008DC AC                  <1>     lodsb   ;Get char in al and inc rsi
-   258 000008DD 3C00                <1>     cmp al, 0
-   259 000008DF 740B                <1>     je .exit
-   260 000008E1 3C3A                <1>     cmp al, ":"
-   261 000008E3 7407                <1>     je .exit
-   262 000008E5 3C22                <1>     cmp al, 22h ;Speechmark
-   263 000008E7 7403                <1>     je .exit
-   264 000008E9 AA                  <1>     stosb   ;Save char from al and inc rdi
-   265 000008EA EBF0                <1>     jmp short .copy 
+   257 000009DA AC                  <1>     lodsb   ;Get char in al and inc rsi
+   258 000009DB 3C00                <1>     cmp al, 0
+   259 000009DD 740B                <1>     je .exit
+   260 000009DF 3C3A                <1>     cmp al, ":"
+   261 000009E1 7407                <1>     je .exit
+   262 000009E3 3C22                <1>     cmp al, 22h ;Speechmark
+   263 000009E5 7403                <1>     je .exit
+   264 000009E7 AA                  <1>     stosb   ;Save char from al and inc rdi
+   265 000009E8 EBF0                <1>     jmp short .copy 
    266                              <1> .exit:
-   267 000008EC 58                  <1>     pop rax
-   268 000008ED C3                  <1>     ret
+   267 000009EA 58                  <1>     pop rax
+   268 000009EB C3                  <1>     ret
    269                              <1> strcpy:
    270                              <1> ;rdi = Destination string
    271                              <1> ;rsi = Source string
    272                              <1> ;rcx = Number of Chars to copy
-   273 000008EE 57                  <1>     push rdi
-   274 000008EF 56                  <1>     push rsi
-   275 000008F0 51                  <1>     push rcx
-   276 000008F1 F3A4                <1>     rep movsb
-   277 000008F3 59                  <1>     pop rcx
-   278 000008F4 5E                  <1>     pop rsi
-   279 000008F5 5F                  <1>     pop rdi
-   280 000008F6 C3                  <1>     ret
+   273 000009EC 57                  <1>     push rdi
+   274 000009ED 56                  <1>     push rsi
+   275 000009EE 51                  <1>     push rcx
+   276 000009EF F3A4                <1>     rep movsb
+   277 000009F1 59                  <1>     pop rcx
+   278 000009F2 5E                  <1>     pop rsi
+   279 000009F3 5F                  <1>     pop rdi
+   280 000009F4 C3                  <1>     ret
    281                              <1> strlen:
    282                              <1> ;Input: rsi = String start
    283                              <1> ;Output: rsi = String start
    284                              <1> ;        ecx = String length, inclusive of NULL char
-   285 000008F7 50                  <1>     push rax
-   286 000008F8 56                  <1>     push rsi
-   287 000008F9 31C9                <1>     xor ecx, ecx    ;Clear counter
+   285 000009F5 50                  <1>     push rax
+   286 000009F6 56                  <1>     push rsi
+   287 000009F7 31C9                <1>     xor ecx, ecx    ;Clear counter
    288                              <1> .search:
-   289 000008FB AC                  <1>     lodsb
-   290 000008FC FFC1                <1>     inc ecx
-   291 000008FE 84C0                <1>     test al, al ;Is this a null char?
-   292 00000900 75F9                <1>     jnz .search ;Null not found
+   289 000009F9 AC                  <1>     lodsb
+   290 000009FA FFC1                <1>     inc ecx
+   291 000009FC 84C0                <1>     test al, al ;Is this a null char?
+   292 000009FE 75F9                <1>     jnz .search ;Null not found
    293                              <1> .exit:
-   294 00000902 5E                  <1>     pop rsi
-   295 00000903 58                  <1>     pop rax
-   296 00000904 C3                  <1>     ret
+   294 00000A00 5E                  <1>     pop rsi
+   295 00000A01 58                  <1>     pop rax
+   296 00000A02 C3                  <1>     ret
    297                              <1> 
    298                              <1> memoryDetection:
-   299 00000905 B820E80000          <1>     mov eax, 0E820h
-   300 0000090A CD35                <1>     int 35h     ;rax = ptr to start, rsi = ptr to data table, each entry 24 bytes
-   301 0000090C EB07                <1>     jmp short .fsa1
+   299 00000A03 B820E80000          <1>     mov eax, 0E820h
+   300 00000A08 CD35                <1>     int 35h     ;rax = ptr to start, rsi = ptr to data table, each entry 24 bytes
+   301 00000A0A EB07                <1>     jmp short .fsa1
    302                              <1> .findStartAddr:
-   303 0000090E 4881C618000000      <1>     add rsi, 24 ;Goto next entry
+   303 00000A0C 4881C618000000      <1>     add rsi, 24 ;Goto next entry
    304                              <1> .fsa1:
-   305 00000915 6685C9              <1>     test cx, cx
-   306 00000918 742C                <1>     jz .worstCase
-   307 0000091A 66FFC9              <1>     dec cx
-   308 0000091D 488B1E              <1>     mov rbx, qword [rsi]    ;Get the address entry into rbx
-   309 00000920 4839C3              <1>     cmp rbx, rax    
-   310 00000923 75E9                <1>     jne .findStartAddr
-   311 00000925 488B4608            <1>     mov rax, qword [rsi + 8] ;Get the number of bytes saved into rax
+   305 00000A13 6685C9              <1>     test cx, cx
+   306 00000A16 742C                <1>     jz .worstCase
+   307 00000A18 66FFC9              <1>     dec cx
+   308 00000A1B 488B1E              <1>     mov rbx, qword [rsi]    ;Get the address entry into rbx
+   309 00000A1E 4839C3              <1>     cmp rbx, rax    
+   310 00000A21 75E9                <1>     jne .findStartAddr
+   311 00000A23 488B4608            <1>     mov rax, qword [rsi + 8] ;Get the number of bytes saved into rax
    312                              <1> 
-   313 00000929 488D15(00000000)    <1>     lea rdx, section.programArea.vstart
-   314 00000930 4829DA              <1>     sub rdx, rbx    ;Get the size of the interpreter and internal data area
-   315 00000933 4829D0              <1>     sub rax, rdx    ;Remove the number of bytes reserved to the interpreter
-   316 00000936 E832FDFFFF          <1>     call printdecimalword
-   317 0000093B 4801C3              <1>     add rbx, rax    ;Add number of bytes to start address
-   318 0000093E 48891D(00110000)    <1>     mov qword [maxMemAddr], rbx ;Save this address
+   313 00000A27 488D15(00000000)    <1>     lea rdx, section.programArea.vstart
+   314 00000A2E 4829DA              <1>     sub rdx, rbx    ;Get the size of the interpreter and internal data area
+   315 00000A31 4829D0              <1>     sub rax, rdx    ;Remove the number of bytes reserved to the interpreter
+   316 00000A34 E832FDFFFF          <1>     call printdecimalword
+   317 00000A39 4801C3              <1>     add rbx, rax    ;Add number of bytes to start address
+   318 00000A3C 48891D(00110000)    <1>     mov qword [maxMemAddr], rbx ;Save this address
    319                              <1> .exit:
-   320 00000945 C3                  <1>     ret
+   320 00000A43 C3                  <1>     ret
    321                              <1> .worstCase:
    322                              <1> ;Assume 2Mb MAX memory, rax has base address
-   323 00000946 48BB00002000000000- <1>     mov rbx, 200000h    ;2Mb value
-   323 0000094F 00                  <1>
-   324 00000950 4829C3              <1>     sub rbx, rax
-   325 00000953 4889D8              <1>     mov rax, rbx    ;Get value in rax
-   326 00000956 E812FDFFFF          <1>     call printdecimalword
-   327 0000095B 48C705(00110000)00- <1>     mov qword [maxMemAddr], 200000h
-   327 00000963 002000              <1>
-   328 00000966 C3                  <1>     ret
+   323 00000A44 48BB00002000000000- <1>     mov rbx, 200000h    ;2Mb value
+   323 00000A4D 00                  <1>
+   324 00000A4E 4829C3              <1>     sub rbx, rax
+   325 00000A51 4889D8              <1>     mov rax, rbx    ;Get value in rax
+   326 00000A54 E812FDFFFF          <1>     call printdecimalword
+   327 00000A59 48C705(00110000)00- <1>     mov qword [maxMemAddr], 200000h
+   327 00000A61 002000              <1>
+   328 00000A64 C3                  <1>     ret
    329                              <1> 
     17                                  %include "BASICDAT.ASM"
-    18 00000967 4F6B0A0D00          <1> prompt  db "Ok",0Ah,0Dh,0
-    19 0000096C 5343522036342D4241- <1> mainmsg db "SCR 64-BASIC v0.1",0Ah,0Dh,0
-    19 00000975 5349432076302E310A- <1>
-    19 0000097E 0D00                <1>
-    20 00000980 204279746573206672- <1> bytemsg db " Bytes free",0Ah,0Dh,0
-    20 00000989 65650A0D00          <1>
-    21 0000098E 0A0D00              <1> crlf    db 0Ah,0Dh,0
-    22 00000991 4572726F720A0D00    <1> errmsg  db "Error",0Ah,0Dh,0
-    23 00000999 303132333435363738- <1> numbers db "0123456789"
-    23 000009A2 39                  <1>
+    18 00000A65 4F6B0A0D00          <1> prompt  db "Ok",0Ah,0Dh,0
+    19 00000A6A 5343522036342D4241- <1> mainmsg db "SCR 64-BASIC v0.1",0Ah,0Dh,0
+    19 00000A73 5349432076302E310A- <1>
+    19 00000A7C 0D00                <1>
+    20 00000A7E 204279746573206672- <1> bytemsg db " Bytes free",0Ah,0Dh,0
+    20 00000A87 65650A0D00          <1>
+    21 00000A8C 0A0D00              <1> crlf    db 0Ah,0Dh,0
+    22 00000A8F 4572726F720A0D00    <1> errmsg  db "Error",0Ah,0Dh,0
+    23 00000A97 303132333435363738- <1> numbers db "0123456789"
+    23 00000AA0 39                  <1>
     24                              <1> ;startVarChars db "ABCDEFGHIJKLMNOPQRSTUVWXYZ" ;Valid starting chars for a var name
     25                              <1> ;numStartVarChars equ $ - startVarChars
-    26 000009A3 414243444546474849- <1> varChrs db "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789%$" ;Valid inner chars for var name
-    26 000009AC 4A4B4C4D4E4F505152- <1>
-    26 000009B5 535455565758595A30- <1>
-    26 000009BE 313233343536373839- <1>
-    26 000009C7 2524                <1>
+    26 00000AA1 414243444546474849- <1> varChrs db "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789%$" ;Valid inner chars for var name
+    26 00000AAA 4A4B4C4D4E4F505152- <1>
+    26 00000AB3 535455565758595A30- <1>
+    26 00000ABC 313233343536373839- <1>
+    26 00000AC5 2524                <1>
     27                              <1> numVarChars equ $ - varChrs
     28                              <1> ;% => Integer variable (8 bytes)
     29                              <1> ;! => Single-Precision, Unused and ignored
@@ -1306,16 +1371,16 @@
     31                              <1> ;$ => String variable
     32                              <1> 
     33                              <1> ;Error Messages
-    34 000009C9 4F7574206F66204D65- <1> noMem   db "Out of Memory",0Ah,0Dh,0
-    34 000009D2 6D6F72790A0D00      <1>
-    35 000009D9 53796E746178204572- <1> syntax  db "Syntax Error",0Ah,0Dh,0
-    35 000009E2 726F720A0D00        <1>
-    36 000009E8 54797065206D69736D- <1> typeError   db "Type mismatch",0Ah,0Dh,0
-    36 000009F1 617463680A0D00      <1>
-    37 000009F8 556E646566696E6564- <1> lineNoXist  db "Undefined line number",0Ah,0Dh,0
-    37 00000A01 206C696E65206E756D- <1>
-    37 00000A0A 6265720A0D00        <1>
-    38 00000A10 427265616B20696E20- <1> breakmsg db "Break in ",0
-    38 00000A19 00                  <1>
+    34 00000AC7 4F7574206F66206D65- <1> noMem   db "Out of memory",0Ah,0Dh,0
+    34 00000AD0 6D6F72790A0D00      <1>
+    35 00000AD7 53796E746178206572- <1> syntax  db "Syntax error",0Ah,0Dh,0
+    35 00000AE0 726F720A0D00        <1>
+    36 00000AE6 54797065206D69736D- <1> typeError   db "Type mismatch",0Ah,0Dh,0
+    36 00000AEF 617463680A0D00      <1>
+    37 00000AF6 556E646566696E6564- <1> lineNoXist  db "Undefined line number",0Ah,0Dh,0
+    37 00000AFF 206C696E65206E756D- <1>
+    37 00000B08 6265720A0D00        <1>
+    38 00000B0E 427265616B20696E20- <1> breakmsg db "Break in ",0
+    38 00000B17 00                  <1>
     18                                  Segment programArea follows=resSeg align=1 vfollows=resSeg valign=1
     19                                  ENDOFPROGRAM:

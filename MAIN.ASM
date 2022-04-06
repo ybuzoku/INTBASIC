@@ -71,13 +71,6 @@ criticalError:
     jmp mainLoop    ;Trash input line, restart line input
 
 ctrlBreakHandler:
-    ;lea rbp, breakmsg
-    ;call ttyOutString
-    ;xor eax, eax
-    ;mov ax, word [currentLine]
-    ;call printdecimalword
-    ;lea rbp, crlf
-    ;call ttyOutString
     or byte [stateByte], 1  ;Set the byte
     iretq
 setHandler:
