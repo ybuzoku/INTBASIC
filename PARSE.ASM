@@ -67,6 +67,7 @@ handleAlgebraicExpression:
 ;Declares a syntax error if weird chars found
 ;Declares a type error if a string variable found
     ;Handle Logical Connectives here
+    ;call .handleThirdLevel
     cmp word [rsi], "NO"
     jne .hae0
     cmp byte [rsi + 2], "T"
@@ -88,6 +89,9 @@ handleAlgebraicExpression:
     jne .relationals
     cmp byte [rsi + 2], "P"
 ;    je .implicaton
+;Level 3, Relational Connectives
+;.handleThirdLevel:
+;   call .handleSecondLevel
 .relationals:
     ;Handle Relational connectives
     cmp byte [rsi], "="
@@ -104,30 +108,32 @@ handleAlgebraicExpression:
 ;    je .leq
     cmp word [rsi], ">="
 ;    je .geq
-    call .handleSecondLevel
+;Level 2, Addition and Subtraction
+.handleSecondLevel:
+    call .handleFirstLevel
 .parseAdditiveOperators:    
     cmp byte [rsi], '-'
     je .processMinus
     cmp byte [rsi], '+'
     jne .exit              ;No operators, expression evaluated, exit
     push rax
-    call .handleSecondLevelSkip   ;Parse second level
+    call .handleFirstLevelSkip   ;Parse first level
 .processAdd:    
     pop rcx
     add rax, rcx           ;Add the two numbers
     jmp short .parseAdditiveOperators  ;Search again for + or -
 .processMinus:
     push rax
-    call .handleSecondLevelSkip   ;Parse second level
+    call .handleFirstLevelSkip   ;Parse first level
     neg rax              ;Change a - b to a + -b
     jmp short .processAdd
 
-;Level 2, Division and multiplication
+;Level 1, Division and multiplication
 
-.handleSecondLevelSkip:
+.handleFirstLevelSkip:
     inc rsi              ;Skip the op symbol
-.handleSecondLevel:
-    call .handleThirdLevel      ;Call third level
+.handleFirstLevel:
+    call .handleZerothLevel      ;Call third level
 .parseProductOperators:   
     cmp byte [rsi], '/'
     je .processDiv
@@ -135,25 +141,25 @@ handleAlgebraicExpression:
     jne .exit           ;Neither multiplication or division, return up a level
 
     push rax
-    call .handleThirdLevelSkip   ;Call third level
+    call .handleZerothLevelSkip   ;Call zeroth level
     pop rcx
     imul rcx             ; Multiplication
     jmp short .parseProductOperators   ;Search again for * or /
 
 .processDiv:
     push rax
-    call .handleThirdLevelSkip   ;Call third level
+    call .handleZerothLevelSkip   ;Call zeroth level
     pop rcx
     xchg rax, rcx
     xor edx, edx         ;Clear rdx for rdx:rax
     idiv rcx             ;Signed division
     jmp .parseProductOperators         ;Search again for * or /
 
-;Level 3, Brackets, numbers and vars.
+;Level 0, Brackets, numbers and vars.
 
-.handleThirdLevelSkip:
+.handleZerothLevelSkip:
     inc rsi             ;Skip the op symbol
-.handleThirdLevel:
+.handleZerothLevel:
     call spaceSkip
     lodsb               ;Read char and adv rsi
     cmp al, '('

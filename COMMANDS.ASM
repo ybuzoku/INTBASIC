@@ -95,6 +95,7 @@ printStatement:
     jb .printStringVar
 .printExpr:
     dec rsi ;Return to the start of the string
+.printExpr1:    ;Return without dec rsi
     call handleAlgebraicExpression ;Gets value of a var and/or algebraic operation
     call printdecimalword
     lea rbp, crlf
@@ -106,7 +107,7 @@ printStatement:
     call getVarNameLength
     call getVarType
     cmp ebx, strEquate
-    jne .printExpr  ;rsi points to the same point as initially
+    jne .printExpr1  ;rsi points to the same point as initially
     call findVariable   ;ecx has string length, get block ptr in rbx
     push rbp
     lea rbp, qword [rbx + stringBlock.string]
@@ -123,7 +124,7 @@ printStatement:
     cmp al, 022h    ;Close Speech marks, check next char
     je .closespeechmarks
     cmp al, ";"     ;Semicolon means print next section on same line
-    je .printStart
+    je .continue
     call ttyOutChar
     jmp short .stringPrint
 .psvexit:
@@ -133,6 +134,9 @@ printStatement:
 .closespeechmarks:
     call spaceSkip
     jmp short .stringPrint
+.continue:
+    xchg bx, bx
+    jmp .printStart
 getInput:
 ;Take a string as a prompt
     mov al, 5
