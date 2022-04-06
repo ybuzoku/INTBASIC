@@ -56,13 +56,21 @@ findVariable:
 .varFound:
     ;Compare to see the var is our var
     lea rdi, qword [rbx + varBlock.sVarName] ;point rdi to the name string
+    push rcx
+    push rsi
     repe cmpsb  ;Compare one byte at a time
+    pop rsi
+    pop rcx
     jne .invalid
     clc
     jmp short .exit
 .datFound:
     lea rdi, qword [rbx + stringBlock.sVarName] ;point rdi to the name string
+    push rcx
+    push rsi
     repe cmpsb  ;Compare one byte at a time
+    pop rsi
+    pop rcx
     jne .invalid
     clc
     jmp short .exit
@@ -196,7 +204,7 @@ makeEditString:
     push rsi
     push rax
     push rbx
-    call findVariable   ;rbx returned with var block or -1
+    call findVariable   ;rbx returned with string block or -1
     cmp rbx, -1
     jne .strcopy
     call allocateBlock
