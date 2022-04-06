@@ -56,6 +56,7 @@ executeExpression:
     call spaceSkip  ;Skip any spaces
     call handleAlgebraicExpression  ;Get the result of the expression into rax
     mov rsi, rdi    ;Return the start of the string into rsi
+    xchg bx, bx
     call setNumericVariable
     ;Now see if the line has any more expressions
     call findOtherExpressionsOnLine

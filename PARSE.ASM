@@ -183,16 +183,21 @@ handleAlgebraicExpression:
     lodsb
     in al, 40h         ;Read timer counter 0
     movzx rax, al
-    ret
+.exit:
+    ret                ;Return
 .exponentFound:
    jmp short .varConstCheck
 .varFound:    
     dec rsi ;Back a char
+    push rcx
+    call getVarNameLength
     call getNumericVariable ;Get variable value in rax
-.exit:
-    ret                ;Return
+    add rsi, rcx    ;Go past the edge of the name
+    pop rcx
+    jmp spaceSkip
+
 .closeBracket:
-    inc si
+    inc rsi
     jmp spaceSkip
 .error:
     lea rbp, syntax
@@ -207,10 +212,10 @@ getNumericVariable:
     push rsi
     push rcx
     push rbx
-    xchg bx, bx
     call getVarNameLength   ;Returns the length of the var name in cx
     call findVariable       ;Returns a pointer to the variable block in rbx
     cmp rbx, -1 ;Variable doesnt exist? Pretend it is 0
+    je .noVar
     cmp byte [rbx + memBlock.bBlockType], varBlockType
     jne .stringFoundError
     mov rax, qword [rbx + varBlock.qValue]
