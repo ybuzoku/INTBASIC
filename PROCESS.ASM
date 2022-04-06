@@ -25,13 +25,12 @@ executeExpression:
     ;Function found! Execute!
     ;rsi points to start of expression to evaluate for function
     ;rdi points to table entry
+    call spaceSkip  ;move rsi to the start of the expression
     lea rbx, funTbl         ;Get table address
     movzx rdx, byte [rdi]   ;Get pascal string length
     movzx edx, word [rdi + rdx]    ;Add pascal strlen to table entry and get ptr
     add rbx, rdx    ;Add word offset to table base
     jmp rbx ;Goto function pointer in rbx
-
-    
 .exit:
     ret
 
@@ -56,12 +55,7 @@ executeExpression:
     call spaceSkip  ;Skip any spaces
     call handleAlgebraicExpression  ;Get the result of the expression into rax
     mov rsi, rdi    ;Return the start of the string into rsi
-    xchg bx, bx
     call setNumericVariable
-    ;Now see if the line has any more expressions
-    call findOtherExpressionsOnLine
-    test al, al ;If al is null, no more expressions on the line
-    jnz executeExpression    ;Execute portion
     ret
 
 .exitError:

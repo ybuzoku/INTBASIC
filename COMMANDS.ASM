@@ -49,7 +49,9 @@ newProgram:
     mov ecx, maxLineLen
     rep stosb
     mov byte [currentLine], 10  ;Default to line 10
-    mov qword [firstLinPtr], -1 ;No program in memory
+    dec rax ;rax = -1
+    mov qword [firstLinPtr], rax ;No program in memory
+    mov word [firstLinNum], ax
     ret
 listProgram:
 ;Go line by line and echo the program lines, inserting a crlf after each
@@ -62,9 +64,14 @@ runProgram:
     mov al, 3
     ret
 printStatement:
-;String must be "" delimited
+;Strings must be "" delimited or a string variable must be used (unsupported rn)
+    cmp byte [rsi], 022h    ;22h = ASCII Speechmarks
+    je .stringPrint
     mov al, 4
     ret
+.stringPrint:
+    lea rbp, syntax
+    jmp criticalError
 getInput:
 ;Take a string as a prompt
     mov al, 5
