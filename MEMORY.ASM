@@ -3,6 +3,7 @@ allocateBlock:
 ;Output: rbx = Pointer to generic memory block, or -1 if memory full
 ;       Caller needs to fill in, block size, block type and specifics
     push rdx
+.ab0:
     mov rbx, qword [lastBlock]    ;Get the last block in the chain
     cmp rbx, -1 ;First allocation?
     je .firstAllocation
@@ -27,7 +28,7 @@ allocateBlock:
     mov qword [mcbChain], rbx
     mov byte [rbx + memBlock.bSignature], lastMemBlock
     mov word [rbx + memBlock.wBlockSize], 0 ;Dummy block
-    ret
+    jmp short .exit
 
 findVariable:
 ;Input: rsi = Source string for variable name

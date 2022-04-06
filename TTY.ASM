@@ -6,7 +6,7 @@ getLineInput:
     mov rsi, rdi
     push rdi
     mov ecx, maxLineLen
-    mov al, 0Dh    ;Ensure the input line is sanitised
+    xor al, al    ;Ensure the input line is sanitised
     rep stosb
     pop rdi
 .getChar:

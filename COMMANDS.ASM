@@ -54,8 +54,15 @@ newProgram:
     mov qword [minMemAddr], rax
     mov qword [lastBlock], rax  ;Start writing at this location
     mov qword [mcbChain], rax   ;Create a mock MCB here
-    mov byte [rax + memBlock.bSignature], lastMemBlock
-    mov word [rax + memBlock.wBlockSize], 0 ;Dummy block, no size, gets overwritten
+
+    mov rdx, rax
+    mov cx, word [rax + memBlock.wBlockSize]
+    mov rdi, rax
+    xor al, al
+    rep stosb   ;Sanitise the old first allocation
+
+    mov byte [rdx + memBlock.bSignature], lastMemBlock
+    mov word [rdx + memBlock.wBlockSize], 0 ;Dummy block, no size, gets overwritten
     xor eax, eax
     mov byte [strLen], al
     lea rdi, inString
