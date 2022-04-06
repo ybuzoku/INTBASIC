@@ -142,13 +142,16 @@ runProgram:
 printStatement:
 ;Strings must be "" delimited or a string variable must be used
 ;rdi points to the command length
+    xchg bx, bx
     movzx ecx, byte [rdi]
+    dec ecx ;This gives instruction name + 1
     add rsi, rcx
 .printStart:
     call spaceSkip  ;move rsi to the start of the expression
     lodsb
     test al, al     ;Is this a null string?
     jz .psvexit
+
     cmp al, 022h    ;22h = ASCII Speechmarks
     je .stringPrint
     ;Here we check if the first char is ASCII, if it is, check if its a string var
@@ -182,13 +185,17 @@ printStatement:
     cmp al, 0
     je .psvexit
     cmp al, ":"
-    je .psvexit
+    je .psvexitColon
     cmp al, 022h    ;Close Speech marks, check next char
     je .closespeechmarks
     cmp al, ";"     ;Semicolon means print next section on same line
     je .continue
     call ttyOutChar
     jmp short .stringPrint
+.openSpeechMark:
+    inc rsi ;Go back a char
+.psvexitColon:
+    dec rsi ;Go back a char
 .psvexit:
     lea rbp, crlf
     call ttyOutString
