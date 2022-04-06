@@ -65,6 +65,44 @@ handleAlgebraicExpression:
 ;Output: rax = Result of said expression
 ;Declares a syntax error if weird chars found
 ;Declares a type error if a string variable found
+    ;Handle Logical Connectives here
+    cmp word [rsi], "NO"
+    jne .hae0
+    cmp byte [rsi + 2], "T"
+;    je .not
+.hae0:
+    cmp word [rsi], "AN"
+    jne .hae1
+    cmp byte [rsi + 2], "D"
+;    je .and
+.hae1:
+    cmp word [rsi], "OR"
+;    je .or
+    cmp word [rsi], "XO"
+    jne .hae2
+    cmp byte [rsi + 2], "R"
+;    je .xor
+.hae2:
+    cmp word [rsi], "IM"
+    jne .relationals
+    cmp byte [rsi + 2], "P"
+;    je .implicaton
+.relationals:
+    ;Handle Relational connectives
+    cmp byte [rsi], "="
+;    je .equivalence
+    cmp word [rsi], "<>"
+;    je .neq
+    cmp word [rsi], "><"
+;    je .neq
+    cmp byte [rsi], "<"
+;    je .less
+    cmp byte [rsi], ">"
+;    je .greater
+    cmp word [rsi], "<="
+;    je .leq
+    cmp word [rsi], ">="
+;    je .geq
     call .handleSecondLevel
 .parseAdditiveOperators:    
     cmp byte [rsi], '-'
@@ -149,6 +187,7 @@ handleAlgebraicExpression:
 .exponentFound:
    jmp short .varConstCheck
 .varFound:    
+    dec rsi ;Back a char
     call getNumericVariable ;Get variable value in rax
 .exit:
     ret                ;Return
@@ -168,6 +207,7 @@ getNumericVariable:
     push rsi
     push rcx
     push rbx
+    xchg bx, bx
     call getVarNameLength   ;Returns the length of the var name in cx
     call findVariable       ;Returns a pointer to the variable block in rbx
     cmp byte [rbx + memBlock.bBlockType], varBlockType
