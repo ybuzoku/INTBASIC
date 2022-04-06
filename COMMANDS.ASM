@@ -103,7 +103,6 @@ printStatement:
 .printStringVar:
     ;Check if it is a string var
     dec rsi
-    xchg bx, bx
     call getVarNameLength
     call getVarType
     cmp ebx, strEquate
