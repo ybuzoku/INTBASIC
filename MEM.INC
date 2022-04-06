@@ -26,7 +26,7 @@ endstruc
 
 struc varBlock
     memBlockM               ;Common memory block header
-    .qValue     resq 1      ;One qword, either value or pointer to string
+    .qValue     resq 1      ;One value qword
     .sVarName:              ;Up to 40 chars for the var name
 endstruc
 

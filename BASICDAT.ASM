@@ -4,8 +4,10 @@ bytemsg db " Bytes free",0Ah,0Dh,0
 crlf    db 0Ah,0Dh,0
 errmsg  db "Error",0Ah,0Dh,0
 numbers db "0123456789"
-varChrs db "ABCDEFGHIJKLMNOPQRSTUVWXYZ%$" ;Valid chars for var name
-numVarChars equ 28
+;startVarChars db "ABCDEFGHIJKLMNOPQRSTUVWXYZ" ;Valid starting chars for a var name
+;numStartVarChars equ $ - startVarChars
+varChrs db "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789%$" ;Valid inner chars for var name
+numVarChars equ $ - varChrs
 ;% => Integer variable (8 bytes)
 ;! => Single-Precision, Unused and ignored
 ;# => Double-Precision, Unused and ignored

@@ -3,35 +3,41 @@ funTbl:
 ;Use PASCAL strings to know how long the comparisons need to be
 ;All function pointers are saved as distances from the head
 ; of the function table
-    db 4,"NEW"
+    db 4, "NEW"     ;DONE
     dw newProgram - funTbl 
 
-    db 5,"LIST"
+    db 5, "LIST"
     dw listProgram - funTbl 
 
-    db 4,"RUN"
+    db 4, "RUN"
     dw runProgram - funTbl
 
-    db 6,"PRINT"
+    db 6, "PRINT"    ;ALMOST DONE
     dw printStatement - funTbl
 
-    db 6,"INPUT"
+    db 2, "?"        ;ALMOST DONE
+    dw printStatement - funTbl
+
+    db 6, "INPUT"
     dw getInput - funTbl
 
-    db 3,"IF"
+    db 3, "IF"
     dw handleIf - funTbl
 
-    db 5,"GOTO"
+    db 5, "GOTO"
     dw fancyJmp - funTbl
 
-    db 7,"SYSTEM"
+    db 7, "SYSTEM"
     dw returnToDOS - funTbl
 
-    db 4,"FOR"
+    db 4, "FOR"
     dw forLoop - funTbl
 
-    db 4, "CLS"
+    db 4, "CLS"     ;DONE
     dw cls - funTbl
+
+    db 6, "DEBUG"
+    dw dbgr - funTbl
 
     db -1    ;Demarkate the end of the table
 
@@ -65,13 +71,52 @@ runProgram:
     ret
 printStatement:
 ;Strings must be "" delimited or a string variable must be used (unsupported rn)
-    cmp byte [rsi], 022h    ;22h = ASCII Speechmarks
+;rdi points to the command length
+    movzx ecx, byte [rdi]
+    add rsi, rcx
+.printStart:
+    call spaceSkip  ;move rsi to the start of the expression
+    lodsb
+    cmp al, 022h    ;22h = ASCII Speechmarks
     je .stringPrint
-    mov al, 4
+    ;Here we check if the first char is ASCII, if it is, check if its a string var
+    cmp al, "A"
+    jb .printExpr
+    cmp al, "Z"
+    jb .printStringVar
+.printExpr:
+    dec rsi ;Return to the start of the string
+    call handleAlgebraicExpression ;Gets value of a var and/or algebraic operation
+    call printdecimalword
+    lea rbp, crlf
+    call ttyOutString
     ret
+.printStringVar:
+    ;Check if it is a string var
+    call getVarNameLength
+    call getVarType
+    cmp ebx, strEquate
+    jne .printExpr  ;rsi points to the same point as initially
+    call findVariable   ;ecx has string length, get block ptr in rbx
+    lea rsi, qword [rbx + stringBlock.string]
 .stringPrint:
-    lea rbp, syntax
-    jmp criticalError
+    lodsb
+    cmp al, 0
+    je .psvexit
+    cmp al, ":"
+    je .psvexit
+    cmp al, 022h    ;Close Speech marks
+    je .psvexit
+    cmp al, ";"     ;Semicolon means print next section on same line
+    je .printStart
+    call ttyOutChar
+    jmp short .stringPrint
+.psvexit:
+    dec rsi
+    lea rbp, crlf
+    call ttyOutString
+    ret
+
 getInput:
 ;Take a string as a prompt
     mov al, 5
@@ -93,3 +138,7 @@ forLoop:
     ret
 cls:
     jmp ttyClear
+dbgr:
+    int 38h
+    ;Reconnect CTRL+BREAK handler
+    ret

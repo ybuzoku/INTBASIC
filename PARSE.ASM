@@ -13,6 +13,7 @@ spaceSkip:
     ret
 
 getVarNameLength:
+;Called pointing to the buffer with the var name in it
 ;Input: rsi = Start of var name
 ;Output: ecx = Length of varname
     push rax
@@ -45,16 +46,16 @@ getVarType:
 ;       rcx = Length of varname
 ;Output: ebx = 0 => Integer
 ;        ebx = 1 => String
+;        ebx = -1 => Var doesnt exist, caller handles
     push rax
     push rcx
     push rsi
-    dec rcx         ;Get second to last char in name
-    add rsi, rcx    ;Move rsi to that char
-    lodsb   ;Get the char into al
-    mov ebx, intEquate
-    mov ecx, strEquate
-    cmp al, "$"     ;String?
-    cmove ebx, ecx  ;Move the string type into ebx
+    call findVariable
+    cmp rbx, -1
+    je .exit
+    movzx ebx, byte [rbx + memBlock.bBlockType]
+    dec ebx
+.exit:
     pop rsi
     pop rcx
     pop rax
@@ -166,18 +167,20 @@ handleAlgebraicExpression:
     cmp al, "^"
     je .exponentFound
 .varConstCheck:
-    cmp al, 40h       ;Alphanumeric first char?
-    jnc .varOrRNDFound      ;Yes, variable found or rnd function
+    cmp al, "A"       ;Alphabetical first char?
+    jae .varOrRNDFound      ;Yes, variable found or rnd function or error
     dec rsi            ;Else back one symbol 
     call decimalToHex  ;to read number into rax
     jmp spaceSkip
 
-.varOrRNDFound:    
-    cmp al, "r"
+.varOrRNDFound:
+    cmp al, "Z"  
+    ja .error   ;Syntax error if char not between A-Z  
+    cmp al, "R"
     jne .varFound
-    cmp byte [rsi], "n" ;rsi was advanced by 1, check 
+    cmp byte [rsi], "N" ;rsi was advanced by 1, check 
     jne .varFound
-    cmp byte [rsi+1], "d"
+    cmp byte [rsi+1], "D"
     jne .varFound
     lodsw               ;Advance rsi by 3
     lodsb

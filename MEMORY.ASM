@@ -29,7 +29,7 @@ allocateBlock:
 findVariable:
 ;Input: rsi = Source string for variable name
 ;       ecx = Length of variable name (max 40)
-;Output: rbx = ptr to varBlock OR -1 if doesnt exist
+;Output: rbx = ptr to varBlock/strBlock OR -1 if doesnt exist
     push rax
     push rcx
     push rdx
@@ -40,7 +40,9 @@ findVariable:
     je .exit
 .search:
     cmp byte [rbx + memBlock.bBlockType], varBlockType
-    je .varFound    ;We found a variable
+    je .varFound    ;We found a numerical variable
+    cmp byte [rbx + memBlock.bBlockType], datBlockType
+    je .datFound    ;We found a string variable
 .invalid:
     ;Are we at the end of the chain?
     cmp byte [rbx + memBlock.bSignature], lastMemBlock
@@ -51,6 +53,12 @@ findVariable:
 .varFound:
     ;Compare to see the var is our var
     lea rdi, qword [rbx + varBlock.sVarName] ;point rdi to the name string
+    repe cmpsb  ;Compare one byte at a time
+    jne .invalid
+    clc
+    jmp short .exit
+.datFound:
+    lea rdi, qword [rbx + stringBlock.sVarName] ;point rdi to the name string
     repe cmpsb  ;Compare one byte at a time
     jne .invalid
     clc
@@ -150,28 +158,6 @@ insertProgramLine:
     pop rax
     ret
 
-makeEditVariable:
-;Will make a variable if it is a new name, or edit the value if it already exists
-;Input: rsi = Var name
-;       rax = Value/String Pointer
-    push rax
-    push rbx
-    push rcx
-
-    call getVarNameLength   ;Get the length in ecx, clear upper of rcx
-    call getVarType ;Get type in rbx
-    test ebx, ebx
-    jnz .string
-    call makeEditInteger
-    jmp short .exit
-.string:
-    call makeEditString
-.exit:
-    pop rcx
-    pop rbx
-    pop rax
-    ret
-
 makeEditInteger:
 ;Will make a variable if it is new name, or edit the value if it already exists
 ;Input: rsi = Var name
@@ -183,7 +169,6 @@ makeEditInteger:
     mov qword [rbx + varBlock.qValue], rax
     ret
 .newVar:
-    nop
     call allocateBlock
     cmp rbx, -1
     je .error
