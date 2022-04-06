@@ -12,10 +12,10 @@ funTbl:
     db 6, "CLEAR"   ;DONE
     dw newProgram - funTbl 
 
-    db 5, "LIST"
+    db 5, "LIST"    ;DONE
     dw listProgram - funTbl 
 
-    db 4, "RUN"
+    db 4, "RUN"     ;DONE
     dw runProgram - funTbl
 
     db 7, "PRINT$"    ;Not implemented yet
@@ -33,7 +33,7 @@ funTbl:
     db 3, "IF"
     dw handleIf - funTbl
 
-    db 5, "GOTO"
+    db 5, "GOTO"    ;DONE
     dw fancyJmp - funTbl
 
     db 7, "SYSTEM"
@@ -45,10 +45,20 @@ funTbl:
     db 4, "CLS"     ;DONE
     dw cls - funTbl
 
-    db 6, "DEBUG"
+    db 6, "DEBUG"   ;DONE
     dw dbgr - funTbl
+thenStr:
+    db 4, "THEN"
+    dw badCmd - funTbl
+elseStr:
+    db 4, "ELSE"
+    dw badCmd - funTbl
 
     db -1    ;Demarkate the end of the table
+;End of Table
+badCmd:
+    lea rbp, syntax
+    call criticalError 
 oldSchoolAssignemnt:
 ;
     movzx ecx, byte [rdi]
@@ -212,10 +222,15 @@ getInput:
     mov al, 5
     ret
 handleIf:
-;Evaluate the string after IF is greater than 0, THEN goto line x
-;IF exp1 THEN exp2
-    mov al, 6
+;Evaluate the string. The IF,THEN/GOTO,ELSE statement must ALL be on one line
+;IF exp1 THEN statement ELSE statement
+;IF exp1 GOTO linenumber ELSE statement
+    movzx ecx, byte [rdi]
+    dec ecx
+    add rsi, rcx
+
     ret
+
 fancyJmp:
 ;GOTO, the hell of every dumb high level programmer
 ;rsi, rdi points just past the end of the command line
