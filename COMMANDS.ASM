@@ -161,9 +161,8 @@ printStatement:
 .printExpr1:    ;Return without dec rsi
     call handleAlgebraicExpression ;Gets value of a var and/or algebraic operation
     call printdecimalword
-    lea rbp, crlf
-    call ttyOutString
-    ret
+    call spaceSkip
+    jmp short .stringPrint
 .printStringVar:
     ;Check if it is a string var
     dec rsi
