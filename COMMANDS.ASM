@@ -157,15 +157,42 @@ fancyJmp:
 ;GOTO, the hell of every dumb high level programmer
     mov al, 7
     ret
-returnToDOS:
-    mov al, 8
-    ret
 forLoop:
     mov al, 9
     ret
+;==========================================================:
+;==========================================================:
+;==========================================================:
+;          Functions Related to Program Management         :
+;==========================================================:
+;==========================================================:
+;==========================================================:
+returnToDOS:
+    mov al, 07h
+    call ttyOutChar
+    jmp start   ;Reset the interpreter
 cls:
     jmp ttyClear
 dbgr:
-    int 38h
+    ;Hook int 40h to main prog EP to allow returning 
+;First call to get default BIOS segement selector and attribute word
+    mov bl, 40h
+    mov eax, 0F007h ;Get the descriptor
+    int 35h
+    mov esi, eax    ;Move segment selector info to esi
+    mov ecx, 40h    ;Interrupt number
+;dx preserves the attribute word
+    lea rbx, .farReturn  ;Pointer passed in
+    mov eax, 0F008h ;Set descriptor
+    int 35h
+    int 38h ;Call debugger
+.farReturn:
     ;Reconnect CTRL+BREAK handler
-    ret
+    mov rsp, stacktop   ;Immediately reset stack
+    lea rdi, ctrlBreakHandler
+    mov al, 3Bh
+    call setHandler
+    
+    lea rbp, crlf
+    call ttyOutString
+    jmp mainLoop

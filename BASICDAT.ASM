@@ -18,3 +18,4 @@ noMem   db "Out of Memory",0Ah,0Dh,0
 syntax  db "Syntax Error",0Ah,0Dh,0
 typeError   db "Type mismatch",0Ah,0Dh,0
 lineNoXist  db "Undefined line number",0Ah,0Dh,0
+breakmsg db "Break in ",0

@@ -107,9 +107,8 @@ searchForProgramLine:
     cmp word [rbx + progLineBlock.wLineNum], dx ;Equal line numbers?
     je .lineFound
     mov rbx, qword [rbx + progLineBlock.qPtr]   ;Walk chain
-    inc rbx ;At the end? If yes, this would be 0 now
-    jnz .search ;Not zero? Keep searching
-    dec rbx ;Make it -1 again
+    cmp rbx, -1
+    jne .search ;Not -1? Keep searching
 .lineFound:
     ret
 
@@ -125,7 +124,7 @@ insertProgramLine:
     push rdi
     call findFirstLine  ;Get start of program in rbx and line number in dx
 ;First check if we should be the first line
-    xchg bx, bx
+
     mov cx, word [rsi + progLineBlock.wLineNum] ;Save line number in cx
     cmp rbx, -1 ;Empty program marker
     je .first

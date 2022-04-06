@@ -19,7 +19,7 @@ maxMemAddr  resq 1  ;Pointer to the byte past which we cannot allocate anything
 ;void* mcbChain, lastBlock, firstLinPtr = -1 => New program, empty entries
 
 strLen      resb 1  ;Counter for number of chars entered in string
-stateByte   resb 1  ;TROFF/TRON etc, unused for now
+stateByte   resb 1  ;Bit 0 => Break Set, stop processing after end of current line
 mcbChain    resq 1  ;Pointer to the start of the chain
 lastBlock   resq 1  ;Pointer to the last block
 firstLinPtr resq 1  ;Pointer to the programs' first line 

@@ -2,6 +2,11 @@ start:
     mov eax, 0C501h
     int 35h         ;Connect the debugger
     call ttyClear   ;Clear the teletype
+    ;Set the CtrlBreak Handler
+    lea rdi, ctrlBreakHandler
+    mov al, 3Bh
+    call setHandler
+
     ;Memory stuff
     lea rbp, mainmsg
     call ttyOutString
@@ -22,7 +27,6 @@ mainLoop:
 ;It will keep accepting lines until a line is entered without a line number
     call getLineInput
     call decimalToHex   ;Check to see if we have a valid line number
-    ;xchg bx, bx
     test ax, ax
     jnz .saveLine
 ;Here we execute the line
@@ -65,3 +69,32 @@ criticalError:
 ;Called with rbp pointing at error message
     call ttyOutString
     jmp mainLoop    ;Trash input line, restart line input
+
+ctrlBreakHandler:
+    ;lea rbp, breakmsg
+    ;call ttyOutString
+    ;xor eax, eax
+    ;mov ax, word [currentLine]
+    ;call printdecimalword
+    ;lea rbp, crlf
+    ;call ttyOutString
+    or byte [stateByte], 1  ;Set the byte
+    iretq
+setHandler:
+;Called with:
+;   rdi = Pointer to interrupt handler
+;   al = Interrupt number
+    mov ebp, eax    ;al has interrupt number which we need to save
+    and ebp, 0FFh   ;Zero everything but the bottom byte
+;First call to get default BIOS segement selector and attribute word
+    mov bl, al  ;Set interrupt number 
+    mov eax, 0F007h ;Get the descriptor
+    int 35h
+    mov esi, eax    ;Move segment selector info to esi
+    mov ecx, ebp    ;Get the interrupt number into cl
+;dx preserves the attribute word
+    mov rbx, rdi  ;Pointer passed in rdi
+    mov eax, 0F008h ;Set descriptor
+    int 35h
+    
+    ret
