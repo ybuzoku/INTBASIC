@@ -18,6 +18,7 @@ mainLoop:
     cld                 ;Set default string op direction
     lea rsp, stacktop    ;Reinitialize stack pointer
     lea rax, mainLoop
+    and byte [stateByte], 0FEh  ;Clear the break bit
     push rax    ;Save address on stack
     lea rbp, prompt
     call ttyOutString
