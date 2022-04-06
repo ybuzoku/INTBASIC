@@ -52,6 +52,7 @@ funTbl:
 oldSchoolAssignemnt:
 ;
     movzx ecx, byte [rdi]
+    dec ecx
     add rsi, rcx
     call spaceSkip  ;Goto var assignment as if at start of line
     jmp executeExpression.variableAssignment
@@ -219,6 +220,7 @@ fancyJmp:
 ;GOTO, the hell of every dumb high level programmer
 ;rsi, rdi points just past the end of the command line
     movzx ecx, byte [rdi]
+    dec ecx
     add rsi, rcx
     call spaceSkip  ;Skip all preceeding spaces
     call handleAlgebraicExpression  ;Turn the expression into a number in ax
