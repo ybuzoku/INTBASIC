@@ -53,6 +53,7 @@ newProgram:
     ret
 listProgram:
 ;Go line by line and echo the program lines, inserting a crlf after each
+;First print the line number, then add a space
     mov al, 2
     ret
 runProgram:

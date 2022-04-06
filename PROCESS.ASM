@@ -60,7 +60,7 @@ executeExpression:
     ;Now see if the line has any more expressions
     call findOtherExpressionsOnLine
     test al, al ;If al is null, no more expressions on the line
-    jz executeExpression    ;Execute portion
+    jnz executeExpression    ;Execute portion
     ret
 
 .exitError:

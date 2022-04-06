@@ -22,7 +22,7 @@ mainLoop:
 ;It will keep accepting lines until a line is entered without a line number
     call getLineInput
     call decimalToHex   ;Check to see if we have a valid line number
-    xchg bx, bx
+    ;xchg bx, bx
     test ax, ax
     jnz .saveLine
 ;Here we execute the line

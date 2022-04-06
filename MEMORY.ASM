@@ -105,10 +105,11 @@ insertProgramLine:
     push rdi
     call findFirstLine  ;Get start of program in rbx and line number in dx
 ;First check if we should be the first line
+    xchg bx, bx
     mov cx, word [rsi + progLineBlock.wLineNum] ;Save line number in cx
     cmp rbx, -1 ;Empty program marker
     je .first
-    cmp dx, cx  ;If cx is below dx, then our entry is first
+    cmp cx, dx  ;If cx is below dx, then our entry is first
     jb .first    
 ;Use ax as the best line number and rdi as the pointer to that block
     mov ax, -1  ;Marker to indicate no insertion

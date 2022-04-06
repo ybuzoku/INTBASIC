@@ -150,12 +150,11 @@ handleAlgebraicExpression:
    jmp short .varConstCheck
 .varFound:    
     call getNumericVariable ;Get variable value in rax
-    ret                 ;Return
+.exit:
+    ret                ;Return
 .closeBracket:
     inc si
     jmp spaceSkip
-.exit:
-    ret
 .error:
     lea rbp, syntax
     jmp criticalError
