@@ -262,6 +262,40 @@ setNumericVariable:
     lea rbp, typeError
     jmp criticalError
 
+setStringVariable:
+;Sets the string pointed to by rdx
+;Input: rsi = Pointer to first char of a variable name
+;       rdx = Start of string
+;Output: rsi = Pointer to first char of variable name
+;Keeps adding characters until a 0, : or " encountered
+;Adds a 0 to the end
+    push rsi
+    push rcx
+    push rbx
+    push rdx
+    push rdi
+    call getVarNameLength   ;Gets the length of the var name in cx
+    call findVariable       ;Returns a ptr to the var block in rbx
+    je .makeEditString
+    cmp byte [rbx + memBlock.bBlockType], datBlockType
+    jne .intFoundError
+    lea rdi, qword [rbx + stringBlock.string]
+    mov rsi, rdx
+    call terminatedstrcpy
+.exit:
+    pop rdi
+    pop rdx
+    pop rbx
+    pop rcx
+    pop rsi
+    ret
+.makeEditString:
+    call makeEditString
+    jmp short .exit
+.intFoundError:
+    lea rbp, typeError
+    jmp criticalError
+
 findOtherExpressionsOnLine:
 ;Input: rsi = start of line portion
 ;Output: rsi = points to first char after first ":" found

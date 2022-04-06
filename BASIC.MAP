@@ -12,8 +12,8 @@ Output file:  BASIC.BIN
 
 Vstart            Start             Stop              Length    Class     Name
                0                 0                83  00000083  progbits  .text
-            1126                83               931  000008AE  progbits  resSeg
-            19D4               931               931  00000000  progbits  programArea
+            1126                83               A22  0000099F  progbits  resSeg
+            1AC5               A22               A22  00000000  progbits  programArea
                0                 0              1126  00001126  nobits    dSeg
 
 -- Sections (detailed) --------------------------------------------------------
@@ -32,7 +32,7 @@ vfollows:  not defined
 ---- Section resSeg -----------------------------------------------------------
 
 class:     progbits
-length:                 8AE
+length:                 99F
 start:                   83
 align:                    1
 follows:   .text
@@ -44,10 +44,10 @@ vfollows:  dSeg
 
 class:     progbits
 length:                   0
-start:                  931
+start:                  A22
 align:                    1
 follows:   resSeg
-vstart:                19D4
+vstart:                1AC5
 valign:                   1
 vfollows:  resSeg
 
@@ -140,121 +140,133 @@ Real              Virtual           Name
              23C              12DF  executeExpression.functionFound
              250              12F3  executeExpression.exit
              251              12F4  executeExpression.variableAssignment
-             28C              132F  executeExpression.exitError
-             298              133B  executeExpression.stringAssignment
-             29B              133E  spaceSkip
-             2A5              1348  spaceSkip.exit
-             2A6              1349  getVarNameLength
-             2B4              1357  getVarNameLength.search
-             2CB              136E  getVarNameLength.exit
-             2D3              1376  getVarType
-             2EA              138D  getVarType.exit
-             2EE              1391  handleAlgebraicExpression
-             2F9              139C  handleAlgebraicExpression.hae0
-             304              13A7  handleAlgebraicExpression.hae1
-             314              13B7  handleAlgebraicExpression.hae2
-             31F              13C2  handleAlgebraicExpression.relationals
-             341              13E4  handleAlgebraicExpression.parseAdditiveOperators
-             355              13F8  handleAlgebraicExpression.processAdd
-             35B              13FE  handleAlgebraicExpression.processMinus
-             366              1409  handleAlgebraicExpression.handleSecondLevelSkip
-             369              140C  handleAlgebraicExpression.handleSecondLevel
-             36E              1411  handleAlgebraicExpression.parseProductOperators
-             384              1427  handleAlgebraicExpression.processDiv
-             397              143A  handleAlgebraicExpression.handleThirdLevelSkip
-             39A              143D  handleAlgebraicExpression.handleThirdLevel
-             3B0              1453  handleAlgebraicExpression.notBracket
-             3B4              1457  handleAlgebraicExpression.varConstCheck
-             3C5              1468  handleAlgebraicExpression.varOrRNDFound
-             3E1              1484  handleAlgebraicExpression.exit
-             3E2              1485  handleAlgebraicExpression.exponentFound
-             3E4              1487  handleAlgebraicExpression.varFound
-             3FB              149E  handleAlgebraicExpression.closeBracket
-             403              14A6  handleAlgebraicExpression.error
-             40F              14B2  getNumericVariable
-             42F              14D2  getNumericVariable.exit
-             433              14D6  getNumericVariable.noVar
-             437              14DA  getNumericVariable.stringFoundError
-             443              14E6  setNumericVariable
-             463              1506  setNumericVariable.exit
-             467              150A  setNumericVariable.makeEditInteger
-             46E              1511  setNumericVariable.stringFoundError
-             47A              151D  findOtherExpressionsOnLine
-             483              1526  findOtherExpressionsOnLine.exit
-             484              1527  funTbl
-             4DB              157E  oldSchoolAssignemnt
-             4EB              158E  newProgram
-             53F              15E2  listProgram
-             542              15E5  runProgram
-             545              15E8  printStatement
-             54B              15EE  printStatement.printStart
-             55D              1600  printStatement.printExpr
-             577              161A  printStatement.printStringVar
-             592              1635  printStatement.stringPrint
-             5AA              164D  printStatement.psvexit
-             5BA              165D  getInput
-             5BD              1660  handleIf
-             5C0              1663  fancyJmp
-             5C3              1666  returnToDOS
-             5C6              1669  forLoop
-             5C9              166C  cls
-             5CE              1671  dbgr
-             5D1              1674  decimalToHex
-             5D6              1679  decimalToHex.processDigits
-             5F2              1695  decimalToHex.exit
-             5F9              169C  printdecimalword
-             629              16CC  printdecimalword.pdw0
-             639              16DC  printdecimalword.pdw1
-             652              16F5  allocateBlock
-             684              1727  allocateBlock.memoryFull
-             68F              1732  allocateBlock.firstAllocation
-             6AE              1751  findVariable
-             6C3              1766  findVariable.search
-             6CF              1772  findVariable.invalid
-             6DE              1781  findVariable.varFound
-             6E9              178C  findVariable.datFound
-             6F7              179A  findVariable.varNotFound
-             701              17A4  findVariable.exit
-             707              17AA  findFirstLine
-             716              17B9  searchForProgramLine
-             726              17C9  searchForProgramLine.search
-             738              17DB  searchForProgramLine.lineFound
-             739              17DC  insertProgramLine
-             75C              17FF  insertProgramLine.walk
-             770              1813  insertProgramLine.candidate
-             77F              1822  insertProgramLine.sort
-             792              1835  insertProgramLine.skipLink
-             7A0              1843  insertProgramLine.first
-             7B2              1855  insertProgramLine.exit
-             7B8              185B  makeEditInteger
-             7CB              186E  makeEditInteger.newVar
-             7F7              189A  makeEditInteger.error
-             803              18A6  makeEditString
-             80F              18B2  strcpy
-             818              18BB  strlen
-             81C              18BF  strlen.search
-             823              18C6  strlen.exit
-             826              18C9  memoryDetection
-             82F              18D2  memoryDetection.findStartAddr
-             836              18D9  memoryDetection.fsa1
-             866              1909  memoryDetection.exit
-             867              190A  memoryDetection.worstCase
-             888              192B  prompt
-             88D              1930  mainmsg
-             8A1              1944  bytemsg
-             8AF              1952  crlf
-             8B2              1955  errmsg
-             8BA              195D  numbers
-             8C4              1967  varChrs
-             8EA              198D  noMem
-             8FA              199D  syntax
-             909              19AC  typeError
-             919              19BC  lineNoXist
+             294              1337  executeExpression.stringAssignment
+             2BA              135D  executeExpression.syntaxError
+             2C6              1369  executeExpression.typError
+             2D2              1375  spaceSkip
+             2DC              137F  spaceSkip.exit
+             2DD              1380  getVarNameLength
+             2EB              138E  getVarNameLength.search
+             302              13A5  getVarNameLength.exit
+             30A              13AD  getVarType
+             321              13C4  getVarType.exit
+             325              13C8  handleAlgebraicExpression
+             330              13D3  handleAlgebraicExpression.hae0
+             33B              13DE  handleAlgebraicExpression.hae1
+             34B              13EE  handleAlgebraicExpression.hae2
+             356              13F9  handleAlgebraicExpression.relationals
+             378              141B  handleAlgebraicExpression.parseAdditiveOperators
+             38C              142F  handleAlgebraicExpression.processAdd
+             392              1435  handleAlgebraicExpression.processMinus
+             39D              1440  handleAlgebraicExpression.handleSecondLevelSkip
+             3A0              1443  handleAlgebraicExpression.handleSecondLevel
+             3A5              1448  handleAlgebraicExpression.parseProductOperators
+             3BB              145E  handleAlgebraicExpression.processDiv
+             3CE              1471  handleAlgebraicExpression.handleThirdLevelSkip
+             3D1              1474  handleAlgebraicExpression.handleThirdLevel
+             3E7              148A  handleAlgebraicExpression.notBracket
+             3EB              148E  handleAlgebraicExpression.varConstCheck
+             3FC              149F  handleAlgebraicExpression.varOrRNDFound
+             418              14BB  handleAlgebraicExpression.exit
+             419              14BC  handleAlgebraicExpression.exponentFound
+             41B              14BE  handleAlgebraicExpression.varFound
+             432              14D5  handleAlgebraicExpression.closeBracket
+             43A              14DD  handleAlgebraicExpression.error
+             446              14E9  getNumericVariable
+             466              1509  getNumericVariable.exit
+             46A              150D  getNumericVariable.noVar
+             46E              1511  getNumericVariable.stringFoundError
+             47A              151D  setNumericVariable
+             49A              153D  setNumericVariable.exit
+             49E              1541  setNumericVariable.makeEditInteger
+             4A5              1548  setNumericVariable.stringFoundError
+             4B1              1554  setStringVariable
+             4D4              1577  setStringVariable.exit
+             4DA              157D  setStringVariable.makeEditString
+             4E1              1584  setStringVariable.intFoundError
+             4ED              1590  findOtherExpressionsOnLine
+             4F6              1599  findOtherExpressionsOnLine.exit
+             4F7              159A  funTbl
+             54E              15F1  oldSchoolAssignemnt
+             55E              1601  newProgram
+             5B2              1655  listProgram
+             5B5              1658  runProgram
+             5B8              165B  printStatement
+             5BE              1661  printStatement.printStart
+             5D4              1677  printStatement.printExpr
+             5EE              1691  printStatement.printStringVar
+             61B              16BE  printStatement.stringPrint
+             633              16D6  printStatement.psvexit
+             640              16E3  printStatement.closespeechmarks
+             647              16EA  getInput
+             64A              16ED  handleIf
+             64D              16F0  fancyJmp
+             650              16F3  returnToDOS
+             653              16F6  forLoop
+             656              16F9  cls
+             65B              16FE  dbgr
+             65E              1701  decimalToHex
+             663              1706  decimalToHex.processDigits
+             67F              1722  decimalToHex.exit
+             686              1729  printdecimalword
+             6B6              1759  printdecimalword.pdw0
+             6C6              1769  printdecimalword.pdw1
+             6DF              1782  allocateBlock
+             711              17B4  allocateBlock.exit
+             713              17B6  allocateBlock.memoryFull
+             71F              17C2  allocateBlock.firstAllocation
+             73E              17E1  findVariable
+             753              17F6  findVariable.search
+             75F              1802  findVariable.invalid
+             76E              1811  findVariable.varFound
+             779              181C  findVariable.datFound
+             787              182A  findVariable.varNotFound
+             791              1834  findVariable.exit
+             797              183A  findFirstLine
+             7A6              1849  searchForProgramLine
+             7B6              1859  searchForProgramLine.search
+             7C8              186B  searchForProgramLine.lineFound
+             7C9              186C  insertProgramLine
+             7EC              188F  insertProgramLine.walk
+             800              18A3  insertProgramLine.candidate
+             80F              18B2  insertProgramLine.sort
+             822              18C5  insertProgramLine.skipLink
+             830              18D3  insertProgramLine.first
+             842              18E5  insertProgramLine.exit
+             848              18EB  makeEditInteger
+             85B              18FE  makeEditInteger.newVar
+             887              192A  makeEditInteger.error
+             893              1936  makeEditString
+             8CD              1970  makeEditString.strcopy
+             8E1              1984  makeEditString.error
+             8ED              1990  terminatedstrcpy
+             8EE              1991  terminatedstrcpy.copy
+             8FE              19A1  terminatedstrcpy.exit
+             900              19A3  strcpy
+             909              19AC  strlen
+             90D              19B0  strlen.search
+             914              19B7  strlen.exit
+             917              19BA  memoryDetection
+             920              19C3  memoryDetection.findStartAddr
+             927              19CA  memoryDetection.fsa1
+             957              19FA  memoryDetection.exit
+             958              19FB  memoryDetection.worstCase
+             979              1A1C  prompt
+             97E              1A21  mainmsg
+             992              1A35  bytemsg
+             9A0              1A43  crlf
+             9A3              1A46  errmsg
+             9AB              1A4E  numbers
+             9B5              1A58  varChrs
+             9DB              1A7E  noMem
+             9EB              1A8E  syntax
+             9FA              1A9D  typeError
+             A0A              1AAD  lineNoXist
 
 ---- Section programArea ------------------------------------------------------
 
 Real              Virtual           Name
-             931              19D4  ENDOFPROGRAM
+             A22              1AC5  ENDOFPROGRAM
 
 ---- Section dSeg -------------------------------------------------------------
 

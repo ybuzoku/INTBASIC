@@ -2,6 +2,7 @@ allocateBlock:
 ;Allocates a program memory block, the caller then fixes the specifics
 ;Output: rbx = Pointer to generic memory block, or -1 if memory full
 ;       Caller needs to fill in, block size, block type and specifics
+    push rdx
     mov rbx, qword [lastBlock]    ;Get the last block in the chain
     cmp rbx, -1 ;First allocation?
     je .firstAllocation
@@ -13,10 +14,12 @@ allocateBlock:
     ja .memoryFull
     mov qword [lastBlock], rbx  ;New last block
     mov byte [rbx + memBlock.bSignature], lastMemBlock
+.exit:
+    pop rdx
     ret
 .memoryFull:
     mov rbx, -1
-    ret
+    jmp short .exit
 .firstAllocation:
 ;Deal with first allocation
     lea rbx, section.programArea.vstart   ;Get this as the head of the chain
@@ -187,14 +190,58 @@ makeEditInteger:
 makeEditString:
 ;Will make a string if it is new name, or replace the string. Strings are null termin
 ;Input: rsi = Var name
-;       ecx = Length of varname
-;       rax = Ptr to string
-;FOR NOW, JUST THROW ERRORS
-    lea rbp, syntax
+;       ecx = Length of varname, max 40 chars
+;       rdx = Ptr to string itself
+    push rdi
+    push rsi
+    push rax
+    push rbx
+    call findVariable   ;rbx returned with var block or -1
+    cmp rbx, -1
+    jne .strcopy
+    call allocateBlock
+    cmp rbx, -1
+    je .error
+    mov word [rbx + stringBlock.wBlockSize], cx    ;Save length of name
+    add word [rbx + stringBlock.wBlockSize], stringBlock_size ;Add full block size
+    mov byte [rbx + stringBlock.bBlockType], datBlockType  ;Block type
+    lea rdi, qword [rbx + stringBlock.sVarName]
+    call strcpy ;Copy the string name into block buffer
+.strcopy:
+    lea rdi, qword [rbx + stringBlock.string]   ;point to string space
+    mov rsi, rdx    ;Point rsi to the string itself
+    call terminatedstrcpy
+    xor al, al
+    stosb   ;Store the null delimiter
+    pop rbx
+    pop rax
+    pop rsi
+    pop rdi
+    ret
+.error:
+    lea rbp, noMem
     jmp criticalError
 ;------------------------------------------------:
 ;  The below are misc memory related functions   :
 ;------------------------------------------------:
+terminatedstrcpy:
+;rdi = Destination String
+;rsi = Source String
+;Copy a terminated string
+    push rax
+.copy:
+    lodsb   ;Get char in al and inc rsi
+    cmp al, 0
+    je .exit
+    cmp al, ":"
+    je .exit
+    cmp al, 22h ;Speechmark
+    je .exit
+    stosb   ;Save char from al and inc rdi
+    jmp short .copy 
+.exit:
+    pop rax
+    ret
 strcpy:
 ;rdi = Destination string
 ;rsi = Source string

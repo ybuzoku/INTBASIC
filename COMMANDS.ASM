@@ -77,13 +77,15 @@ runProgram:
     mov al, 3
     ret
 printStatement:
-;Strings must be "" delimited or a string variable must be used (unsupported rn)
+;Strings must be "" delimited or a string variable must be used
 ;rdi points to the command length
     movzx ecx, byte [rdi]
     add rsi, rcx
 .printStart:
     call spaceSkip  ;move rsi to the start of the expression
     lodsb
+    test al, al     ;Is this a null string?
+    jz .psvexit
     cmp al, 022h    ;22h = ASCII Speechmarks
     je .stringPrint
     ;Here we check if the first char is ASCII, if it is, check if its a string var
@@ -100,30 +102,37 @@ printStatement:
     ret
 .printStringVar:
     ;Check if it is a string var
+    dec rsi
     call getVarNameLength
     call getVarType
     cmp ebx, strEquate
     jne .printExpr  ;rsi points to the same point as initially
     call findVariable   ;ecx has string length, get block ptr in rbx
-    lea rsi, qword [rbx + stringBlock.string]
+    push rbp
+    lea rbp, qword [rbx + stringBlock.string]
+    call ttyOutString
+    pop rbp
+    add rsi, rcx    ;Go past variable
+    call spaceSkip
 .stringPrint:
     lodsb
     cmp al, 0
     je .psvexit
     cmp al, ":"
     je .psvexit
-    cmp al, 022h    ;Close Speech marks
-    je .psvexit
+    cmp al, 022h    ;Close Speech marks, check next char
+    je .closespeechmarks
     cmp al, ";"     ;Semicolon means print next section on same line
     je .printStart
     call ttyOutChar
     jmp short .stringPrint
 .psvexit:
-    dec rsi
     lea rbp, crlf
     call ttyOutString
     ret
-
+.closespeechmarks:
+    call spaceSkip
+    jmp short .stringPrint
 getInput:
 ;Take a string as a prompt
     mov al, 5

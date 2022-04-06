@@ -42,27 +42,46 @@ executeExpression:
     call spaceSkip  ;Skip spaces after the end of the var name
     lodsb   ;Get the first char after the spaces. This must be a =
     cmp al, "="
-    jne .exitError
+    jne .syntaxError
     mov rsi, rdi    ;Return rsi to the start of the string name
     add rsi, rcx    ;Go to end of var name
+    dec rsi
+    lodsb   ;Get last char into al and inc rsi
+    cmp al, "$"
+    je .stringAssignment
     call spaceSkip  ;Skip any spaces
     inc rsi         ;Go past the equality sign
     call spaceSkip  ;Skip any spaces
     cmp byte [rsi], 22h ;Open speech mark
-    je .stringAssignment
+    je .typError    ;Integers cant have speechmarks
     call handleAlgebraicExpression  ;Get the result of the expression into rax
     mov rsi, rdi    ;Return the start of the string into rsi
     call setNumericVariable
     ret
-
-.exitError:
-    lea rbp, syntax ;Syntax error, keyword a bit confused
-    jmp criticalError
-
 .stringAssignment:
 ;This simply copies the string which is either speech mark, 0 or : terminated
 ;First allocate a string
-;rdi = start of string pointer
+;rsi = First char after the end of the variable name
+;rdi = start of variable name 
 ;rcx = char count for var name
-    mov rsi, rdi    ;Return to the start of the string
-    
+    call spaceSkip  ;Skip any spaces
+    inc rsi         ;Go past the equality sign
+    call spaceSkip  ;Skip any spaces
+    cmp byte [rsi], 22h ;Open speechmark check again
+    jne .typError    ;Assigning a number to a string is a type error
+    ;rsi now points to the start of the string to save
+    inc rsi ;Go past the speech mark
+    mov rdx, rsi    ;save start of string data in rdx
+    mov rsi, rdi
+    push rdi
+    call setStringVariable
+    pop rsi ;Save the start of the assignment in rsi
+    ret
+
+.syntaxError:
+    lea rbp, syntax ;Syntax error, keyword a bit confused
+    jmp criticalError
+.typError:
+    lea rbp, typeError
+    jmp criticalError
+
