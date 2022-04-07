@@ -48,11 +48,20 @@ funTbl:
     db 6, "DEBUG"   ;DONE
     dw dbgr - funTbl
 
-    db 5, "TRON"
+    db 5, "TRON"    ;DONE
     dw tron - funTbl
 
-    db 6, "TROFF"
+    db 6, "TROFF"   ;DONE
     dw troff - funTbl
+
+    db 4, "END"     ;DONE
+    dw endProg - funTbl
+
+    db 5, "STOP"    ;DONE
+    dw endProg - funTbl
+
+    db 7, "ESCAPE"  ;DONE
+    dw endProg - funTbl
 thenStr:
     db 5, "THEN"    ;DONE
     dw badCmd - funTbl
@@ -65,6 +74,8 @@ elseStr:
 badCmd:
     lea rbp, syntax
     call criticalError 
+endProg:
+    jmp mainLoop
 tron:
     or byte [stateByte], traceBit   ;Set the traceBit
     ret
@@ -124,7 +135,9 @@ listProgram:
     ret
 runProgram:
 ;Go to each line, one at a time, skip the line number and execute the expr
-;First thing it does, takes the first line number and moves it to current line number
+;First thing it does, resets the stack 
+; and takes the first line number and moves it to current line number
+    lea rsp, stacktop
     mov rbx, qword [firstLinPtr]    ;Get a pointer to the first program line
 .runLines:
     cmp rbx, -1 ;Are we at the end?
@@ -133,11 +146,13 @@ runProgram:
     mov word [currentLine], ax  ;Gone to new line
     lea rsi, qword [rbx + progLineBlock.sLine]  ;Point to the instruction
     call spaceSkip  ;Goto first char
+    ;xchg bx, bx
     call mainProcessing
+.rl0:
     mov rbx, qword [rbx + progLineBlock.qPtr]   ;Walk list of program lines
     jmp short .runLines
 .exit:
-    ret
+    jmp mainLoop
 
 printStatement:
 ;Strings must be "" delimited or a string variable must be used
@@ -204,6 +219,7 @@ printStatement:
     lodsb
     cmp al, ";" ;only exception to exiting if next non space char is a semicolon
     je .stringPrint
+    dec rsi ;Go back a step
     jmp short .psvexit
 .continue:
     call spaceSkip
@@ -219,6 +235,7 @@ handleIf:
     movzx ecx, byte [rdi]
     dec ecx
     add rsi, rcx
+
     call spaceSkip
     call handleAlgebraicExpression
     test rax, rax  ;If this is 0, go to the else
@@ -231,11 +248,14 @@ handleIf:
     ;If no GOTO or THEN, then syntax error
     lodsd   ;Get the whole word
     cmp eax, "THEN"
-    je mainProcessing   ; Go past THEN, to process statement
+    je .mp0   ; Go past THEN, to process statement
     cmp eax, "GOTO"
     jne .error
     sub rsi, 4  ;Go back four spaces to process GOTO
-    jmp mainProcessing
+.mp0:
+    lea rax, mainProcessing
+    push rax
+    ret 3*8 ;Align stack as expected
 .else:
     mov eax, "ELSE" ;Lucky for us, ELSE fits in eax
 .e0:
@@ -249,7 +269,7 @@ handleIf:
 ;If we are else, first move rsi past the else
     add rsi, 4  ;We are past the else now
     call spaceSkip
-    jmp mainProcessing
+    ret 3*8 ;Align stack as expected
 .noElse0:
 ;If there is no ELSE, simply ret
     dec rsi ;Ensure it is caught by the main findOtherExpressionsOnLine command
@@ -273,9 +293,9 @@ fancyJmp:
     je .unknownLineNumber
 
     lea rdx, runProgram.runLines    ;New line pointer in rbx
-    ;xchg bx, bx
     push rdx    ;Run lines return address
-    ret 3*8  ;pop three qwords off of the stack (old return addresses)
+    ;xchg bx, bx 
+    ret 3*8     ;pop three qwords off of the stack (old return addresses)
 .unknownLineNumber:
     lea rbp, lineNoXist
     call ttyOutString

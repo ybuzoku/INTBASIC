@@ -101,7 +101,7 @@ mainProcessing:
     call findOtherExpressionsOnLine
     test al, al ;If al is null, no more expressions on the line
     jnz mainProcessing    ;Execute portion again
-    ret
+    ret ;Return to caller
 .tron:
 ;Print the line number about to be executed
     mov al, "["
