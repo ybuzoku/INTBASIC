@@ -2,7 +2,8 @@
 
 spaceSkip:
 ;Allows us to skip spaces that might have been placed for
-; ease of reading by the user.
+; ease of reading by the user without modifying any registers
+; except for rsi.
 ;Input: rsi = Pointer to string
 ;Output: rsi = First non space character encountered
     cmp byte [rsi], " "

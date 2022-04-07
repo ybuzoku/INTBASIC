@@ -69,6 +69,18 @@ elseStr:
     db 5, "ELSE"    ;DONE
     dw badCmd - funTbl
 
+    db 6, "EPEEK"
+    dw memRead - funTbl
+
+    db 6, "EPOKE"
+    dw memWrite - funTbl
+
+    db 5, "PEEK"
+    dw byteRead - funTbl
+
+    db 5, "POKE"
+    dw byteWrite - funTbl
+
     db -1    ;Demarkate the end of the table
 ;End of Table
 badCmd:
@@ -82,6 +94,12 @@ tron:
 troff:
     and byte [stateByte], ~traceBit ;Clear the traceBit
     ret
+memRead:
+memWrite:
+byteRead:
+byteWrite:
+    ret
+
 oldSchoolAssignemnt:
 ;
     movzx ecx, byte [rdi]
@@ -226,7 +244,80 @@ printStatement:
     jmp .printStart
 getInput:
 ;Take a string as a prompt
-    mov al, 5
+;rdi points just past the end of the command line
+;Input prompt strings must be speech mark delimited on both sides!
+    movzx ecx, byte [rdi]
+    dec ecx
+    add rsi, rcx
+    call spaceSkip
+    ;Now check to see if the user has specified a custom prompt
+    lodsb   ;Get first symbol and go past it
+    cmp al, 22h ;Speechmark?
+    jne .defaultPrompt ;If no speechmark, print default prompt
+.customPrompt:
+    mov rdi, rsi    ;Save start of string in rdi
+.cp0:
+    lodsb           ;Now search for end of string speech marks or null terminator
+    cmp al, 22h     ;Is al a speech mark?
+    je .printCustomPrompt
+    test al, al     ;Is al null?
+    jnz .cp0        ;No, keep searching for terminator
+.error:
+    lea rbp, syntax
+    jmp criticalError
+.printCustomPrompt:
+    mov rsi, rdi    ;rsi points to the first char of the string
+.pcp0:
+    lodsb
+    cmp al, 22h     ;Speechmark?
+    je .stopPrompt
+    call ttyOutChar
+    jmp short .pcp0
+.stopPrompt:
+    call spaceSkip  ;Skip spaces
+    lodsb   ;Get first non space char after closing speechmark
+    cmp al, ";" ;Semicolon means no default prompt
+    je .noDefaultPrompt
+    cmp al, "," ;Comma also means no default prompt
+    je .noDefaultPrompt
+.defaultPrompt:
+    dec rsi
+    mov al, "?"
+    call ttyOutChar
+.noDefaultPrompt:
+    mov al, " " ;space
+    call ttyOutChar
+    call spaceSkip  ;Skip spaces after default supressor to get to var name
+    call getVarNameLength   ;Get var name length in ecx
+    lea rdi, digitString    ;Buffer has 48 chars, string names are max 40
+    call strcpy     ;rsi points to var name
+    push rdi    ;rdi points to first char of variable
+    push rcx
+    call getLineInput   ;Get input from the user in inString, null terminated
+    pop rcx
+    pop rdi 
+    mov rsi, rdi    ;Save the start of the var name in rsi
+    add rsi, rcx    ;Go to end of var
+    dec rsi
+    lodsb   ;Are we a string variable?
+    lea rsi, inString   ;Move rsi to start of user input
+    cmp al, "$"
+    je .handleString
+.handleNumeric:
+    xchg bx, bx
+    call handleAlgebraicExpression  ;Get the result of the expression into rax
+    mov rsi, rdi    ;Return the start of the string into rsi
+    call setNumericVariable
+    ret
+.handleString:
+    ;IF a string variable, come here
+    ;rdi has the start of the variable name
+
+    ;rdx must point to the start of the string
+    ;rsi must point to the start of the variable name
+    mov rdx, rsi
+    mov rsi, rdi    ;Return start of user name in rsi
+    call setStringVariable
     ret
 handleIf:
 ;Evaluate the string. The IF,THEN/GOTO,ELSE statement must ALL be on one line
