@@ -47,6 +47,12 @@ funTbl:
 
     db 6, "DEBUG"   ;DONE
     dw dbgr - funTbl
+
+    db 5, "TRON"
+    dw tron - funTbl
+
+    db 6, "TROFF"
+    dw troff - funTbl
 thenStr:
     db 5, "THEN"    ;DONE
     dw badCmd - funTbl
@@ -59,6 +65,12 @@ elseStr:
 badCmd:
     lea rbp, syntax
     call criticalError 
+tron:
+    or byte [stateByte], traceBit   ;Set the traceBit
+    ret
+troff:
+    and byte [stateByte], ~traceBit ;Clear the traceBit
+    ret
 oldSchoolAssignemnt:
 ;
     movzx ecx, byte [rdi]
@@ -248,7 +260,7 @@ handleIf:
     jmp criticalError
 
 fancyJmp:
-;GOTO, the hell of every dumb high level programmer
+;GOTO
 ;rdi points just past the end of the command line
     movzx ecx, byte [rdi]
     dec ecx
@@ -261,10 +273,9 @@ fancyJmp:
     je .unknownLineNumber
 
     lea rdx, runProgram.runLines    ;New line pointer in rbx
-    ;reset stack pointer, temporary fix, nned to find the leak
-    lea rsp, qword [stacktop - 8]
+    ;xchg bx, bx
     push rdx    ;Run lines return address
-    ret;8  ;pop one qword off of the stack (old rbx)
+    ret 3*8  ;pop three qwords off of the stack (old return addresses)
 .unknownLineNumber:
     lea rbp, lineNoXist
     call ttyOutString

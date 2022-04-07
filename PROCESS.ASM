@@ -87,23 +87,34 @@ executeExpression:
 
 mainProcessing:
     ;rsi points to string to begin processing
-    test byte [stateByte], 1 ;Is break set before exec?
+    test byte [stateByte], breakBit ;Is break set before exec?
     jnz .break
+    test byte [stateByte], traceBit ;Are we TRON?
+    jnz .tron
+.mp0:
     push rbx
     call executeExpression
     pop rbx
-    test byte [stateByte], 1 ;Is break set after exec?
+    test byte [stateByte], breakBit ;Is break set after exec?
     jnz .break
     ;Now see if the line has any more expressions by checking for :
     call findOtherExpressionsOnLine
     test al, al ;If al is null, no more expressions on the line
     jnz mainProcessing    ;Execute portion again
     ret
+.tron:
+;Print the line number about to be executed
+    mov al, "["
+    call ttyOutChar
+    movzx eax, word [currentLine]
+    call printdecimalword
+    mov al, "]"
+    call ttyOutChar
+    jmp short .mp0
 .break:
     lea rbp, breakmsg
     call ttyOutString
-    xor eax, eax
-    mov ax, word [currentLine]
+    movzx eax, word [currentLine]
     call printdecimalword
     lea rbp, crlf
     call ttyOutString

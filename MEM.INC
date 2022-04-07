@@ -39,3 +39,7 @@ endstruc
 ;Variable equates
 intEquate  equ 0
 strEquate  equ 1
+
+;Status Equates
+breakBit   equ 1    ;Set means on
+traceBit   equ 2    ;Set means TRON, Clear means TROFF

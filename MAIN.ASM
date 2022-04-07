@@ -31,9 +31,7 @@ mainLoop:
     test ax, ax
     jnz .saveLine
 ;Here we execute the line
-.ml1:
-    call mainProcessing
-    ret
+    jmp mainProcessing
 .saveLine:
     ;ax has the line number
     mov dx, ax

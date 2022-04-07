@@ -64,6 +64,7 @@ ttyOutChar:
     int 30h
     ret
 ttyOutString:
+;Print 0 terminated strings
     mov eax, 1304h
     int 30h
     ret
