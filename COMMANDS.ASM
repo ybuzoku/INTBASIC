@@ -30,13 +30,13 @@ funTbl:
     db 6, "INPUT"
     dw getInput - funTbl
 
-    db 3, "IF"
+    db 3, "IF"      ;DONE, needs to be tested
     dw handleIf - funTbl
 
     db 5, "GOTO"    ;DONE
     dw fancyJmp - funTbl
 
-    db 7, "SYSTEM"
+    db 7, "SYSTEM"  ;DONE
     dw returnToDOS - funTbl
 
     db 4, "FOR"
@@ -48,10 +48,10 @@ funTbl:
     db 6, "DEBUG"   ;DONE
     dw dbgr - funTbl
 thenStr:
-    db 5, "THEN"
+    db 5, "THEN"    ;DONE
     dw badCmd - funTbl
 elseStr:
-    db 5, "ELSE"
+    db 5, "ELSE"    ;DONE
     dw badCmd - funTbl
 
     db -1    ;Demarkate the end of the table
@@ -249,7 +249,7 @@ handleIf:
 
 fancyJmp:
 ;GOTO, the hell of every dumb high level programmer
-;rsi, rdi points just past the end of the command line
+;rdi points just past the end of the command line
     movzx ecx, byte [rdi]
     dec ecx
     add rsi, rcx
@@ -261,9 +261,10 @@ fancyJmp:
     je .unknownLineNumber
 
     lea rdx, runProgram.runLines    ;New line pointer in rbx
-    mov qword [rsp], rdx    ;Run lines return address
-    ;xchg bx, bx
-    ret 8  ;pop one qword off of the stack (old rbx)
+    ;reset stack pointer, temporary fix, nned to find the leak
+    lea rsp, qword [stacktop - 8]
+    push rdx    ;Run lines return address
+    ret;8  ;pop one qword off of the stack (old rbx)
 .unknownLineNumber:
     lea rbp, lineNoXist
     call ttyOutString

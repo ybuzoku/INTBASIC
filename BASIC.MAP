@@ -12,8 +12,8 @@ Output file:  BASIC.BIN
 
 Vstart            Start             Stop              Length    Class     Name
                0                 0                83  00000083  progbits  .text
-            1126                83               C33  00000BB0  progbits  resSeg
-            1CD6               C33               C33  00000000  progbits  programArea
+            1126                83               C35  00000BB2  progbits  resSeg
+            1CD8               C35               C35  00000000  progbits  programArea
                0                 0              1126  00001126  nobits    dSeg
 
 -- Sections (detailed) --------------------------------------------------------
@@ -32,7 +32,7 @@ vfollows:  not defined
 ---- Section resSeg -----------------------------------------------------------
 
 class:     progbits
-length:                 BB0
+length:                 BB2
 start:                   83
 align:                    1
 follows:   .text
@@ -44,10 +44,10 @@ vfollows:  dSeg
 
 class:     progbits
 length:                   0
-start:                  C33
+start:                  C35
 align:                    1
 follows:   resSeg
-vstart:                1CD6
+vstart:                1CD8
 valign:                   1
 vfollows:  resSeg
 
@@ -219,76 +219,76 @@ Real              Virtual           Name
              7B2              1855  handleIf.noElse
              7B3              1856  handleIf.error
              7BF              1862  fancyJmp
-             7F0              1893  fancyJmp.unknownLineNumber
-             801              18A4  forLoop
-             804              18A7  returnToDOS
-             810              18B3  cls
-             815              18B8  dbgr
-             835              18D8  dbgr.farReturn
-             85E              1901  decimalToHex
-             863              1906  decimalToHex.processDigits
-             87F              1922  decimalToHex.exit
-             886              1929  printdecimalword
-             8B6              1959  printdecimalword.pdw0
-             8C6              1969  printdecimalword.pdw1
-             8DF              1982  allocateBlock
-             8E0              1983  allocateBlock.ab0
-             911              19B4  allocateBlock.exit
-             913              19B6  allocateBlock.memoryFull
-             91F              19C2  allocateBlock.firstAllocation
-             93F              19E2  findVariable
-             954              19F7  findVariable.search
-             960              1A03  findVariable.invalid
-             96F              1A12  findVariable.varFound
-             97E              1A21  findVariable.datFound
-             990              1A33  findVariable.varNotFound
-             99A              1A3D  findVariable.exit
-             9A0              1A43  findFirstLine
-             9AF              1A52  searchForProgramLine
-             9BF              1A62  searchForProgramLine.search
-             9D2              1A75  searchForProgramLine.lineFound
-             9D3              1A76  insertProgramLine
-             9F3              1A96  insertProgramLine.walk
-             A07              1AAA  insertProgramLine.candidate
-             A16              1AB9  insertProgramLine.sort
-             A29              1ACC  insertProgramLine.skipLink
-             A37              1ADA  insertProgramLine.first
-             A49              1AEC  insertProgramLine.exit
-             A4F              1AF2  makeEditInteger
-             A62              1B05  makeEditInteger.newVar
-             A8E              1B31  makeEditInteger.error
-             A9A              1B3D  makeEditString
-             AD4              1B77  makeEditString.strcopy
-             AE8              1B8B  makeEditString.error
-             AF4              1B97  terminatedstrcpy
-             AF5              1B98  terminatedstrcpy.copy
-             B05              1BA8  terminatedstrcpy.exit
-             B07              1BAA  strcpy
-             B10              1BB3  strlen
-             B14              1BB7  strlen.search
-             B1B              1BBE  strlen.exit
-             B1E              1BC1  memoryDetection
-             B27              1BCA  memoryDetection.findStartAddr
-             B2E              1BD1  memoryDetection.fsa1
-             B5E              1C01  memoryDetection.exit
-             B5F              1C02  memoryDetection.worstCase
-             B80              1C23  prompt
-             B85              1C28  mainmsg
-             B99              1C3C  bytemsg
-             BA7              1C4A  crlf
-             BAA              1C4D  errmsg
-             BB2              1C55  numbers
-             BBC              1C5F  varChrs
-             BE2              1C85  noMem
-             BF2              1C95  syntax
-             C01              1CA4  typeError
-             C11              1CB4  lineNoXist
-             C29              1CCC  breakmsg
+             7F2              1895  fancyJmp.unknownLineNumber
+             803              18A6  forLoop
+             806              18A9  returnToDOS
+             812              18B5  cls
+             817              18BA  dbgr
+             837              18DA  dbgr.farReturn
+             860              1903  decimalToHex
+             865              1908  decimalToHex.processDigits
+             881              1924  decimalToHex.exit
+             888              192B  printdecimalword
+             8B8              195B  printdecimalword.pdw0
+             8C8              196B  printdecimalword.pdw1
+             8E1              1984  allocateBlock
+             8E2              1985  allocateBlock.ab0
+             913              19B6  allocateBlock.exit
+             915              19B8  allocateBlock.memoryFull
+             921              19C4  allocateBlock.firstAllocation
+             941              19E4  findVariable
+             956              19F9  findVariable.search
+             962              1A05  findVariable.invalid
+             971              1A14  findVariable.varFound
+             980              1A23  findVariable.datFound
+             992              1A35  findVariable.varNotFound
+             99C              1A3F  findVariable.exit
+             9A2              1A45  findFirstLine
+             9B1              1A54  searchForProgramLine
+             9C1              1A64  searchForProgramLine.search
+             9D4              1A77  searchForProgramLine.lineFound
+             9D5              1A78  insertProgramLine
+             9F5              1A98  insertProgramLine.walk
+             A09              1AAC  insertProgramLine.candidate
+             A18              1ABB  insertProgramLine.sort
+             A2B              1ACE  insertProgramLine.skipLink
+             A39              1ADC  insertProgramLine.first
+             A4B              1AEE  insertProgramLine.exit
+             A51              1AF4  makeEditInteger
+             A64              1B07  makeEditInteger.newVar
+             A90              1B33  makeEditInteger.error
+             A9C              1B3F  makeEditString
+             AD6              1B79  makeEditString.strcopy
+             AEA              1B8D  makeEditString.error
+             AF6              1B99  terminatedstrcpy
+             AF7              1B9A  terminatedstrcpy.copy
+             B07              1BAA  terminatedstrcpy.exit
+             B09              1BAC  strcpy
+             B12              1BB5  strlen
+             B16              1BB9  strlen.search
+             B1D              1BC0  strlen.exit
+             B20              1BC3  memoryDetection
+             B29              1BCC  memoryDetection.findStartAddr
+             B30              1BD3  memoryDetection.fsa1
+             B60              1C03  memoryDetection.exit
+             B61              1C04  memoryDetection.worstCase
+             B82              1C25  prompt
+             B87              1C2A  mainmsg
+             B9B              1C3E  bytemsg
+             BA9              1C4C  crlf
+             BAC              1C4F  errmsg
+             BB4              1C57  numbers
+             BBE              1C61  varChrs
+             BE4              1C87  noMem
+             BF4              1C97  syntax
+             C03              1CA6  typeError
+             C13              1CB6  lineNoXist
+             C2B              1CCE  breakmsg
 
 ---- Section programArea ------------------------------------------------------
 
 Real              Virtual           Name
-             C33              1CD6  ENDOFPROGRAM
+             C35              1CD8  ENDOFPROGRAM
 
 ---- Section dSeg -------------------------------------------------------------
 
