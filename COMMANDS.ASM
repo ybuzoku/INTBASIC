@@ -189,7 +189,10 @@ printStatement:
     ret
 .closespeechmarks:
     call spaceSkip
-    jmp short .stringPrint
+    lodsb
+    cmp al, ";" ;only exception to exiting if next non space char is a semicolon
+    je .stringPrint
+    jmp short .psvexit
 .continue:
     call spaceSkip
     jmp .printStart
@@ -208,8 +211,41 @@ handleIf:
     call handleAlgebraicExpression
     test rax, rax  ;If this is 0, go to the else
     jnz .else
+    call spaceSkip
+    ;Now check if it is a THEN or a GOTO
+    ;If it is a THEN, go past the then and let mainProcessing handle it
+    ;If it is a GOTO, dont go past the GOTO and let mainProcessing handle it
+    ;In both cases JUMP to mainProcessing to avoid stack growth
+    ;If no GOTO or THEN, then syntax error
+    lodsd   ;Get the whole word
+    cmp eax, "THEN"
+    je mainProcessing   ; Go past THEN, to process statement
+    cmp eax, "GOTO"
+    jne .error
+    sub rsi, 4  ;Go back four spaces to process GOTO
+    jmp mainProcessing
 .else:
+    mov eax, "ELSE" ;Lucky for us, ELSE fits in eax
+.e0:
+    inc rsi
+    cmp byte [rsi], 0   ;End of command line?
+    jz .noElse
+    cmp byte [rsi], ":" ;End of command line portion?
+    jz .noElse0
+    cmp dword [rsi], eax
+    jne .e0
+;If we are else, first move rsi past the else
+    add rsi, 4  ;We are past the else now
+    call spaceSkip
+    jmp mainProcessing
+.noElse0:
+;If there is no ELSE, simply ret
+    dec rsi ;Ensure it is caught by the main findOtherExpressionsOnLine command
+.noElse:
     ret
+.error:
+    lea rbx, syntax
+    jmp criticalError
 
 fancyJmp:
 ;GOTO, the hell of every dumb high level programmer
