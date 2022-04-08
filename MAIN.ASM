@@ -30,8 +30,9 @@ mainLoop:
     call decimalToHex   ;Check to see if we have a valid line number
     test ax, ax
     jnz .saveLine
-;Here we execute the line
-    jmp mainProcessing
+;Here we execute the line, move rsi to the start of the line
+    lea rsi, inString
+    jmp mainProcessor
 .saveLine:
     ;ax has the line number
     mov dx, ax

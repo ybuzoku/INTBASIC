@@ -8,7 +8,7 @@ executeExpression:
 .functionFinderLoop:
     movzx ecx, byte [rdi]  ;Get the string length  
     cmp cl, -1  ;-1 is the end of table marker, either Var assignment or error
-    je .variableAssignment 
+    je .notLetVarAssignment ;No key word found, consider variable assignment
     push rsi    ;Save ptr to start of string on stack 
     push rdi
     inc rdi             ;Goto first char in function name
@@ -27,83 +27,44 @@ executeExpression:
     ;rdi points to table entry
     lea rbx, funTbl         ;Get table address
     movzx rdx, byte [rdi]   ;Get pascal string length
-    movzx edx, word [rdi + rdx]    ;Add pascal strlen to table entry and get ptr
-    add rbx, rdx    ;Add word offset to table base
-    jmp rbx ;Goto function pointer in rbx
+    movzx ecx, word [rdi + rdx] ;Add pascal strlen to table entry and get word offset
+    add rbx, rcx    ;Add word offset to table base
+    dec rdx         ;Get number of chars in function name
+    add rsi, rdx    ;rsi points to first char AFTER function name
+.runFunction:
+    call rbx        ;Call the function pointer in rbx
 .exit:
-    ret
+    call findOtherExpressionsOnLine ;See if there are any other expressions
+    test al, al ;If al is null, no more expressions on the line
+    ;If not null, keep executing expressions, rsi points to first char after :
+    jnz executeExpression 
+    jmp short mainProcessor.mp1
+.notLetVarAssignment:
+    lea rbx, variableAssignment
+    jmp short .runFunction  ;Now call the function as if it was found from the table
 
-.variableAssignment:
-    ;Establish if the string is a variable assignment or not
-    ;rsi points to start of string
-    call getVarNameLength   ;Get the variable name length
-    mov rdi, rsi    ;Save ptr to start of string in rdi
-    add rsi, rcx    ;Go to end of string
-    call spaceSkip  ;Skip spaces after the end of the var name
-    lodsb   ;Get the first char after the spaces. This must be a =
-    cmp al, "="
-    jne .syntaxError
-    mov rsi, rdi    ;Return rsi to the start of the string name
-    add rsi, rcx    ;Go to end of var name
-    dec rsi
-    lodsb   ;Get last char into al and inc rsi
-    cmp al, "$"
-    je .stringAssignment
-    call spaceSkip  ;Skip any spaces
-    inc rsi         ;Go past the equality sign
-    call spaceSkip  ;Skip any spaces
-    cmp byte [rsi], 22h ;Open speech mark
-    je .typError    ;Integers cant have speechmarks
-    call handleAlgebraicExpression  ;Get the result of the expression into rax
-    mov rsi, rdi    ;Return the start of the string into rsi
-    call setNumericVariable
-    ret
-.stringAssignment:
-;This simply copies the string which is either speech mark, 0 or : terminated
-;First allocate a string
-;rsi = First char after the end of the variable name
-;rdi = start of variable name 
-;rcx = char count for var name
-    call spaceSkip  ;Skip any spaces
-    inc rsi         ;Go past the equality sign
-    call spaceSkip  ;Skip any spaces
-    cmp byte [rsi], 22h ;Open speechmark check again
-    jne .typError    ;Assigning a number to a string is a type error
-    ;rsi now points to the start of the string to save
-    inc rsi ;Go past the speech mark
-    mov rdx, rsi    ;save start of string data in rdx
-    mov rsi, rdi
-    push rdi
-    call setStringVariable
-    pop rsi ;Save the start of the assignment in rsi
-    ret
-
-.syntaxError:
-    lea rbp, syntax ;Syntax error, keyword a bit confused
-    jmp criticalError
-.typError:
-    lea rbp, typeError
-    jmp criticalError
-
-mainProcessing:
+mainProcessor:
     ;rsi points to string to begin processing
     test byte [stateByte], breakBit ;Is break set before exec?
     jnz .break
     test byte [stateByte], traceBit ;Are we TRON?
     jnz .tron
 .mp0:
-    push rbx
-    call executeExpression
-    pop rbx
+    ;Get the address of the next line and push it on stack
+    ;This allows a program to modify the return address or even add 
+    ; more addresses to the stack
+    jmp executeExpression
+    ;Pop it off the stack here
+    ;cmp the address to -1, if equal, exit
+.mp1:
     test byte [stateByte], breakBit ;Is break set after exec?
     jnz .break
     ;Now see if the line has any more expressions by checking for :
-    call findOtherExpressionsOnLine
-    test al, al ;If al is null, no more expressions on the line
-    jnz mainProcessing    ;Execute portion again
     ret ;Return to caller
 .tron:
 ;Print the line number about to be executed
+    test byte [stateByte], indirectBit  ;Tron should only work in indirect mode
+    jz .mp0
     mov al, "["
     call ttyOutChar
     movzx eax, word [currentLine]

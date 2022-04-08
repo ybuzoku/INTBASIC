@@ -34,7 +34,7 @@ funTbl:
     dw handleIf - funTbl
 
     db 5, "GOTO"    ;DONE
-    dw fancyJmp - funTbl
+    dw goto - funTbl
 
     db 7, "SYSTEM"  ;DONE
     dw returnToDOS - funTbl
@@ -101,12 +101,62 @@ byteWrite:
     ret
 
 oldSchoolAssignemnt:
-;
-    movzx ecx, byte [rdi]
-    dec ecx
-    add rsi, rcx
+;Assign with a LET directive
+;rsi points to first char AFTER function name
     call spaceSkip  ;Goto var assignment as if at start of line
-    jmp executeExpression.variableAssignment
+variableAssignment: ;Assignment without a LET directive
+    ;Establish if the string is a variable assignment or not
+    ;rsi points to start of string
+    call getVarNameLength   ;Get the variable name length
+    mov rdi, rsi    ;Save ptr to start of string in rdi
+    add rsi, rcx    ;Go to end of string
+    call spaceSkip  ;Skip spaces after the end of the var name
+    lodsb   ;Get the first char after the spaces. This must be a =
+    cmp al, "="
+    jne .syntaxError
+    mov rsi, rdi    ;Return rsi to the start of the string name
+    add rsi, rcx    ;Go to end of var name
+    dec rsi
+    lodsb   ;Get last char into al and inc rsi
+    cmp al, "$"
+    je .stringAssignment
+    call spaceSkip  ;Skip any spaces
+    inc rsi         ;Go past the equality sign
+    call spaceSkip  ;Skip any spaces
+    cmp byte [rsi], 22h ;Open speech mark
+    je .typError    ;Integers cant have speechmarks
+    call handleAlgebraicExpression  ;Get the result of the expression into rax
+    mov rsi, rdi    ;Return the start of the string into rsi
+    call setNumericVariable
+    ret
+.stringAssignment:
+;This simply copies the string which is either speech mark, 0 or : terminated
+;First allocate a string
+;rsi = First char after the end of the variable name
+;rdi = start of variable name 
+;rcx = char count for var name
+    call spaceSkip  ;Skip any spaces
+    inc rsi         ;Go past the equality sign
+    call spaceSkip  ;Skip any spaces
+    cmp byte [rsi], 22h ;Open speechmark check again
+    jne .typError    ;Assigning a number to a string is a type error
+    ;rsi now points to the start of the string to save
+    inc rsi ;Go past the speech mark
+    mov rdx, rsi    ;save start of string data in rdx
+    mov rsi, rdi
+    push rdi
+    call setStringVariable
+    pop rsi ;Save the start of the assignment in rsi
+    ret
+
+.syntaxError:
+    lea rbp, syntax ;Syntax error, keyword a bit confused
+    jmp criticalError
+.typError:
+    lea rbp, typeError
+    jmp criticalError
+
+
 newProgram: 
 ;Simply reset the program pointers
     lea rax, section.programArea.vstart
@@ -152,32 +202,13 @@ listProgram:
 .exit:
     ret
 runProgram:
-;Go to each line, one at a time, skip the line number and execute the expr
-;First thing it does, resets the stack 
-; and takes the first line number and moves it to current line number
-    lea rsp, stacktop
-    mov rbx, qword [firstLinPtr]    ;Get a pointer to the first program line
-.runLines:
-    cmp rbx, -1 ;Are we at the end?
-    je .exit    ;Yes, return to the prompt
-    movzx eax, word [rbx + progLineBlock.wLineNum]
-    mov word [currentLine], ax  ;Gone to new line
-    lea rsi, qword [rbx + progLineBlock.sLine]  ;Point to the instruction
-    call spaceSkip  ;Goto first char
-    ;xchg bx, bx
-    call mainProcessing
-.rl0:
-    mov rbx, qword [rbx + progLineBlock.qPtr]   ;Walk list of program lines
-    jmp short .runLines
-.exit:
-    jmp mainLoop
+;Set the bit if it is clear. 
+;Return in rbx the block of the first line for the program to run
+
 
 printStatement:
 ;Strings must be "" delimited or a string variable must be used
-;rdi points to the command length
-    movzx ecx, byte [rdi]
-    dec ecx ;This gives instruction name + 1
-    add rsi, rcx
+;rsi points to first char AFTER function name
 .printStart:
     call spaceSkip  ;move rsi to the start of the expression
     lodsb
@@ -245,10 +276,8 @@ printStatement:
 getInput:
 ;Take a string as a prompt
 ;rdi points just past the end of the command line
+;rsi points to first char AFTER function name
 ;Input prompt strings must be speech mark delimited on both sides!
-    movzx ecx, byte [rdi]
-    dec ecx
-    add rsi, rcx
     call spaceSkip
     ;Now check to see if the user has specified a custom prompt
     lodsb   ;Get first symbol and go past it
@@ -304,7 +333,6 @@ getInput:
     cmp al, "$"
     je .handleString
 .handleNumeric:
-    xchg bx, bx
     call handleAlgebraicExpression  ;Get the result of the expression into rax
     mov rsi, rdi    ;Return the start of the string into rsi
     call setNumericVariable
@@ -323,9 +351,7 @@ handleIf:
 ;Evaluate the string. The IF,THEN/GOTO,ELSE statement must ALL be on one line
 ;IF exp1 THEN statement ELSE statement
 ;IF exp1 GOTO linenumber ELSE statement
-    movzx ecx, byte [rdi]
-    dec ecx
-    add rsi, rcx
+;rsi points to first char AFTER function name
 
     call spaceSkip
     call handleAlgebraicExpression
@@ -343,43 +369,27 @@ handleIf:
     ;If no GOTO or THEN, then syntax error
     lodsd   ;Get the whole word
     cmp eax, "THEN"
-    je .mp0   ; Go past THEN, to process statement
+    je .hi0   ; Go past THEN, to process statement
     cmp eax, "GOTO"
     jne .error
     sub rsi, 4  ;Go back four spaces to process GOTO
-.mp0:
-    lea rax, mainProcessing
-    push rax
-    ret 3*8 ;Align stack as expected
+.hi0:
+    ret
 .else:
     mov eax, "ELSE" ;Lucky for us, ELSE fits in eax
-.e0:
-    inc rsi
-    cmp byte [rsi], 0   ;End of command line?
-    jz .noElse
-    cmp byte [rsi], ":" ;End of command line portion?
-    jz .noElse0
-    cmp dword [rsi], eax
-    jne .e0
-;If we are else, first move rsi past the else
-    add rsi, 4  ;We are past the else now
-    call spaceSkip
-    ret 3*8 ;Align stack as expected
+    ret
 .noElse0:
 ;If there is no ELSE, simply ret
-    dec rsi ;Ensure it is caught by the main findOtherExpressionsOnLine command
 .noElse:
     ret
 .error:
     lea rbx, syntax
     jmp criticalError
 
-fancyJmp:
-;GOTO
+goto:
+;GOTO, works by replacing the next address on the stack
 ;rdi points just past the end of the command line
-    movzx ecx, byte [rdi]
-    dec ecx
-    add rsi, rcx
+;rsi points to first char AFTER function name
     call spaceSkip  ;Skip all preceeding spaces
     call handleAlgebraicExpression  ;Turn the expression into a number in ax
     movzx edx, ax   ;Line number into dx
@@ -387,14 +397,12 @@ fancyJmp:
     cmp rbx, -1
     je .unknownLineNumber
 
-    lea rdx, runProgram.runLines    ;New line pointer in rbx
-    push rdx    ;Run lines return address
-    ;xchg bx, bx 
-    ret 3*8     ;pop three qwords off of the stack (old return addresses)
+    ret
 .unknownLineNumber:
     lea rbp, lineNoXist
     call ttyOutString
     jmp mainLoop
+
 forLoop:
     mov al, 9
     ret
