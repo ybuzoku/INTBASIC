@@ -329,8 +329,12 @@ handleIf:
 
     call spaceSkip
     call handleAlgebraicExpression
-    test rax, rax  ;If this is 0, go to the else
-    jnz .else
+;THIS WORKS ON CONTRALOGIC. If the algebraic expression evaluates to 0,
+; it is currently taken to be true (as that is a condition I can test for
+; easily). Once Proper logical operators are introduced, then I will have to
+; switch it so that test rax, rax -> jz .else
+    test rax, rax  ;If this is NOT 0, go to the else
+    jnz .else   ;CONTRALOGIC, TO BE SWITCHED IN LATER VERSIONS TO JZ 
     call spaceSkip
     ;Now check if it is a THEN or a GOTO
     ;If it is a THEN, go past the then and let mainProcessing handle it

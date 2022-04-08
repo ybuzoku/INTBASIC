@@ -57,8 +57,9 @@
     45                              <1> strEquate  equ 1
     46                              <1> 
     47                              <1> ;Status Equates
-    48                              <1> breakBit   equ 1    ;Set means on
-    49                              <1> traceBit   equ 2    ;Set means TRON, Clear means TROFF
+    48                              <1> breakBit    equ 1    ;Set means on
+    49                              <1> traceBit    equ 2    ;Set means TRON, Clear means TROFF
+    50                              <1> indirectBit equ 3    ;Set means indirect/program mode, Clear means direct/line mode
      5                                  Segment .text align=1
      6                                  %include "RELOC.ASM"
      7 00000000 55AA                <1>     dw 0AA55h 
@@ -1050,108 +1051,112 @@
    343                              <1> 
    344 00000801 E8EBFAFFFF          <1>     call spaceSkip
    345 00000806 E839FBFFFF          <1>     call handleAlgebraicExpression
-   346 0000080B 4885C0              <1>     test rax, rax  ;If this is 0, go to the else
-   347 0000080E 7526                <1>     jnz .else
-   348 00000810 E8DCFAFFFF          <1>     call spaceSkip
-   349                              <1>     ;Now check if it is a THEN or a GOTO
-   350                              <1>     ;If it is a THEN, go past the then and let mainProcessing handle it
-   351                              <1>     ;If it is a GOTO, dont go past the GOTO and let mainProcessing handle it
-   352                              <1>     ;In both cases JUMP to mainProcessing to avoid stack growth
-   353                              <1>     ;If no GOTO or THEN, then syntax error
-   354 00000815 AD                  <1>     lodsd   ;Get the whole word
-   355 00000816 3D5448454E          <1>     cmp eax, "THEN"
-   356 0000081B 740E                <1>     je .mp0   ; Go past THEN, to process statement
-   357 0000081D 3D474F544F          <1>     cmp eax, "GOTO"
-   358 00000822 753B                <1>     jne .error
-   359 00000824 4881EE04000000      <1>     sub rsi, 4  ;Go back four spaces to process GOTO
-   360                              <1> .mp0:
-   361 0000082B 488D054EFAFFFF      <1>     lea rax, mainProcessing
-   362 00000832 50                  <1>     push rax
-   363 00000833 C21800              <1>     ret 3*8 ;Align stack as expected
-   364                              <1> .else:
-   365 00000836 B8454C5345          <1>     mov eax, "ELSE" ;Lucky for us, ELSE fits in eax
-   366                              <1> .e0:
-   367 0000083B 48FFC6              <1>     inc rsi
-   368 0000083E 803E00              <1>     cmp byte [rsi], 0   ;End of command line?
-   369 00000841 741B                <1>     jz .noElse
-   370 00000843 803E3A              <1>     cmp byte [rsi], ":" ;End of command line portion?
-   371 00000846 7413                <1>     jz .noElse0
-   372 00000848 3906                <1>     cmp dword [rsi], eax
-   373 0000084A 75EF                <1>     jne .e0
-   374                              <1> ;If we are else, first move rsi past the else
-   375 0000084C 4881C604000000      <1>     add rsi, 4  ;We are past the else now
-   376 00000853 E899FAFFFF          <1>     call spaceSkip
-   377 00000858 C21800              <1>     ret 3*8 ;Align stack as expected
-   378                              <1> .noElse0:
-   379                              <1> ;If there is no ELSE, simply ret
-   380 0000085B 48FFCE              <1>     dec rsi ;Ensure it is caught by the main findOtherExpressionsOnLine command
-   381                              <1> .noElse:
-   382 0000085E C3                  <1>     ret
-   383                              <1> .error:
-   384 0000085F 488D1D35040000      <1>     lea rbx, syntax
-   385 00000866 E957F8FFFF          <1>     jmp criticalError
-   386                              <1> 
-   387                              <1> fancyJmp:
-   388                              <1> ;GOTO
-   389                              <1> ;rdi points just past the end of the command line
-   390 0000086B 0FB60F              <1>     movzx ecx, byte [rdi]
-   391 0000086E FFC9                <1>     dec ecx
-   392 00000870 4801CE              <1>     add rsi, rcx
-   393 00000873 E879FAFFFF          <1>     call spaceSkip  ;Skip all preceeding spaces
-   394 00000878 E8C7FAFFFF          <1>     call handleAlgebraicExpression  ;Turn the expression into a number in ax
-   395 0000087D 0FB7D0              <1>     movzx edx, ax   ;Line number into dx
-   396 00000880 E8D3010000          <1>     call searchForProgramLine   ;Get pointer to line in rbx
-   397 00000885 4881FBFFFFFFFF      <1>     cmp rbx, -1
-   398 0000088C 740B                <1>     je .unknownLineNumber
-   399                              <1> 
-   400 0000088E 488D15EBFDFFFF      <1>     lea rdx, runProgram.runLines    ;New line pointer in rbx
-   401 00000895 52                  <1>     push rdx    ;Run lines return address
-   402                              <1>     ;xchg bx, bx 
-   403 00000896 C21800              <1>     ret 3*8     ;pop three qwords off of the stack (old return addresses)
-   404                              <1> .unknownLineNumber:
-   405 00000899 488D2D1A040000      <1>     lea rbp, lineNoXist
-   406 000008A0 E8EDF8FFFF          <1>     call ttyOutString
-   407 000008A5 E992F7FFFF          <1>     jmp mainLoop
-   408                              <1> forLoop:
-   409 000008AA B009                <1>     mov al, 9
-   410 000008AC C3                  <1>     ret
-   411                              <1> ;==========================================================:
-   412                              <1> ;==========================================================:
-   413                              <1> ;==========================================================:
-   414                              <1> ;          Functions Related to Program Management         :
+   346                              <1> ;THIS WORKS ON CONTRALOGIC. If the algebraic expression evaluates to 0,
+   347                              <1> ; it is currently taken to be true (as that is a condition I can test for
+   348                              <1> ; easily). Once Proper logical operators are introduced, then I will have to
+   349                              <1> ; switch it so that test rax, rax -> jz .else
+   350 0000080B 4885C0              <1>     test rax, rax  ;If this is NOT 0, go to the else
+   351 0000080E 7526                <1>     jnz .else   ;CONTRALOGIC, TO BE SWITCHED IN LATER VERSIONS TO JZ 
+   352 00000810 E8DCFAFFFF          <1>     call spaceSkip
+   353                              <1>     ;Now check if it is a THEN or a GOTO
+   354                              <1>     ;If it is a THEN, go past the then and let mainProcessing handle it
+   355                              <1>     ;If it is a GOTO, dont go past the GOTO and let mainProcessing handle it
+   356                              <1>     ;In both cases JUMP to mainProcessing to avoid stack growth
+   357                              <1>     ;If no GOTO or THEN, then syntax error
+   358 00000815 AD                  <1>     lodsd   ;Get the whole word
+   359 00000816 3D5448454E          <1>     cmp eax, "THEN"
+   360 0000081B 740E                <1>     je .mp0   ; Go past THEN, to process statement
+   361 0000081D 3D474F544F          <1>     cmp eax, "GOTO"
+   362 00000822 753B                <1>     jne .error
+   363 00000824 4881EE04000000      <1>     sub rsi, 4  ;Go back four spaces to process GOTO
+   364                              <1> .mp0:
+   365 0000082B 488D054EFAFFFF      <1>     lea rax, mainProcessing
+   366 00000832 50                  <1>     push rax
+   367 00000833 C21800              <1>     ret 3*8 ;Align stack as expected
+   368                              <1> .else:
+   369 00000836 B8454C5345          <1>     mov eax, "ELSE" ;Lucky for us, ELSE fits in eax
+   370                              <1> .e0:
+   371 0000083B 48FFC6              <1>     inc rsi
+   372 0000083E 803E00              <1>     cmp byte [rsi], 0   ;End of command line?
+   373 00000841 741B                <1>     jz .noElse
+   374 00000843 803E3A              <1>     cmp byte [rsi], ":" ;End of command line portion?
+   375 00000846 7413                <1>     jz .noElse0
+   376 00000848 3906                <1>     cmp dword [rsi], eax
+   377 0000084A 75EF                <1>     jne .e0
+   378                              <1> ;If we are else, first move rsi past the else
+   379 0000084C 4881C604000000      <1>     add rsi, 4  ;We are past the else now
+   380 00000853 E899FAFFFF          <1>     call spaceSkip
+   381 00000858 C21800              <1>     ret 3*8 ;Align stack as expected
+   382                              <1> .noElse0:
+   383                              <1> ;If there is no ELSE, simply ret
+   384 0000085B 48FFCE              <1>     dec rsi ;Ensure it is caught by the main findOtherExpressionsOnLine command
+   385                              <1> .noElse:
+   386 0000085E C3                  <1>     ret
+   387                              <1> .error:
+   388 0000085F 488D1D35040000      <1>     lea rbx, syntax
+   389 00000866 E957F8FFFF          <1>     jmp criticalError
+   390                              <1> 
+   391                              <1> fancyJmp:
+   392                              <1> ;GOTO
+   393                              <1> ;rdi points just past the end of the command line
+   394 0000086B 0FB60F              <1>     movzx ecx, byte [rdi]
+   395 0000086E FFC9                <1>     dec ecx
+   396 00000870 4801CE              <1>     add rsi, rcx
+   397 00000873 E879FAFFFF          <1>     call spaceSkip  ;Skip all preceeding spaces
+   398 00000878 E8C7FAFFFF          <1>     call handleAlgebraicExpression  ;Turn the expression into a number in ax
+   399 0000087D 0FB7D0              <1>     movzx edx, ax   ;Line number into dx
+   400 00000880 E8D3010000          <1>     call searchForProgramLine   ;Get pointer to line in rbx
+   401 00000885 4881FBFFFFFFFF      <1>     cmp rbx, -1
+   402 0000088C 740B                <1>     je .unknownLineNumber
+   403                              <1> 
+   404 0000088E 488D15EBFDFFFF      <1>     lea rdx, runProgram.runLines    ;New line pointer in rbx
+   405 00000895 52                  <1>     push rdx    ;Run lines return address
+   406                              <1>     ;xchg bx, bx 
+   407 00000896 C21800              <1>     ret 3*8     ;pop three qwords off of the stack (old return addresses)
+   408                              <1> .unknownLineNumber:
+   409 00000899 488D2D1A040000      <1>     lea rbp, lineNoXist
+   410 000008A0 E8EDF8FFFF          <1>     call ttyOutString
+   411 000008A5 E992F7FFFF          <1>     jmp mainLoop
+   412                              <1> forLoop:
+   413 000008AA B009                <1>     mov al, 9
+   414 000008AC C3                  <1>     ret
    415                              <1> ;==========================================================:
    416                              <1> ;==========================================================:
    417                              <1> ;==========================================================:
-   418                              <1> returnToDOS:
-   419 000008AD B007                <1>     mov al, 07h
-   420 000008AF E8D9F8FFFF          <1>     call ttyOutChar
-   421 000008B4 E947F7FFFF          <1>     jmp start   ;Reset the interpreter
-   422                              <1> cls:
-   423 000008B9 E9E1F8FFFF          <1>     jmp ttyClear
-   424                              <1> dbgr:
-   425                              <1>     ;Hook int 40h to main prog EP to allow returning 
-   426                              <1> ;First call to get default BIOS segement selector and attribute word
-   427 000008BE B340                <1>     mov bl, 40h
-   428 000008C0 B807F00000          <1>     mov eax, 0F007h ;Get the descriptor
-   429 000008C5 CD35                <1>     int 35h
-   430 000008C7 89C6                <1>     mov esi, eax    ;Move segment selector info to esi
-   431 000008C9 B940000000          <1>     mov ecx, 40h    ;Interrupt number
-   432                              <1> ;dx preserves the attribute word
-   433 000008CE 488D1D09000000      <1>     lea rbx, .farReturn  ;Pointer passed in
-   434 000008D5 B808F00000          <1>     mov eax, 0F008h ;Set descriptor
-   435 000008DA CD35                <1>     int 35h
-   436 000008DC CD38                <1>     int 38h ;Call debugger
-   437                              <1> .farReturn:
-   438                              <1>     ;Reconnect CTRL+BREAK handler
-   439 000008DE 48BC-               <1>     mov rsp, stacktop   ;Immediately reset stack
-   439 000008E0 [C00F000000000000]  <1>
-   440 000008E8 488D3DDDF7FFFF      <1>     lea rdi, ctrlBreakHandler
-   441 000008EF B03B                <1>     mov al, 3Bh
-   442 000008F1 E8DFF7FFFF          <1>     call setHandler
-   443                              <1>     
-   444 000008F6 488D2D53030000      <1>     lea rbp, crlf
-   445 000008FD E890F8FFFF          <1>     call ttyOutString
-   446 00000902 E935F7FFFF          <1>     jmp mainLoop
+   418                              <1> ;          Functions Related to Program Management         :
+   419                              <1> ;==========================================================:
+   420                              <1> ;==========================================================:
+   421                              <1> ;==========================================================:
+   422                              <1> returnToDOS:
+   423 000008AD B007                <1>     mov al, 07h
+   424 000008AF E8D9F8FFFF          <1>     call ttyOutChar
+   425 000008B4 E947F7FFFF          <1>     jmp start   ;Reset the interpreter
+   426                              <1> cls:
+   427 000008B9 E9E1F8FFFF          <1>     jmp ttyClear
+   428                              <1> dbgr:
+   429                              <1>     ;Hook int 40h to main prog EP to allow returning 
+   430                              <1> ;First call to get default BIOS segement selector and attribute word
+   431 000008BE B340                <1>     mov bl, 40h
+   432 000008C0 B807F00000          <1>     mov eax, 0F007h ;Get the descriptor
+   433 000008C5 CD35                <1>     int 35h
+   434 000008C7 89C6                <1>     mov esi, eax    ;Move segment selector info to esi
+   435 000008C9 B940000000          <1>     mov ecx, 40h    ;Interrupt number
+   436                              <1> ;dx preserves the attribute word
+   437 000008CE 488D1D09000000      <1>     lea rbx, .farReturn  ;Pointer passed in
+   438 000008D5 B808F00000          <1>     mov eax, 0F008h ;Set descriptor
+   439 000008DA CD35                <1>     int 35h
+   440 000008DC CD38                <1>     int 38h ;Call debugger
+   441                              <1> .farReturn:
+   442                              <1>     ;Reconnect CTRL+BREAK handler
+   443 000008DE 48BC-               <1>     mov rsp, stacktop   ;Immediately reset stack
+   443 000008E0 [C00F000000000000]  <1>
+   444 000008E8 488D3DDDF7FFFF      <1>     lea rdi, ctrlBreakHandler
+   445 000008EF B03B                <1>     mov al, 3Bh
+   446 000008F1 E8DFF7FFFF          <1>     call setHandler
+   447                              <1>     
+   448 000008F6 488D2D53030000      <1>     lea rbp, crlf
+   449 000008FD E890F8FFFF          <1>     call ttyOutString
+   450 00000902 E935F7FFFF          <1>     jmp mainLoop
     15                                  %include "MATH.ASM"
     16                              <1> decimalToHex:
     17                              <1>     ;Takes ASCII encoded decimal number and 

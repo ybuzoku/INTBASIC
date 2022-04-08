@@ -103,6 +103,7 @@ Value     Name
 00000001  strEquate
 00000001  breakBit
 00000002  traceBit
+00000003  indirectBit
 00000100  maxLineLen
 00000030  digitStringLen
 00000026  numVarChars
