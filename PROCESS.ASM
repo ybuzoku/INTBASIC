@@ -100,3 +100,7 @@ mainProcessor:
     mov qword [rsp + 8], %1     ;Now place the new function block ptr as next function
 %endmacro
 ;GOTO simply replaces the qword for the function block
+;NEXT, WEND, RETURN look at the address BEFORE the usual address and copy that into
+; the next address to be used position on the stack. 
+; NEXT and WEND dont do any stack clean up, RETURN does
+; The return line for NEXT and WEND deal with clean up

@@ -406,6 +406,10 @@
    112                              <1>     mov qword [rsp + 8], %1     ;Now place the new function block ptr as next function
    113                              <1> %endmacro
    114                              <1> ;GOTO simply replaces the qword for the function block
+   115                              <1> ;NEXT, WEND, RETURN look at the address BEFORE the usual address and copy that into
+   116                              <1> ; the next address to be used position on the stack. 
+   117                              <1> ; NEXT and WEND dont do any stack clean up, RETURN does
+   118                              <1> ; The return line for NEXT and WEND deal with clean up
     13                                  %include "PARSE.ASM"
     14                              <1> ;Main Parsing Routines go here
     15                              <1> 
