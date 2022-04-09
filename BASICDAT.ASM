@@ -19,3 +19,4 @@ syntax  db "Syntax error",0Ah,0Dh,0
 typeError   db "Type mismatch",0Ah,0Dh,0
 lineNoXist  db "Undefined line number",0Ah,0Dh,0
 breakmsg db "Break in ",0
+stkOvflw db "Stack overflow",0Ah,0Dh,0

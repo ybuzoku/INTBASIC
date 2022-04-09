@@ -1,4 +1,7 @@
-stack       resq 200h - 8  ;Save 4Kb stack space
+oflowbuff   resq 10        ;10 Qwords of overflow buffer
+;rsp should never get here when operating in a program.
+;Only acceptable to be used when processing a line
+stack       resq 200h - 8 - 10*8  ;Save total 4Kb stack space
 stacktop    resq 1
 
 maxLineLen  equ 256

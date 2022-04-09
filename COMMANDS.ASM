@@ -202,8 +202,9 @@ listProgram:
 .exit:
     ret
 runProgram:
-;Set the bit if it is clear. 
-;Return in rbx the block of the first line for the program to run
+    or byte [stateByte], indirectBit    ;Entering indirect mode
+;Find the first line of code to run, replace the -1 on the stack with that 
+; program line block address
 
 
 printStatement:
@@ -400,7 +401,7 @@ goto:
     call searchForProgramLine   ;Get pointer to line in rbx
     cmp rbx, -1
     je .unknownLineNumber
-    mov qword [rsp + 8], rbx
+    mov qword [rsp + 8], rbx    ;Replace the old next function block with this
     ret
 .unknownLineNumber:
     lea rbp, lineNoXist

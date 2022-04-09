@@ -2,7 +2,7 @@ mainProcessor:
 ;rsi must point to the start of the portion of the line to execute
     call spaceSkip  ;Skip any leading spaces
     cmp byte [rsi], 0   ;Null terminated line, empty line?
-    je .exit
+    je .gotoNextLine
     ;rsi now points to function
     lea rdi, funTbl     ;Point rdi to the function table
 .functionFinderLoop:
@@ -39,7 +39,7 @@ mainProcessor:
     test byte [stateByte], traceBit ;Are we TRON?
     jnz .tron
 .mp0:
-;EXEC   LINE
+;EXEC   LINE    PORTION
     ;Get the address of the next line and push it on stack
     ;This allows a program to modify the return address or even add 
     ; more addresses to the stack
@@ -52,14 +52,15 @@ mainProcessor:
 
     call findOtherExpressionsOnLine ;See if there are any other expressions
     test al, al ;If al is null, no more expressions on the line
-    ;If not null, keep executing expressions, rsi points to first char after :
+    ;If not null, keep executing expressions on same line
+    ;rsi points to first char after :
     jnz mainProcessor 
 .exit:
     ret
 .notLetVarAssignment:
     lea rbx, variableAssignment
     jmp short .runFunction  ;Now call the function as if it was found from the table
-
+.gotoNextLine:
 .tron:
 ;Print the line number about to be executed
     test byte [stateByte], indirectBit  ;Tron should only work in indirect mode
@@ -81,3 +82,21 @@ mainProcessor:
     jmp mainLoop    ;Exit processing
 
 
+%macro addQwordToStack 1    ;One argument, a register
+;This macro adds an extra qword to the stack for flow control
+; such as FOR, WHILE, GOSUB. It adds the default return address
+; for the NEXT, WEND, RETURN keywords
+;rsp points to return address for function call
+;rax trashed
+    push rax  ;Make space for one more qword, push a dummy word
+    cmp rsp, stack
+    ja ..@stackOK
+    lea rbp, stkOvflw
+    jmp criticalError
+    ;rsp points to the qword pushed by rax
+..@stackOK:
+    mov rax, qword [rsp + 8]    ;Get call rbx return address
+    mov qword [rsp], rax        ;Replace on stack
+    mov qword [rsp + 8], %1     ;Now place the new function block ptr as next function
+%endmacro
+;GOTO simply replaces the qword for the function block
