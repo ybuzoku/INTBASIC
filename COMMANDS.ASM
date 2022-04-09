@@ -323,8 +323,11 @@ getInput:
     push rdi    ;rdi points to first char of variable
     push rcx
     call getLineInput   ;Get input from the user in inString, null terminated
+    ;This will sanitise in direct mode meaning input cannot have any more statements
+    ; after it.
     pop rcx
     pop rdi 
+    xchg bx, bx
     mov rsi, rdi    ;Save the start of the var name in rsi
     add rsi, rcx    ;Go to end of var
     dec rsi
@@ -336,7 +339,7 @@ getInput:
     call handleAlgebraicExpression  ;Get the result of the expression into rax
     mov rsi, rdi    ;Return the start of the string into rsi
     call setNumericVariable
-    ret
+    jmp short .commonExit
 .handleString:
     ;IF a string variable, come here
     ;rdi has the start of the variable name
@@ -346,6 +349,7 @@ getInput:
     mov rdx, rsi
     mov rsi, rdi    ;Return start of user name in rsi
     call setStringVariable
+.commonExit:
     ret
 handleIf:
 ;Evaluate the string. The IF,THEN/GOTO,ELSE statement must ALL be on one line
@@ -387,7 +391,7 @@ handleIf:
     jmp criticalError
 
 goto:
-;GOTO, works by replacing the next address on the stack
+;GOTO, works by replacing the address after the return address on the stack
 ;rdi points just past the end of the command line
 ;rsi points to first char AFTER function name
     call spaceSkip  ;Skip all preceeding spaces
@@ -396,7 +400,7 @@ goto:
     call searchForProgramLine   ;Get pointer to line in rbx
     cmp rbx, -1
     je .unknownLineNumber
-
+    mov qword [rsp + 8], rbx
     ret
 .unknownLineNumber:
     lea rbp, lineNoXist

@@ -1,4 +1,4 @@
-executeExpression:
+mainProcessor:
 ;rsi must point to the start of the portion of the line to execute
     call spaceSkip  ;Skip any leading spaces
     cmp byte [rsi], 0   ;Null terminated line, empty line?
@@ -32,35 +32,34 @@ executeExpression:
     dec rdx         ;Get number of chars in function name
     add rsi, rdx    ;rsi points to first char AFTER function name
 .runFunction:
-    call rbx        ;Call the function pointer in rbx
-.exit:
-    call findOtherExpressionsOnLine ;See if there are any other expressions
-    test al, al ;If al is null, no more expressions on the line
-    ;If not null, keep executing expressions, rsi points to first char after :
-    jnz executeExpression 
-    jmp short mainProcessor.mp1
-.notLetVarAssignment:
-    lea rbx, variableAssignment
-    jmp short .runFunction  ;Now call the function as if it was found from the table
-
-mainProcessor:
     ;rsi points to string to begin processing
+    ;Run bit tests
     test byte [stateByte], breakBit ;Is break set before exec?
     jnz .break
     test byte [stateByte], traceBit ;Are we TRON?
     jnz .tron
 .mp0:
+;EXEC   LINE
     ;Get the address of the next line and push it on stack
     ;This allows a program to modify the return address or even add 
     ; more addresses to the stack
-    jmp executeExpression
+    call rbx        ;Call the function pointer in rbx
     ;Pop it off the stack here
     ;cmp the address to -1, if equal, exit
-.mp1:
+;EXEC COMPLETE
     test byte [stateByte], breakBit ;Is break set after exec?
     jnz .break
-    ;Now see if the line has any more expressions by checking for :
-    ret ;Return to caller
+
+    call findOtherExpressionsOnLine ;See if there are any other expressions
+    test al, al ;If al is null, no more expressions on the line
+    ;If not null, keep executing expressions, rsi points to first char after :
+    jnz mainProcessor 
+.exit:
+    ret
+.notLetVarAssignment:
+    lea rbx, variableAssignment
+    jmp short .runFunction  ;Now call the function as if it was found from the table
+
 .tron:
 ;Print the line number about to be executed
     test byte [stateByte], indirectBit  ;Tron should only work in indirect mode
