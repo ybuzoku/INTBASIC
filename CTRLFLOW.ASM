@@ -45,30 +45,47 @@ handleIf:
     test rax, rax  ;If this is NOT 0, go to the else
     jnz .else   ;CONTRALOGIC, TO BE SWITCHED IN LATER VERSIONS TO JZ 
     call spaceSkip
-    ;Now check if it is a THEN or a GOTO
-    ;If it is a THEN or GOTO, go past it and let mainProcessing handle it
-    ;In both cases JUMP to mainProcessing to avoid stack growth
-    ;If no GOTO or THEN, then syntax error
-    lodsd   ;Get the whole word
+    lodsd   ;Get the whole word, must be either "THEN " or "GOTO "
     cmp eax, "THEN"
     je .hi0   ; Go past THEN, to process statement
     cmp eax, "GOTO"
     jne .error
+    cmp byte [rsi], " " ;is the next char a space?
+    jne .error
     jmp goto
-.hi0:
-    ret
+.candidatethen:
+    cmp byte [rsi], " " ;is the next char a space?
+    je .hi0
+    jmp short .error
 .else:
-;Replace the space in front of ELSE with a 0. It is still printed as a space by the TTY
-;If the char before ELSE is not a space, keep searching for ELSE 
-; (as it could be a var name) and if no else found, simply return
-    mov eax, "ELSE"
-    ret
-.noElse0:
-;If there is no ELSE, simply ret
+    ;Search for the ELSE, it has to be preceeded with a space and have a space after
+    cmp byte [rsi], 0 ;Are we at end of line?
+    je .noElse
+    cmp byte [rsi], ":" ;Are we at end line segment?
+    je .noElse
+    inc rsi
+    cmp dword [rsi], " ELS"
+    jne .else
+    add rsi, 4  ;Skip those four chars, we have a candidate
+    cmp word [rsi], "E "
+    jne .else   ;If not equal failed to match pattern
+    add rsi, 2  ;Else its the ELSE we are looking for, move rsi to first space past it
+.hi0:
+;Now we do the branchy stuff, branch to the same line just further down
+    or byte [stateByte], ctrlFlow   ;Set branch bit
+    mov dx, word [currentLine]
+    call searchForProgramLine
+    cmp rbx, -1 ;Does the line not exist somehow?
+    je .error
+    mov rax, rsi    ;Save pointer in rax
+    lea rcx, qword [rbx + progLineBlock.sLine] ;Get the difference in chars
+    sub rax, rcx
+    and al, -1  ;Save only bottom byte as the difference should be less than 255
+    shl eax, 10h ;Shift to byte 3
+    or edx, eax ;Save the offset into byte 3
 .noElse:
+;If no else, simply return
     ret
 .error:
     lea rbx, syntax
     jmp criticalError
-else:
-;If ELSE is called as a 

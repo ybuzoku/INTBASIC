@@ -58,7 +58,7 @@ thenStr:
     dw badCmd - funTbl
 elseStr:
     db 5, "ELSE"    ;DONE
-    dw else - funTbl
+    dw badCmd - funTbl
 
     
     db 7, "SYSTEM"  ;DONE
@@ -221,6 +221,8 @@ runProgram:
     ;Runs the machine in indirect mode
     or byte [stateByte], indirectBit    ;Entering indirect mode
     ;rsi must point to the first line
+    mov dx, word [firstLinNum]
+    mov word [currentLine], dx
     mov rbx, qword [firstLinPtr]
     lea rsi, qword [rbx + progLineBlock.sLine]
     call runLine
@@ -233,6 +235,7 @@ printStatement:
 .printStart:
     call spaceSkip  ;move rsi to the start of the expression
     lodsb
+
     test al, al     ;Is this a null string?
     jz .psvexit
 
@@ -348,7 +351,6 @@ getInput:
     ; after it.
     pop rcx
     pop rdi 
-    xchg bx, bx
     mov rsi, rdi    ;Save the start of the var name in rsi
     add rsi, rcx    ;Go to end of var
     dec rsi
