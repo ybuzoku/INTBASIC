@@ -64,6 +64,7 @@ mainLoop:
 criticalError:
 ;Called with rbp pointing at error message
     call ttyOutString
+    mov byte [stateByte], 0 ;Reset the state byte
     jmp mainLoop    ;Trash input line, restart line input
 
 ctrlBreakHandler:

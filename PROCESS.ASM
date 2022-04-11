@@ -56,7 +56,6 @@ runLine:
     test byte [stateByte], breakBit ;Is break set before exec?
     jnz .break
 ;EXEC   LINE    PORTION
-    ;xchg bx, bx
     call rbx        ;Call the function pointer in rbx
     ;rsi should be pointing to the next portion of the line or the end of the line
 ;EXEC COMPLETE

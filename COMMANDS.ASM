@@ -3,98 +3,99 @@ funTbl:
 ;Use PASCAL strings to know how long the comparisons need to be
 ;All function pointers are saved as distances from the head
 ; of the function table
-    db 4, "LET"     ;DONE
+;BASIC instructions are space terminated
+;Interpreter instructions are null terminated
+    db 5, "LET "     ;DONE
     dw oldSchoolAssignemnt - funTbl
 
-    db 4, "NEW"     ;DONE
+    db 5, "NEW",0     ;DONE
     dw newProgram - funTbl 
 
-    db 6, "CLEAR"   ;DONE
+    db 7, "CLEAR",0   ;DONE
     dw newProgram - funTbl 
 
-    db 5, "LIST"    ;DONE
+    db 6, "LIST",0    ;DONE
     dw listProgram - funTbl 
 
-    db 4, "RUN"     ;DONE
+    db 5, "RUN",0     ;DONE
     dw runProgram - funTbl
 
-    db 7, "PRINT$"    ;Not implemented yet
+    db 8, "PRINT$ "    ;Not implemented yet
     dw printStatement - funTbl
 
-    db 6, "PRINT"    ;DONE
+    db 7, "PRINT "    ;DONE
     dw printStatement - funTbl
 
-    db 2, "?"        ;DONE, alias Print
+    db 3, "? "        ;DONE, alias Print
     dw printStatement - funTbl
 
-    db 6, "INPUT"
+    db 7, "INPUT "
     dw getInput - funTbl
 
-    db 3, "IF"      ;DONE, needs to be tested
+    db 4, "IF "      ;DONE, needs to be tested
     dw handleIf - funTbl
 
-    db 5, "GOTO"    ;DONE
+    db 6, "GOTO "    ;DONE
     dw goto - funTbl
 
-    db 6, "GOSUB"
+    db 7, "GOSUB "
     dw gosub - funTbl
 
-    db 7, "RETURN"
+    db 8, "RETURN "
     dw return - funTbl
 
-    db 4, "FOR"
+    db 5, "FOR "
     dw forLoop - funTbl
 
-    db 5, "NEXT"
+    db 6, "NEXT "
     dw next - funTbl
 
-    db 6, "WHILE"
+    db 7, "WHILE "
     dw while - funTbl
 
-    db 5, "WEND"
+    db 6, "WEND "
     dw wend - funTbl    
 thenStr:
-    db 5, "THEN"    ;DONE
+    db 6, "THEN "    ;DONE
     dw badCmd - funTbl
 elseStr:
-    db 5, "ELSE"    ;DONE
+    db 6, "ELSE "    ;DONE
     dw badCmd - funTbl
 
-    
-    db 7, "SYSTEM"  ;DONE
+    db 8, "SYSTEM",0  ;DONE
     dw returnToDOS - funTbl
 
-    db 4, "CLS"     ;DONE
+    db 5, "CLS",0     ;DONE
     dw cls - funTbl
 
-    db 6, "DEBUG"   ;DONE
+    db 7, "DEBUG",0   ;DONE
     dw dbgr - funTbl
 
-    db 5, "TRON"    ;DONE
+    db 6, "TRON",0    ;DONE
     dw tron - funTbl
 
-    db 6, "TROFF"   ;DONE
+    db 7, "TROFF",0   ;DONE
     dw troff - funTbl
 
-    db 4, "END"     ;DONE
+    db 5, "END "     ;DONE
     dw endProg - funTbl
 
-    db 5, "STOP"    ;DONE
+    db 6, "STOP "    ;DONE
     dw endProg - funTbl
 
-    db 7, "ESCAPE"  ;DONE
+    db 8, "ESCAPE "  ;DONE
     dw endProg - funTbl
 
-    db 6, "EPEEK"
+    db 7, "EPEEK "
     dw memRead - funTbl
 
-    db 6, "EPOKE"
+    db 7, "EPOKE "
     dw memWrite - funTbl
 
-    db 5, "PEEK"
+    db 6, "PEEK "
     dw byteRead - funTbl
 
-    db 5, "POKE"
+    db 6, "POKE "
     dw byteWrite - funTbl
 
     db -1    ;Demarkate the end of the table
@@ -222,7 +223,7 @@ runProgram:
     or byte [stateByte], indirectBit    ;Entering indirect mode
     ;rsi must point to the first line
     mov dx, word [firstLinNum]
-    mov word [currentLine], dx
+    mov word [currentLine], dx ;Reset the current line back to the start
     mov rbx, qword [firstLinPtr]
     lea rsi, qword [rbx + progLineBlock.sLine]
     call runLine
