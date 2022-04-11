@@ -36,11 +36,33 @@ funTbl:
     db 5, "GOTO"    ;DONE
     dw goto - funTbl
 
-    db 7, "SYSTEM"  ;DONE
-    dw returnToDOS - funTbl
+    db 6, "GOSUB"
+    dw gosub - funTbl
+
+    db 7, "RETURN"
+    dw return - funTbl
 
     db 4, "FOR"
     dw forLoop - funTbl
+
+    db 5, "NEXT"
+    dw next - funTbl
+
+    db 6, "WHILE"
+    dw while - funTbl
+
+    db 5, "WEND"
+    dw wend - funTbl    
+thenStr:
+    db 5, "THEN"    ;DONE
+    dw badCmd - funTbl
+elseStr:
+    db 5, "ELSE"    ;DONE
+    dw badCmd - funTbl
+
+    
+    db 7, "SYSTEM"  ;DONE
+    dw returnToDOS - funTbl
 
     db 4, "CLS"     ;DONE
     dw cls - funTbl
@@ -62,12 +84,6 @@ funTbl:
 
     db 7, "ESCAPE"  ;DONE
     dw endProg - funTbl
-thenStr:
-    db 5, "THEN"    ;DONE
-    dw badCmd - funTbl
-elseStr:
-    db 5, "ELSE"    ;DONE
-    dw badCmd - funTbl
 
     db 6, "EPEEK"
     dw memRead - funTbl
@@ -202,10 +218,14 @@ listProgram:
 .exit:
     ret
 runProgram:
+    ;Runs the machine in indirect mode
     or byte [stateByte], indirectBit    ;Entering indirect mode
-;Find the first line of code to run, replace the -1 on the stack with that 
-; program line block address
-
+    ;rsi must point to the first line
+    mov rbx, qword [firstLinPtr]
+    lea rsi, qword [rbx + progLineBlock.sLine]
+    call runLine
+    and byte [stateByte], ~indirectBit  ;Exit indirect mode
+    ret
 
 printStatement:
 ;Strings must be "" delimited or a string variable must be used
@@ -352,65 +372,7 @@ getInput:
     call setStringVariable
 .commonExit:
     ret
-handleIf:
-;Evaluate the string. The IF,THEN/GOTO,ELSE statement must ALL be on one line
-;IF exp1 THEN statement ELSE statement
-;IF exp1 GOTO linenumber ELSE statement
-;rsi points to first char AFTER function name
 
-    call spaceSkip
-    call handleAlgebraicExpression
-;THIS WORKS ON CONTRALOGIC. If the algebraic expression evaluates to 0,
-; it is currently taken to be true (as that is a condition I can test for
-; easily). Once Proper logical operators are introduced, then I will have to
-; switch it so that test rax, rax -> jz .else
-    test rax, rax  ;If this is NOT 0, go to the else
-    jnz .else   ;CONTRALOGIC, TO BE SWITCHED IN LATER VERSIONS TO JZ 
-    call spaceSkip
-    ;Now check if it is a THEN or a GOTO
-    ;If it is a THEN, go past the then and let mainProcessing handle it
-    ;If it is a GOTO, dont go past the GOTO and let mainProcessing handle it
-    ;In both cases JUMP to mainProcessing to avoid stack growth
-    ;If no GOTO or THEN, then syntax error
-    lodsd   ;Get the whole word
-    cmp eax, "THEN"
-    je .hi0   ; Go past THEN, to process statement
-    cmp eax, "GOTO"
-    jne .error
-    sub rsi, 4  ;Go back four spaces to process GOTO
-.hi0:
-    ret
-.else:
-    mov eax, "ELSE" ;Lucky for us, ELSE fits in eax
-    ret
-.noElse0:
-;If there is no ELSE, simply ret
-.noElse:
-    ret
-.error:
-    lea rbx, syntax
-    jmp criticalError
-
-goto:
-;GOTO, works by replacing the address after the return address on the stack
-;rdi points just past the end of the command line
-;rsi points to first char AFTER function name
-    call spaceSkip  ;Skip all preceeding spaces
-    call handleAlgebraicExpression  ;Turn the expression into a number in ax
-    movzx edx, ax   ;Line number into dx
-    call searchForProgramLine   ;Get pointer to line in rbx
-    cmp rbx, -1
-    je .unknownLineNumber
-    mov qword [rsp + 8], rbx    ;Replace the old next function block with this
-    ret
-.unknownLineNumber:
-    lea rbp, lineNoXist
-    call ttyOutString
-    jmp mainLoop
-
-forLoop:
-    mov al, 9
-    ret
 ;==========================================================:
 ;==========================================================:
 ;==========================================================:

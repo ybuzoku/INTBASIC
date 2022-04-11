@@ -32,7 +32,7 @@ mainLoop:
     jnz .saveLine
 ;Here we execute the line, move rsi to the start of the line
     lea rsi, inString
-    jmp mainProcessor
+    jmp runLine
 .saveLine:
     ;ax has the line number
     mov dx, ax

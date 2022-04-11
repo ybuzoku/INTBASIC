@@ -1,8 +1,8 @@
-mainProcessor:
+keywordParser:
 ;rsi must point to the start of the portion of the line to execute
     call spaceSkip  ;Skip any leading spaces
     cmp byte [rsi], 0   ;Null terminated line, empty line?
-    je .gotoNextLine
+    je .exitEmpty
     ;rsi now points to function
     lea rdi, funTbl     ;Point rdi to the function table
 .functionFinderLoop:
@@ -31,47 +31,87 @@ mainProcessor:
     add rbx, rcx    ;Add word offset to table base
     dec rdx         ;Get number of chars in function name
     add rsi, rdx    ;rsi points to first char AFTER function name
-.runFunction:
-    ;rsi points to string to begin processing
-    ;Run bit tests
-    test byte [stateByte], breakBit ;Is break set before exec?
-    jnz .break
+.exit:
+    ret 
+.exitEmpty:
+    mov rbx, -1
+    ret
+    ;rbx has the function pointer, 
+    ;rsi points to the first char after the keyword (e.g. PRINT, INPUT etc)
+.notLetVarAssignment:
+    lea rbx, variableAssignment
+    jmp short .exit  ;Now call the function as if it was found from the table
+
+runLine:
+;New lines begin here, rsi point to the start of the program line
     test byte [stateByte], traceBit ;Are we TRON?
     jnz .tron
-.mp0:
+.stringPortionProcess:
+    ;rsi points to string portion to begin processing
+    call keywordParser
+    ;rbx has the function pointer, if rbx is -1, line was empty
+    ;rsi points to the first char after the keyword (e.g. PRINT, INPUT etc)
+    ;If this char is 0, goto next line
+    cmp rbx, -1
+    je .gotoNextLine
+    test byte [stateByte], breakBit ;Is break set before exec?
+    jnz .break
 ;EXEC   LINE    PORTION
-    ;Get the address of the next line and push it on stack
-    ;This allows a program to modify the return address or even add 
-    ; more addresses to the stack
     call rbx        ;Call the function pointer in rbx
-    ;Pop it off the stack here
-    ;cmp the address to -1, if equal, exit
+    ;rsi should be pointing to the next portion of the line or the end of the line
 ;EXEC COMPLETE
     test byte [stateByte], breakBit ;Is break set after exec?
     jnz .break
+    test byte [stateByte], indirectBit
+    jz .exit    ;IF in direct mode, just return to command line
+    test byte [stateByte], ctrlFlow ;Ctrl Flow =>ignore other expressions temporarily
+    jnz .ctrlFlowHandler
 
     call findOtherExpressionsOnLine ;See if there are any other expressions
     test al, al ;If al is null, no more expressions on the line
     ;If not null, keep executing expressions on same line
     ;rsi points to first char after :
-    jnz mainProcessor 
+    jz .gotoNextLine
+    jmp short .stringPortionProcess
+.gotoNextLine:
+    mov dx, word [currentLine]  ;Get in rbx the ptr to current line
+    call searchForProgramLine
+    cmp rbx, -1 ;Does the line not exist somehow?
+    je .exit
+    mov rbx, qword [rbx + progLineBlock.qPtr] ;Walk chain
+    cmp rbx, -1 ;Are we at the end of the chain?
+    je .exit
+    mov dx, word [rbx + progLineBlock.wLineNum] ;Save the new line number
+.gotoNextLineCommon:
+    mov word [currentLine], dx
+    lea rsi, qword [rbx + progLineBlock.sLine] ;Point rsi to the start of the next line
+    jmp runLine
 .exit:
     ret
-.notLetVarAssignment:
-    lea rbx, variableAssignment
-    jmp short .runFunction  ;Now call the function as if it was found from the table
-.gotoNextLine:
+.ctrlFlowHandler:
+    ;The stack pointer should be pointing now at the block
+    ; control flow data block. 
+    ;The functions which return with this bit set, also have placed
+    ; the next line number in dx, offset into line in byte three of edx
+    and byte [stateByte], ~ctrlFlow ;First clear the ctrlflow bit
+    call searchForProgramLine   ;Get pointer to line
+    cmp rbx, -1 ;Does the line not exist?
+    jne .gotoNextLineCommon
+.badLineNumber:
+    lea rbp, lineNoXist
+    jmp criticalError
+
 .tron:
 ;Print the line number about to be executed
     test byte [stateByte], indirectBit  ;Tron should only work in indirect mode
-    jz .mp0
+    jz .stringPortionProcess
     mov al, "["
     call ttyOutChar
     movzx eax, word [currentLine]
     call printdecimalword
     mov al, "]"
     call ttyOutChar
-    jmp short .mp0
+    jmp .stringPortionProcess
 .break:
     lea rbp, breakmsg
     call ttyOutString
@@ -80,27 +120,3 @@ mainProcessor:
     lea rbp, crlf
     call ttyOutString
     jmp mainLoop    ;Exit processing
-
-
-%macro addQwordToStack 1    ;One argument, a register
-;This macro adds an extra qword to the stack for flow control
-; such as FOR, WHILE, GOSUB. It adds the default return address
-; for the NEXT, WEND, RETURN keywords
-;rsp points to return address for function call
-;rax trashed
-    push rax  ;Make space for one more qword, push a dummy word
-    cmp rsp, stack
-    ja ..@stackOK
-    lea rbp, stkOvflw
-    jmp criticalError
-    ;rsp points to the qword pushed by rax
-..@stackOK:
-    mov rax, qword [rsp + 8]    ;Get call rbx return address
-    mov qword [rsp], rax        ;Replace on stack
-    mov qword [rsp + 8], %1     ;Now place the new function block ptr as next function
-%endmacro
-;GOTO simply replaces the qword for the function block
-;NEXT, WEND, RETURN look at the address BEFORE the usual address and copy that into
-; the next address to be used position on the stack. 
-; NEXT and WEND dont do any stack clean up, RETURN does
-; The return line for NEXT and WEND deal with clean up
