@@ -44,4 +44,4 @@ strEquate  equ 1
 breakBit    equ 1    ;Set means on
 traceBit    equ 2    ;Set means TRON, Clear means TROFF
 indirectBit equ 4    ;Set means indirect/program mode, Clear means direct/line mode
-ctrlFlow    equ 8    ;Set mean do not find other expression on current line
+ctrlFlow    equ 8    ;Set means do not find other expression on current line

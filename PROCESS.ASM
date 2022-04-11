@@ -51,8 +51,7 @@ runLine:
     call keywordParser
     ;rbx has the function pointer, if rbx is -1, line was empty
     ;rsi points to the first char after the keyword (e.g. PRINT, INPUT etc)
-    ;If this char is 0, goto next line
-    cmp rbx, -1
+    cmp rbx, -1 ;If the line is empty, rbx has a -1 so skip the line
     je .gotoNextLine
     test byte [stateByte], breakBit ;Is break set before exec?
     jnz .break
@@ -71,8 +70,7 @@ runLine:
     test al, al ;If al is null, no more expressions on the line
     ;If not null, keep executing expressions on same line
     ;rsi points to first char after :
-    jz .gotoNextLine
-    jmp short .stringPortionProcess
+    jnz .stringPortionProcess ;If a : found, keep processing
 .gotoNextLine:
     mov dx, word [currentLine]  ;Get in rbx the ptr to current line
     call searchForProgramLine
@@ -82,9 +80,9 @@ runLine:
     cmp rbx, -1 ;Are we at the end of the chain?
     je .exit
     mov dx, word [rbx + progLineBlock.wLineNum] ;Save the new line number
+    lea rsi, qword [rbx + progLineBlock.sLine] ;Point rsi to the start of the next line
 .gotoNextLineCommon:
     mov word [currentLine], dx
-    lea rsi, qword [rbx + progLineBlock.sLine] ;Point rsi to the start of the next line
     jmp runLine
 .exit:
     ret
@@ -96,7 +94,13 @@ runLine:
     and byte [stateByte], ~ctrlFlow ;First clear the ctrlflow bit
     call searchForProgramLine   ;Get pointer to line
     cmp rbx, -1 ;Does the line not exist?
-    jne .gotoNextLineCommon
+    je .gotoNextLineCommon
+    lea rsi, qword [rbx + progLineBlock.sLine] ;Point rsi to the start of the next line
+    mov eax, edx    ;Isolate the offset into the line
+    shr eax, 10h    ;Get byte three into byte 1
+    and eax, 0FFh   ;Save only the bottom byte
+    add rsi, rax    ;Add the offset into the string to rsi
+    jmp short .gotoNextLineCommon
 .badLineNumber:
     lea rbp, lineNoXist
     jmp criticalError

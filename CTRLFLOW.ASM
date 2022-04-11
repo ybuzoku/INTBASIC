@@ -10,7 +10,6 @@ nextScan:
 ;=======================================
 goto:
 ;GOTO, works by replacing the address after the return address on the stack
-;rdi points just past the end of the command line
 ;rsi points to first char AFTER function name
     call spaceSkip  ;Skip all preceeding spaces
     call handleAlgebraicExpression  ;Turn the expression into a number in ax
@@ -47,8 +46,7 @@ handleIf:
     jnz .else   ;CONTRALOGIC, TO BE SWITCHED IN LATER VERSIONS TO JZ 
     call spaceSkip
     ;Now check if it is a THEN or a GOTO
-    ;If it is a THEN, go past the then and let mainProcessing handle it
-    ;If it is a GOTO, dont go past the GOTO and let mainProcessing handle it
+    ;If it is a THEN or GOTO, go past it and let mainProcessing handle it
     ;In both cases JUMP to mainProcessing to avoid stack growth
     ;If no GOTO or THEN, then syntax error
     lodsd   ;Get the whole word
@@ -56,11 +54,14 @@ handleIf:
     je .hi0   ; Go past THEN, to process statement
     cmp eax, "GOTO"
     jne .error
-    sub rsi, 4  ;Go back four spaces to process GOTO
+    jmp goto
 .hi0:
     ret
 .else:
-    mov eax, "ELSE" ;Lucky for us, ELSE fits in eax
+;Replace the space in front of ELSE with a 0. It is still printed as a space by the TTY
+;If the char before ELSE is not a space, keep searching for ELSE 
+; (as it could be a var name) and if no else found, simply return
+    mov eax, "ELSE"
     ret
 .noElse0:
 ;If there is no ELSE, simply ret
@@ -69,3 +70,5 @@ handleIf:
 .error:
     lea rbx, syntax
     jmp criticalError
+else:
+;If ELSE is called as a 

@@ -58,7 +58,7 @@ thenStr:
     dw badCmd - funTbl
 elseStr:
     db 5, "ELSE"    ;DONE
-    dw badCmd - funTbl
+    dw else - funTbl
 
     
     db 7, "SYSTEM"  ;DONE
