@@ -53,7 +53,9 @@ funTbl:
     db 6, "NEXT "
     dw next - funTbl
 
-    db 7, "WHILE "
+    db 7
+whileStr:
+    db "WHILE "
     dw while - funTbl
 
     db 6, "WEND "

@@ -6,6 +6,83 @@ retScan:
 ; for a return
 
 wendScan:
+; Gets the current line address and starts searching program from the current line
+; for a WEND
+; Puts the packed specialQword into rdx if a WEND is found
+; Returns rdx = -1 if an error occured with rbp pointing to the error string
+    push rsi
+    mov dx, word [currentLine]  ;pre-load dx with the current line number
+    call searchForProgramLine   ;Get program block pointer into rbx
+    cmp rbx, -1 ;If for some reason line doesnt exist?
+    je .error   ;Unknown Error
+;Now pack for the first portion/line after the for loop
+;rsi points just after the FOR itself
+    push rsi    ;Save the first point after the WHILE itself
+    call findOtherExpressionsOnLine     ;Get the first : or ASCII NUL
+    movzx eax, word [rbx + progLineBlock.wLineNum]  ;Get the line number
+    lea rcx, qword [rbx + progLineBlock.sLine]  ;Load ptr to start of string in rsi
+    sub rsi, rcx    ;Compute difference from start of string
+    mov ecx, esi    ;Should just be low byte of si so cl
+    and ecx, 0FFh   ;Save only bottom byte just in case of garbage
+    shl ecx, 2*8    ;Move to the third byte in the dword
+    or eax, ecx     ;Add byte three to eax
+    mov edx, eax    ;Save in edx
+    shl rdx, 5*8    ;Shift three bytes to top of qword
+    pop rsi
+.initialSearch:
+    ;First look for a : or a ASCII NUL to leave the WHILE part of the line
+    cmp byte [rsi], 0
+    je .gotoNextLine
+    cmp dword [rsi], "WEND"
+    je .wordFound
+    inc rsi ;Now search up until the end of the line for a WEND
+    ;"WEND" found here!
+    jmp short .initialSearch
+.gotoNextLine:
+    mov rbx, qword [rbx + progLineBlock.qPtr] ;Get pointer to next program line
+    cmp rbx, -1 ;Now, when walking if it gives a value of -1, no NEXT found
+    je .noWend
+    lea rsi, qword [rbx + progLineBlock.sLine] ;Load pointer to string rsi
+    jmp short .initialSearch
+.wordFound:
+    ;Here, word found! Huzzah! Now pack edx correctly
+    ;rsi points to the N in "WEND "
+    call findOtherExpressionsOnLine 
+    ;make rsi point to next expression on the line or the end of the line
+    movzx eax, word [rbx + progLineBlock.wLineNum]  ;Get the line number
+    lea rcx, qword [rbx + progLineBlock.sLine]  ;Load ptr to start of string in rsi
+    sub rsi, rcx    ;Compute difference from start of string
+    mov ecx, esi    ;Should just be low byte of si so cl
+    and ecx, 0FFh   ;Save only bottom byte just in case of garbage
+    shl ecx, 2*8    ;Move to the third byte in the dword
+    or eax, ecx     ;Add byte three to eax
+    shl rax, 8*2    ;Shift three bytes to byte 4 of qword
+    or rdx, rax     ;Add bytes [4:2] to rdx
+    ;Compute checksum now
+    xor eax, eax
+    mov al, WHILEsig 
+    mov dx, ax  ;Zero checksum byte
+    xor eax, eax
+    mov ecx, 8  ;8 times
+.csumLoop:
+    ;Spin rdx 8 times adding each byte to al
+    add al, dl
+    rol rdx, 8  ;Rotate left by 8 bits
+    dec ecx
+    jnz .csumLoop
+    neg al ;Get twos compliment of sum (FFh - al)
+    mov dh, al  ;Save in checksum byte
+.exit:
+    pop rsi
+    ret
+.noWend:
+    lea rbp, noWend
+    mov rdx, -1
+    jmp .exit
+.error:
+    lea rbp, uknowner
+    mov rdx, -1
+    jmp .exit
 nextScan:
 ; Gets the current line address and starts searching program from the current line
 ; for a NEXT
@@ -115,7 +192,6 @@ forLoop:
 ;rsp -> Return address
     ;First check we have a NEXT following this FOR
     call nextScan
-
     cmp rdx, -1
     je .critError
     ;Here we make space on the stack.
@@ -251,12 +327,100 @@ return:
     ret
 
 while:
+    ;First check we have a WEND following this WHILE
+    call wendScan
+    cmp rdx, -1
+    je .critError
+    ;Here we make space on the stack.
+    mov ecx, whileStruct_size/8
+    makeSpaceOnStack rcx  ;Make a qword of space on the stack
+    mov rbp, rsp
+    add rbp, 8  ;Make rbp point to the base of the new struc
+    mov qword [rbp + whileStruct.specQword], rdx  ;Move rdx into its place on the stack
+    ;rsi should point after the WHILE
+    call handleAlgebraicExpression  ;Get result of expression in rax
+    mov rdx, qword [rbp + whileStruct.specQword]    ;Get special qword back into rdx
+    test rax, rax   ;Zero is FALSE
+    jz .conditionFalse
+    shr rdx, 5*8    ;Bring the upper three bytes down to eax
+.exit:
     or byte [stateByte], ctrlFlow   ;Set branch bit
     ret
-
+.conditionFalse:
+    ;If condition is false, jump to the instruction after WEND
+    ;Here we reclaim the space from the stack.
+    mov ecx, whileStruct_size/8
+    cleanSpaceOnStack rcx  ;Clean a qword of space on the stack
+    shr rdx, 2*8    ;Bring bytes 4:2 down to bytes 2:0
+    or edx, edx     ;Zero the rest of it
+    jmp short .exit
+.critError:
+    ;called with rbp already pointing to error string
+    jmp criticalError
 wend:
+    ;Find the While on the WHILE line and evaluate the expression
+    ;if true, branch to the WHILE three bytes in specialQword
+    ;if false, branch to WEND three bytes in specialQword and clean stack
+    ;First verify we have a While structure on the stack
+    mov rbp, rsp    ;Dont need to save rbp so trash it
+    add rbp, 8  ;Make it point to the base of the struc past the return address
+    mov rdx, qword [rbp + whileStruct.specQword]
+    cmp dl, WHILEsig
+    jne .noWhile
+    ;Now compute checksum to verify its not an accident
+    xor al, al
+    mov ecx, 8
+.checksumTest:
+    add al, dl
+    ror rdx, 8
+    dec ecx
+    jnz .checksumTest
+    test al, al     ;This should be 0
+    jnz .noWhile
+    ;Now we are truly in a WHILE loop
+    ;Search the While line for the WHILE keyword and evaluate the expression after it
+    ;rdx is as normal
+    shr rdx, 5*8    ;Get upper three bytes down low
+    and edx, 0FFFFh ;Save only dx
+    call searchForProgramLine
+    cmp rbx, -1
+    je .error
+    lea rsi, qword [rbx + progLineBlock.sLine] ;Point to start of string
+.whileScan:
+    cmp byte [rsi], 0   ;Are we at the end of the line
+    je .noWhile ;If so, we have gotten to the end of the line without a while
+    lea rdi, whileStr   ;Point to the while string in the table, 6 chars long
+    mov ecx, 6
+.scanning:
+    cmpsb
+    jne .whileScan
+    dec ecx
+    jnz .scanning
+    ;Here is equal, rsi points past the space in "WHILE "
+    dec rsi
+    call spaceSkip  ;Skip all spaces
+    call handleAlgebraicExpression  ;Get algebraic expression in rax
+    mov rdx, qword [rbp + whileStruct.specQword]    ;Get special qword back into rdx
+    test rax, rax
+    jz .conditionFalse
+    shr rdx, 5*8    ;Bring the upper three bytes down to eax
+.exit:
     or byte [stateByte], ctrlFlow   ;Set branch bit
     ret
+.conditionFalse:
+    ;If condition is false, go to the instruction after WEND
+    ;Here we reclaim the space from the stack.
+    mov ecx, whileStruct_size/8
+    cleanSpaceOnStack rcx  ;Clean a qword of space on the stack
+    shr rdx, 2*8    ;Bring bytes 4:2 down to bytes 2:0
+    or edx, edx     ;Zero the rest of it
+    jmp short .exit
+.error:
+    lea rbp, uknowner
+    jmp criticalError
+.noWhile:
+    lea rbp, noWhile
+    jmp criticalError
 
 handleIf:
 ;Evaluate the string. The IF,THEN/GOTO,ELSE statement must ALL be on one line

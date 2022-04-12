@@ -21,7 +21,7 @@ lineNoXist  db "Undefined line number",0Ah,0Dh,0
 breakmsg db "Break in ",0
 stkOvflw db "Stack overflow",0Ah,0Dh,0
 
-nowend   db "WHILE without WEND", 0Ah, 0Dh, 0
+noWend   db "WHILE without WEND", 0Ah, 0Dh, 0
 noWhile  db "WEND without WHILE", 0Ah, 0Dh, 0
 noFor    db "NEXT without FOR", 0Ah, 0Dh, 0
 noNext   db "FOR without NEXT", 0Ah, 0Dh, 0
