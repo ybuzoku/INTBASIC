@@ -114,6 +114,11 @@ elseStr:
     db 6, "POKE "
     dw byteWrite - funTbl
 
+    db 5, "REM "
+    dw remark - funTbl
+    db 3, "' "
+    dw remark - funTbl
+    
     db -1    ;Demarkate the end of the table
 ;End of Table
 badCmd:
@@ -132,6 +137,14 @@ memWrite:
 byteRead:
 byteWrite:
     ret
+remark:
+;Comment code, keep looping until end of line
+    lodsb
+    test al, al 
+    jnz remark
+    dec rsi ;When al = 0, rsi points past it, move it back by one
+    ret
+
 oldSchoolAssignemnt:
 ;Assign with a LET directive
 ;rsi points to first char AFTER function name
