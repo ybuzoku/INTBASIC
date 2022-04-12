@@ -9,9 +9,25 @@ wendScan:
 nextScan:
 ; Gets the current line address and starts searching program from the current line
 ; for a NEXT
-; Puts the packed three bytes into the low three bytes of edx if a NEXT is found
+; Puts the packed specialQword into rdx if a NEXT is found
     push rsi
     mov dx, word [currentLine]  ;pre-load dx with the current line number
+    call searchForProgramLine   ;Get program block pointer into rbx
+    cmp rbx, -1 ;If for some reason line doesnt exist?
+    je .error   ;Unknown Error
+;Now pack for the first portion/line after the for loop
+;rsi points just after the FOR itself
+    push rsi    ;Save the first point after the FOR itself
+    call findOtherExpressionsOnLine     ;Get the first : or ASCII NUL
+    movzx eax, word [rbx + progLineBlock.wLineNum]  ;Get the line number
+    shl eax, 8  ;Make space for Offset byte
+    lea rcx, qword [rbx + progLineBlock.sLine]  ;Load ptr to start of string in rsi
+    sub rsi, rcx    ;Compute difference from start of string
+    mov ecx, esi    ;Should just be low byte of si so cl
+    mov al, cl      ;Save the byte into al
+    mov edx, eax    ;Save in edx
+    shl rdx, 5*8    ;Shift three bytes to top of qword
+    pop rsi
 .initialSearch:
     ;First look for a : or a ASCII NUL to leave the FOR part of the line
     cmp byte [rsi], 0
@@ -21,14 +37,51 @@ nextScan:
     jne .initialSearch
     cmp byte [rsi + 4], " " ;NEXT must have a space after it
     jne .initialSearch
-
+    ;"NEXT " found here!
+    jmp short .wordFound
 .gotoNextLine:
-    call searchForProgramLine
+    mov rbx, qword [rbx + progLineBlock.qPtr] ;Get pointer to next program line
+    cmp rbx, -1 ;Now, when walking if it gives a value of -1, no NEXT found
+    je .noNext
+    lea rsi, qword [rbx + progLineBlock.sLine] ;Load pointer to string rsi
+    jmp short .initialSearch
+.wordFound:
+    ;Here, word found! Huzzah! Now pack edx correctly
+    ;rsi points to the N in "NEXT "
+    call findOtherExpressionsOnLine 
+    ;make rsi point to next expression on the line or the end of the line
+    movzx eax, word [rbx + progLineBlock.wLineNum]  ;Get the line number
+    shl eax, 8  ;Make space for Offset byte
+    lea rcx, qword [rbx + progLineBlock.sLine]  ;Load ptr to start of string in rsi
+    sub rsi, rcx    ;Compute difference from start of string
+    mov ecx, esi    ;Should just be low byte of si so cl
+    mov al, cl      ;Save the byte into al
+    shl rax, 8*2    ;Shift three bytes to byte 4 of qword
+    or rdx, rax     ;Add bytes [4:2] to rdx
+    ;Compute checksum now
+    xor eax, eax
+    mov al, FORsig 
+    mov dx, ax  ;Zero checksum byte
+    xor eax, eax
+    mov ecx, 8  ;8 times
+.csumLoop:
+    ;Spin rdx 8 times adding each byte to al
+    add al, dl
+    rol rdx, 8  ;Rotate left by 8 bits
+    dec ecx
+    jnz .csumLoop
+    neg al ;Get twos compliment of sum (FFh - al)
+    inc al
+    mov dh, al  ;Save in checksum byte
 .exit:
     pop rsi
     ret
-.nextFound:
-    
+.noNext:
+    lea rbp, noNext
+    jmp criticalError
+.error:
+    lea rbp, uknowner
+    jmp criticalError
 ;=======================================
 ;  ACTUAL CONTROL FLOW FUNCTIONS HERE  :
 ;=======================================

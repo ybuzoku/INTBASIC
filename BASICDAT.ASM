@@ -26,4 +26,4 @@ noWhile  db "WEND without WHILE", 0Ah, 0Dh, 0
 noFor    db "NEXT without FOR", 0Ah, 0Dh, 0
 noNext   db "FOR without NEXT", 0Ah, 0Dh, 0
 noReturn db "RETURN without GOSUB", 0Ah, 0Dh, 0
-errorMsg db "Unprintable error", 0Ah, 0Dh, 0
+uknowner db "Unprintable error", 0Ah, 0Dh, 0

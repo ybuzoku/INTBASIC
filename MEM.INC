@@ -96,10 +96,10 @@ endstruc
     shl %1, 3  ;Multiply argument register by 8
     sub rsp, %1 ;Clear space on the stack plus one qword for ret addr
     cmp rsp, oflowbuff
-    ja ..@1 ;If rsp above overflow buffer, its oki
+    ja .macroNotOverflow ;If rsp above overflow buffer, its oki
     lea rbp, stkOvflw
     jmp criticalError
-..@1:
+.macroNotOverflow:
     ;rsp now points to the start of the cleared space
     ;Put the return address back on the stack
     push rax
