@@ -80,8 +80,8 @@ endstruc
 struc gosubStruct
     .specQword  resq 1  ;Special qword
 ;Special qword:
-; Bytes[7:6] = Line number of GOSUB 
-; Byte 5 =  Offset in line for either first : after GOSUB or ASCII NULL (end of line)
+; Byte 7 =  Offset in line for either first : after GOSUB or ASCII NULL (end of line)
+; Bytes[6:5] = Line number of GOSUB 
 ; Bytes[4:2] = 055AA55h space filler signature
 ; Byte 1 = Parity check sum for the qword, makes the sum of the bytes in qword 0
 ; Byte 0 = GOSUB signature

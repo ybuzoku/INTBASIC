@@ -175,6 +175,15 @@ goto:
     or byte [stateByte], ctrlFlow   ;Set branch bit
     ret
 
+gosub:
+    call goto   ;Goto does all the things we need, puts line number into dx
+    or byte [stateByte], ctrlFlow   ;Set branch bit
+    ret
+
+return:
+    or byte [stateByte], ctrlFlow   ;Set branch bit
+    ret
+
 forLoop:
 ;This saves the following struc on the stack
 ;------------Hi stack addr-------------
@@ -317,14 +326,6 @@ next:
 .noForNext:
     lea rbp, noFor
     jmp criticalError
-
-gosub:
-    or byte [stateByte], ctrlFlow   ;Set branch bit
-    ret
-
-return:
-    or byte [stateByte], ctrlFlow   ;Set branch bit
-    ret
 
 while:
     ;First check we have a WEND following this WHILE

@@ -235,7 +235,7 @@ runProgram:
     lea rsi, qword [rbx + progLineBlock.sLine]
     call runLine
     and byte [stateByte], ~indirectBit  ;Exit indirect mode
-    ret
+    jmp mainLoop    ;Resets the stack if exit mid loop to avoid stkoverflow
 
 printStatement:
 ;Strings must be "" delimited or a string variable must be used
