@@ -120,7 +120,7 @@ badCmd:
     lea rbp, syntax
     call criticalError 
 endProg:
-    jmp mainLoop
+    jmp runProgram.endProgramPoint
 tron:
     or byte [stateByte], traceBit   ;Set the traceBit
     ret
@@ -243,6 +243,7 @@ runProgram:
     mov rbx, qword [firstLinPtr]
     lea rsi, qword [rbx + progLineBlock.sLine]
     call runLine
+.endProgramPoint:
     and byte [stateByte], ~indirectBit  ;Exit indirect mode
     jmp mainLoop    ;Resets the stack if exit mid loop to avoid stkoverflow
 

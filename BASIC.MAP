@@ -233,6 +233,7 @@ Real              Virtual           Name
              7F2              1665  listProgram.printLines
              826              1699  listProgram.exit
              827              169A  runProgram
+             84C              16BF  runProgram.endProgramPoint
              858              16CB  printStatement
              858              16CB  printStatement.printStart
              86E              16E1  printStatement.printExpr

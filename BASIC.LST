@@ -920,7 +920,7 @@
    134 00000661 488D2DE70C0000      <1>     lea rbp, syntax
    135 00000668 E85CFAFFFF          <1>     call criticalError 
    136                              <1> endProg:
-   137 0000066D E9CAF9FFFF          <1>     jmp mainLoop
+   137 0000066D E957010000          <1>     jmp runProgram.endProgramPoint
    138                              <1> tron:
    139 00000672 800D(D90E0000)02    <1>     or byte [stateByte], traceBit   ;Set the traceBit
    140 00000679 C3                  <1>     ret
@@ -1043,192 +1043,193 @@
    257 000007B9 488B1D(EA0E0000)    <1>     mov rbx, qword [firstLinPtr]
    258 000007C0 488D730E            <1>     lea rsi, qword [rbx + progLineBlock.sLine]
    259 000007C4 E85FFAFFFF          <1>     call runLine
-   260 000007C9 8025(D90E0000)FB    <1>     and byte [stateByte], ~indirectBit  ;Exit indirect mode
-   261 000007D0 E967F8FFFF          <1>     jmp mainLoop    ;Resets the stack if exit mid loop to avoid stkoverflow
-   262                              <1> 
-   263                              <1> printStatement:
-   264                              <1> ;Strings must be "" delimited or a string variable must be used
-   265                              <1> ;rsi points to first char AFTER function name
-   266                              <1> .printStart:
-   267 000007D5 E860FBFFFF          <1>     call spaceSkip  ;move rsi to the start of the expression
-   268 000007DA AC                  <1>     lodsb
-   269                              <1> 
-   270 000007DB 84C0                <1>     test al, al     ;Is this a null string?
-   271 000007DD 746B                <1>     jz .psvexit
-   272                              <1> 
-   273 000007DF 3C22                <1>     cmp al, 022h    ;22h = ASCII Speechmarks
-   274 000007E1 7449                <1>     je .stringPrint
-   275                              <1>     ;Here we check if the first char is ASCII, if it is, check if its a string var
-   276 000007E3 3C41                <1>     cmp al, "A"
-   277 000007E5 7204                <1>     jb .printExpr
-   278 000007E7 3C5A                <1>     cmp al, "Z"
-   279 000007E9 7214                <1>     jb .printStringVar
-   280                              <1> .printExpr:
-   281 000007EB 48FFCE              <1>     dec rsi ;Return to the start of the string
-   282                              <1> .printExpr1:    ;Return without dec rsi
-   283 000007EE E89AFBFFFF          <1>     call handleAlgebraicExpression ;Gets value of a var and/or algebraic operation
-   284 000007F3 E8EB070000          <1>     call printdecimalword
-   285 000007F8 E83DFBFFFF          <1>     call spaceSkip
-   286 000007FD EB2D                <1>     jmp short .stringPrint
-   287                              <1> .printStringVar:
-   288                              <1>     ;Check if it is a string var
-   289 000007FF 48FFCE              <1>     dec rsi
-   290 00000802 E83EFBFFFF          <1>     call getVarNameLength
-   291 00000807 E866FBFFFF          <1>     call getVarType
-   292 0000080C 81FB01000000        <1>     cmp ebx, strEquate
-   293 00000812 75DA                <1>     jne .printExpr1  ;rsi points to the same point as initially
-   294 00000814 E883080000          <1>     call findVariable   ;ecx has string length, get block ptr in rbx
-   295 00000819 55                  <1>     push rbp
-   296 0000081A 488D6B04            <1>     lea rbp, qword [rbx + stringBlock.string]
-   297 0000081E E87DF9FFFF          <1>     call ttyOutString
-   298 00000823 5D                  <1>     pop rbp
-   299 00000824 4801CE              <1>     add rsi, rcx    ;Go past variable
-   300 00000827 E80EFBFFFF          <1>     call spaceSkip
-   301                              <1> .stringPrint:
-   302 0000082C AC                  <1>     lodsb
-   303 0000082D 3C00                <1>     cmp al, 0
-   304 0000082F 7419                <1>     je .psvexit
-   305 00000831 3C3A                <1>     cmp al, ":"
-   306 00000833 7412                <1>     je .psvexitColon
-   307 00000835 3C22                <1>     cmp al, 022h    ;Close Speech marks, check next char
-   308 00000837 741E                <1>     je .closespeechmarks
-   309 00000839 3C3B                <1>     cmp al, ";"     ;Semicolon means print next section on same line
-   310 0000083B 7429                <1>     je .continue
-   311 0000083D E859F9FFFF          <1>     call ttyOutChar
-   312 00000842 EBE8                <1>     jmp short .stringPrint
-   313                              <1> .openSpeechMark:
-   314 00000844 48FFC6              <1>     inc rsi ;Go back a char
-   315                              <1> .psvexitColon:
-   316 00000847 48FFCE              <1>     dec rsi ;Go back a char
-   317                              <1> .psvexit:
-   318 0000084A 488D2DB30A0000      <1>     lea rbp, crlf
-   319 00000851 E84AF9FFFF          <1>     call ttyOutString
-   320 00000856 C3                  <1>     ret
-   321                              <1> .closespeechmarks:
-   322 00000857 E8DEFAFFFF          <1>     call spaceSkip
-   323 0000085C AC                  <1>     lodsb
-   324 0000085D 3C3B                <1>     cmp al, ";" ;only exception to exiting if next non space char is a semicolon
-   325 0000085F 74CB                <1>     je .stringPrint
-   326 00000861 48FFCE              <1>     dec rsi ;Go back a step
-   327 00000864 EBE4                <1>     jmp short .psvexit
-   328                              <1> .continue:
-   329 00000866 E8CFFAFFFF          <1>     call spaceSkip
-   330 0000086B E965FFFFFF          <1>     jmp .printStart
-   331                              <1> getInput:
-   332                              <1> ;Take a string as a prompt
-   333                              <1> ;rdi points just past the end of the command line
-   334                              <1> ;rsi points to first char AFTER function name
-   335                              <1> ;Input prompt strings must be speech mark delimited on both sides!
-   336 00000870 E8C5FAFFFF          <1>     call spaceSkip
-   337                              <1>     ;Now check to see if the user has specified a custom prompt
-   338 00000875 AC                  <1>     lodsb   ;Get first symbol and go past it
-   339 00000876 3C22                <1>     cmp al, 22h ;Speechmark?
-   340 00000878 7535                <1>     jne .defaultPrompt ;If no speechmark, print default prompt
-   341                              <1> .customPrompt:
-   342 0000087A 4889F7              <1>     mov rdi, rsi    ;Save start of string in rdi
-   343                              <1> .cp0:
-   344 0000087D AC                  <1>     lodsb           ;Now search for end of string speech marks or null terminator
-   345 0000087E 3C22                <1>     cmp al, 22h     ;Is al a speech mark?
-   346 00000880 7410                <1>     je .printCustomPrompt
-   347 00000882 84C0                <1>     test al, al     ;Is al null?
-   348 00000884 75F7                <1>     jnz .cp0        ;No, keep searching for terminator
-   349                              <1> .error:
-   350 00000886 488D2DC20A0000      <1>     lea rbp, syntax
-   351 0000088D E937F8FFFF          <1>     jmp criticalError
-   352                              <1> .printCustomPrompt:
-   353 00000892 4889FE              <1>     mov rsi, rdi    ;rsi points to the first char of the string
-   354                              <1> .pcp0:
-   355 00000895 AC                  <1>     lodsb
-   356 00000896 3C22                <1>     cmp al, 22h     ;Speechmark?
-   357 00000898 7407                <1>     je .stopPrompt
-   358 0000089A E8FCF8FFFF          <1>     call ttyOutChar
-   359 0000089F EBF4                <1>     jmp short .pcp0
-   360                              <1> .stopPrompt:
-   361 000008A1 E894FAFFFF          <1>     call spaceSkip  ;Skip spaces
-   362 000008A6 AC                  <1>     lodsb   ;Get first non space char after closing speechmark
-   363 000008A7 3C3B                <1>     cmp al, ";" ;Semicolon means no default prompt
-   364 000008A9 740E                <1>     je .noDefaultPrompt
-   365 000008AB 3C2C                <1>     cmp al, "," ;Comma also means no default prompt
-   366 000008AD 740A                <1>     je .noDefaultPrompt
-   367                              <1> .defaultPrompt:
-   368 000008AF 48FFCE              <1>     dec rsi
-   369 000008B2 B03F                <1>     mov al, "?"
-   370 000008B4 E8E2F8FFFF          <1>     call ttyOutChar
-   371                              <1> .noDefaultPrompt:
-   372 000008B9 B020                <1>     mov al, " " ;space
-   373 000008BB E8DBF8FFFF          <1>     call ttyOutChar
-   374 000008C0 E875FAFFFF          <1>     call spaceSkip  ;Skip spaces after default supressor to get to var name
-   375 000008C5 E87BFAFFFF          <1>     call getVarNameLength   ;Get var name length in ecx
-   376 000008CA 488D3D(980E0000)    <1>     lea rdi, digitString    ;Buffer has 48 chars, string names are max 40
-   377 000008D1 E88E090000          <1>     call strcpy     ;rsi points to var name
-   378 000008D6 57                  <1>     push rdi    ;rdi points to first char of variable
-   379 000008D7 51                  <1>     push rcx
-   380 000008D8 E826F8FFFF          <1>     call getLineInput   ;Get input from the user in inString, null terminated
-   381                              <1>     ;This will sanitise in direct mode meaning input cannot have any more statements
-   382                              <1>     ; after it.
-   383 000008DD 59                  <1>     pop rcx
-   384 000008DE 5F                  <1>     pop rdi 
-   385 000008DF 4889FE              <1>     mov rsi, rdi    ;Save the start of the var name in rsi
-   386 000008E2 4801CE              <1>     add rsi, rcx    ;Go to end of var
-   387 000008E5 48FFCE              <1>     dec rsi
-   388 000008E8 AC                  <1>     lodsb   ;Are we a string variable?
-   389 000008E9 488D35(980D0000)    <1>     lea rsi, inString   ;Move rsi to start of user input
-   390 000008F0 3C24                <1>     cmp al, "$"
-   391 000008F2 740F                <1>     je .handleString
-   392                              <1> .handleNumeric:
-   393 000008F4 E894FAFFFF          <1>     call handleAlgebraicExpression  ;Get the result of the expression into rax
-   394 000008F9 4889FE              <1>     mov rsi, rdi    ;Return the start of the string into rsi
-   395 000008FC E8E1FBFFFF          <1>     call setNumericVariable
-   396 00000901 EB0B                <1>     jmp short .commonExit
-   397                              <1> .handleString:
-   398                              <1>     ;IF a string variable, come here
-   399                              <1>     ;rdi has the start of the variable name
-   400                              <1> 
-   401                              <1>     ;rdx must point to the start of the string
-   402                              <1>     ;rsi must point to the start of the variable name
-   403 00000903 4889F2              <1>     mov rdx, rsi
-   404 00000906 4889FE              <1>     mov rsi, rdi    ;Return start of user name in rsi
-   405 00000909 E80BFCFFFF          <1>     call setStringVariable
-   406                              <1> .commonExit:
-   407 0000090E C3                  <1>     ret
-   408                              <1> 
-   409                              <1> ;==========================================================:
+   260                              <1> .endProgramPoint:
+   261 000007C9 8025(D90E0000)FB    <1>     and byte [stateByte], ~indirectBit  ;Exit indirect mode
+   262 000007D0 E967F8FFFF          <1>     jmp mainLoop    ;Resets the stack if exit mid loop to avoid stkoverflow
+   263                              <1> 
+   264                              <1> printStatement:
+   265                              <1> ;Strings must be "" delimited or a string variable must be used
+   266                              <1> ;rsi points to first char AFTER function name
+   267                              <1> .printStart:
+   268 000007D5 E860FBFFFF          <1>     call spaceSkip  ;move rsi to the start of the expression
+   269 000007DA AC                  <1>     lodsb
+   270                              <1> 
+   271 000007DB 84C0                <1>     test al, al     ;Is this a null string?
+   272 000007DD 746B                <1>     jz .psvexit
+   273                              <1> 
+   274 000007DF 3C22                <1>     cmp al, 022h    ;22h = ASCII Speechmarks
+   275 000007E1 7449                <1>     je .stringPrint
+   276                              <1>     ;Here we check if the first char is ASCII, if it is, check if its a string var
+   277 000007E3 3C41                <1>     cmp al, "A"
+   278 000007E5 7204                <1>     jb .printExpr
+   279 000007E7 3C5A                <1>     cmp al, "Z"
+   280 000007E9 7214                <1>     jb .printStringVar
+   281                              <1> .printExpr:
+   282 000007EB 48FFCE              <1>     dec rsi ;Return to the start of the string
+   283                              <1> .printExpr1:    ;Return without dec rsi
+   284 000007EE E89AFBFFFF          <1>     call handleAlgebraicExpression ;Gets value of a var and/or algebraic operation
+   285 000007F3 E8EB070000          <1>     call printdecimalword
+   286 000007F8 E83DFBFFFF          <1>     call spaceSkip
+   287 000007FD EB2D                <1>     jmp short .stringPrint
+   288                              <1> .printStringVar:
+   289                              <1>     ;Check if it is a string var
+   290 000007FF 48FFCE              <1>     dec rsi
+   291 00000802 E83EFBFFFF          <1>     call getVarNameLength
+   292 00000807 E866FBFFFF          <1>     call getVarType
+   293 0000080C 81FB01000000        <1>     cmp ebx, strEquate
+   294 00000812 75DA                <1>     jne .printExpr1  ;rsi points to the same point as initially
+   295 00000814 E883080000          <1>     call findVariable   ;ecx has string length, get block ptr in rbx
+   296 00000819 55                  <1>     push rbp
+   297 0000081A 488D6B04            <1>     lea rbp, qword [rbx + stringBlock.string]
+   298 0000081E E87DF9FFFF          <1>     call ttyOutString
+   299 00000823 5D                  <1>     pop rbp
+   300 00000824 4801CE              <1>     add rsi, rcx    ;Go past variable
+   301 00000827 E80EFBFFFF          <1>     call spaceSkip
+   302                              <1> .stringPrint:
+   303 0000082C AC                  <1>     lodsb
+   304 0000082D 3C00                <1>     cmp al, 0
+   305 0000082F 7419                <1>     je .psvexit
+   306 00000831 3C3A                <1>     cmp al, ":"
+   307 00000833 7412                <1>     je .psvexitColon
+   308 00000835 3C22                <1>     cmp al, 022h    ;Close Speech marks, check next char
+   309 00000837 741E                <1>     je .closespeechmarks
+   310 00000839 3C3B                <1>     cmp al, ";"     ;Semicolon means print next section on same line
+   311 0000083B 7429                <1>     je .continue
+   312 0000083D E859F9FFFF          <1>     call ttyOutChar
+   313 00000842 EBE8                <1>     jmp short .stringPrint
+   314                              <1> .openSpeechMark:
+   315 00000844 48FFC6              <1>     inc rsi ;Go back a char
+   316                              <1> .psvexitColon:
+   317 00000847 48FFCE              <1>     dec rsi ;Go back a char
+   318                              <1> .psvexit:
+   319 0000084A 488D2DB30A0000      <1>     lea rbp, crlf
+   320 00000851 E84AF9FFFF          <1>     call ttyOutString
+   321 00000856 C3                  <1>     ret
+   322                              <1> .closespeechmarks:
+   323 00000857 E8DEFAFFFF          <1>     call spaceSkip
+   324 0000085C AC                  <1>     lodsb
+   325 0000085D 3C3B                <1>     cmp al, ";" ;only exception to exiting if next non space char is a semicolon
+   326 0000085F 74CB                <1>     je .stringPrint
+   327 00000861 48FFCE              <1>     dec rsi ;Go back a step
+   328 00000864 EBE4                <1>     jmp short .psvexit
+   329                              <1> .continue:
+   330 00000866 E8CFFAFFFF          <1>     call spaceSkip
+   331 0000086B E965FFFFFF          <1>     jmp .printStart
+   332                              <1> getInput:
+   333                              <1> ;Take a string as a prompt
+   334                              <1> ;rdi points just past the end of the command line
+   335                              <1> ;rsi points to first char AFTER function name
+   336                              <1> ;Input prompt strings must be speech mark delimited on both sides!
+   337 00000870 E8C5FAFFFF          <1>     call spaceSkip
+   338                              <1>     ;Now check to see if the user has specified a custom prompt
+   339 00000875 AC                  <1>     lodsb   ;Get first symbol and go past it
+   340 00000876 3C22                <1>     cmp al, 22h ;Speechmark?
+   341 00000878 7535                <1>     jne .defaultPrompt ;If no speechmark, print default prompt
+   342                              <1> .customPrompt:
+   343 0000087A 4889F7              <1>     mov rdi, rsi    ;Save start of string in rdi
+   344                              <1> .cp0:
+   345 0000087D AC                  <1>     lodsb           ;Now search for end of string speech marks or null terminator
+   346 0000087E 3C22                <1>     cmp al, 22h     ;Is al a speech mark?
+   347 00000880 7410                <1>     je .printCustomPrompt
+   348 00000882 84C0                <1>     test al, al     ;Is al null?
+   349 00000884 75F7                <1>     jnz .cp0        ;No, keep searching for terminator
+   350                              <1> .error:
+   351 00000886 488D2DC20A0000      <1>     lea rbp, syntax
+   352 0000088D E937F8FFFF          <1>     jmp criticalError
+   353                              <1> .printCustomPrompt:
+   354 00000892 4889FE              <1>     mov rsi, rdi    ;rsi points to the first char of the string
+   355                              <1> .pcp0:
+   356 00000895 AC                  <1>     lodsb
+   357 00000896 3C22                <1>     cmp al, 22h     ;Speechmark?
+   358 00000898 7407                <1>     je .stopPrompt
+   359 0000089A E8FCF8FFFF          <1>     call ttyOutChar
+   360 0000089F EBF4                <1>     jmp short .pcp0
+   361                              <1> .stopPrompt:
+   362 000008A1 E894FAFFFF          <1>     call spaceSkip  ;Skip spaces
+   363 000008A6 AC                  <1>     lodsb   ;Get first non space char after closing speechmark
+   364 000008A7 3C3B                <1>     cmp al, ";" ;Semicolon means no default prompt
+   365 000008A9 740E                <1>     je .noDefaultPrompt
+   366 000008AB 3C2C                <1>     cmp al, "," ;Comma also means no default prompt
+   367 000008AD 740A                <1>     je .noDefaultPrompt
+   368                              <1> .defaultPrompt:
+   369 000008AF 48FFCE              <1>     dec rsi
+   370 000008B2 B03F                <1>     mov al, "?"
+   371 000008B4 E8E2F8FFFF          <1>     call ttyOutChar
+   372                              <1> .noDefaultPrompt:
+   373 000008B9 B020                <1>     mov al, " " ;space
+   374 000008BB E8DBF8FFFF          <1>     call ttyOutChar
+   375 000008C0 E875FAFFFF          <1>     call spaceSkip  ;Skip spaces after default supressor to get to var name
+   376 000008C5 E87BFAFFFF          <1>     call getVarNameLength   ;Get var name length in ecx
+   377 000008CA 488D3D(980E0000)    <1>     lea rdi, digitString    ;Buffer has 48 chars, string names are max 40
+   378 000008D1 E88E090000          <1>     call strcpy     ;rsi points to var name
+   379 000008D6 57                  <1>     push rdi    ;rdi points to first char of variable
+   380 000008D7 51                  <1>     push rcx
+   381 000008D8 E826F8FFFF          <1>     call getLineInput   ;Get input from the user in inString, null terminated
+   382                              <1>     ;This will sanitise in direct mode meaning input cannot have any more statements
+   383                              <1>     ; after it.
+   384 000008DD 59                  <1>     pop rcx
+   385 000008DE 5F                  <1>     pop rdi 
+   386 000008DF 4889FE              <1>     mov rsi, rdi    ;Save the start of the var name in rsi
+   387 000008E2 4801CE              <1>     add rsi, rcx    ;Go to end of var
+   388 000008E5 48FFCE              <1>     dec rsi
+   389 000008E8 AC                  <1>     lodsb   ;Are we a string variable?
+   390 000008E9 488D35(980D0000)    <1>     lea rsi, inString   ;Move rsi to start of user input
+   391 000008F0 3C24                <1>     cmp al, "$"
+   392 000008F2 740F                <1>     je .handleString
+   393                              <1> .handleNumeric:
+   394 000008F4 E894FAFFFF          <1>     call handleAlgebraicExpression  ;Get the result of the expression into rax
+   395 000008F9 4889FE              <1>     mov rsi, rdi    ;Return the start of the string into rsi
+   396 000008FC E8E1FBFFFF          <1>     call setNumericVariable
+   397 00000901 EB0B                <1>     jmp short .commonExit
+   398                              <1> .handleString:
+   399                              <1>     ;IF a string variable, come here
+   400                              <1>     ;rdi has the start of the variable name
+   401                              <1> 
+   402                              <1>     ;rdx must point to the start of the string
+   403                              <1>     ;rsi must point to the start of the variable name
+   404 00000903 4889F2              <1>     mov rdx, rsi
+   405 00000906 4889FE              <1>     mov rsi, rdi    ;Return start of user name in rsi
+   406 00000909 E80BFCFFFF          <1>     call setStringVariable
+   407                              <1> .commonExit:
+   408 0000090E C3                  <1>     ret
+   409                              <1> 
    410                              <1> ;==========================================================:
    411                              <1> ;==========================================================:
-   412                              <1> ;          Functions Related to Program Management         :
-   413                              <1> ;==========================================================:
+   412                              <1> ;==========================================================:
+   413                              <1> ;          Functions Related to Program Management         :
    414                              <1> ;==========================================================:
    415                              <1> ;==========================================================:
-   416                              <1> returnToDOS:
-   417 0000090F B007                <1>     mov al, 07h
-   418 00000911 E885F8FFFF          <1>     call ttyOutChar
-   419 00000916 E9E5F6FFFF          <1>     jmp start   ;Reset the interpreter
-   420                              <1> cls:
-   421 0000091B E98DF8FFFF          <1>     jmp ttyClear
-   422                              <1> dbgr:
-   423                              <1>     ;Hook int 40h to main prog EP to allow returning 
-   424                              <1> ;First call to get default BIOS segement selector and attribute word
-   425 00000920 B340                <1>     mov bl, 40h
-   426 00000922 B807F00000          <1>     mov eax, 0F007h ;Get the descriptor
-   427 00000927 CD35                <1>     int 35h
-   428 00000929 89C6                <1>     mov esi, eax    ;Move segment selector info to esi
-   429 0000092B B940000000          <1>     mov ecx, 40h    ;Interrupt number
-   430                              <1> ;dx preserves the attribute word
-   431 00000930 488D1D09000000      <1>     lea rbx, .farReturn  ;Pointer passed in
-   432 00000937 B808F00000          <1>     mov eax, 0F008h ;Set descriptor
-   433 0000093C CD35                <1>     int 35h
-   434 0000093E CD38                <1>     int 38h ;Call debugger
-   435                              <1> .farReturn:
-   436                              <1>     ;Reconnect CTRL+BREAK handler
-   437 00000940 48BC-               <1>     mov rsp, stacktop   ;Immediately reset stack
-   437 00000942 [900D000000000000]  <1>
-   438 0000094A 488D3D89F7FFFF      <1>     lea rdi, ctrlBreakHandler
-   439 00000951 B03B                <1>     mov al, 3Bh
-   440 00000953 E88BF7FFFF          <1>     call setHandler
-   441                              <1>     
-   442 00000958 488D2DA5090000      <1>     lea rbp, crlf
-   443 0000095F E83CF8FFFF          <1>     call ttyOutString
-   444 00000964 E9D3F6FFFF          <1>     jmp mainLoop
+   416                              <1> ;==========================================================:
+   417                              <1> returnToDOS:
+   418 0000090F B007                <1>     mov al, 07h
+   419 00000911 E885F8FFFF          <1>     call ttyOutChar
+   420 00000916 E9E5F6FFFF          <1>     jmp start   ;Reset the interpreter
+   421                              <1> cls:
+   422 0000091B E98DF8FFFF          <1>     jmp ttyClear
+   423                              <1> dbgr:
+   424                              <1>     ;Hook int 40h to main prog EP to allow returning 
+   425                              <1> ;First call to get default BIOS segement selector and attribute word
+   426 00000920 B340                <1>     mov bl, 40h
+   427 00000922 B807F00000          <1>     mov eax, 0F007h ;Get the descriptor
+   428 00000927 CD35                <1>     int 35h
+   429 00000929 89C6                <1>     mov esi, eax    ;Move segment selector info to esi
+   430 0000092B B940000000          <1>     mov ecx, 40h    ;Interrupt number
+   431                              <1> ;dx preserves the attribute word
+   432 00000930 488D1D09000000      <1>     lea rbx, .farReturn  ;Pointer passed in
+   433 00000937 B808F00000          <1>     mov eax, 0F008h ;Set descriptor
+   434 0000093C CD35                <1>     int 35h
+   435 0000093E CD38                <1>     int 38h ;Call debugger
+   436                              <1> .farReturn:
+   437                              <1>     ;Reconnect CTRL+BREAK handler
+   438 00000940 48BC-               <1>     mov rsp, stacktop   ;Immediately reset stack
+   438 00000942 [900D000000000000]  <1>
+   439 0000094A 488D3D89F7FFFF      <1>     lea rdi, ctrlBreakHandler
+   440 00000951 B03B                <1>     mov al, 3Bh
+   441 00000953 E88BF7FFFF          <1>     call setHandler
+   442                              <1>     
+   443 00000958 488D2DA5090000      <1>     lea rbp, crlf
+   444 0000095F E83CF8FFFF          <1>     call ttyOutString
+   445 00000964 E9D3F6FFFF          <1>     jmp mainLoop
     15                                  %include "CTRLFLOW.ASM"
     16                              <1> 
     17                              <1> ;Handles all the specific functions related to control flow such as scanning 
