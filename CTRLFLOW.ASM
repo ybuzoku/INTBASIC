@@ -138,7 +138,6 @@ forLoop:
 .flToFound:
     ;rsi points to the preceeding space so add 3 to go to trailing space
     add rsi, 3
-    xchg bx, bx
     call spaceSkip  ;Go to expression to evaluate
     call handleAlgebraicExpression  ;Get in rax the limit value
     mov qword [rbp + forStruct.limitValue], rax
