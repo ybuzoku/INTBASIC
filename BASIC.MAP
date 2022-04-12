@@ -12,8 +12,8 @@ Output file:  BASIC.BIN
 
 Vstart            Start             Stop              Length    Class     Name
                0                 0                83  00000083  progbits  .text
-             EF6                83               FE5  00000F62  progbits  resSeg
-            1E58               FE5               FE5  00000000  progbits  programArea
+             EF6                83              100C  00000F89  progbits  resSeg
+            1E7F              100C              100C  00000000  progbits  programArea
                0                 0               EF6  00000EF6  nobits    dSeg
 
 -- Sections (detailed) --------------------------------------------------------
@@ -32,7 +32,7 @@ vfollows:  not defined
 ---- Section resSeg -----------------------------------------------------------
 
 class:     progbits
-length:                 F62
+length:                 F89
 start:                   83
 align:                    1
 follows:   .text
@@ -44,10 +44,10 @@ vfollows:  dSeg
 
 class:     progbits
 length:                   0
-start:                  FE5
+start:                 100C
 align:                    1
 follows:   resSeg
-vstart:                1E58
+vstart:                1E7F
 valign:                   1
 vfollows:  resSeg
 
@@ -268,92 +268,93 @@ Real              Virtual           Name
              A46              18B9  nextScan.csumLoop
              A56              18C9  nextScan.exit
              A58              18CB  nextScan.noNext
-             A64              18D7  nextScan.error
-             A70              18E3  goto
-             A85              18F8  forLoop
-             AA7              191A  forLoop.macroNotOverflow
-             ABA              192D  next
-             ACC              193F  gosub
-             AD4              1947  return
-             ADC              194F  while
-             AE4              1957  wend
-             AEC              195F  handleIf
-             B19              198C  handleIf.candidatethen
-             B20              1993  handleIf.else
-             B4A              19BD  handleIf.hi0
-             B77              19EA  handleIf.noElse
-             B78              19EB  handleIf.error
-             B84              19F7  decimalToHex
-             B89              19FC  decimalToHex.processDigits
-             BA5              1A18  decimalToHex.exit
-             BAC              1A1F  printdecimalword
-             BDC              1A4F  printdecimalword.pdw0
-             BEC              1A5F  printdecimalword.pdw1
-             C05              1A78  allocateBlock
-             C06              1A79  allocateBlock.ab0
-             C37              1AAA  allocateBlock.exit
-             C39              1AAC  allocateBlock.memoryFull
-             C45              1AB8  allocateBlock.firstAllocation
-             C65              1AD8  findVariable
-             C7A              1AED  findVariable.search
-             C86              1AF9  findVariable.invalid
-             C95              1B08  findVariable.varFound
-             CA4              1B17  findVariable.datFound
-             CB6              1B29  findVariable.varNotFound
-             CC0              1B33  findVariable.exit
-             CC6              1B39  findFirstLine
-             CD5              1B48  searchForProgramLine
-             CE5              1B58  searchForProgramLine.search
-             CF8              1B6B  searchForProgramLine.lineFound
-             CF9              1B6C  insertProgramLine
-             D19              1B8C  insertProgramLine.walk
-             D2D              1BA0  insertProgramLine.candidate
-             D3C              1BAF  insertProgramLine.sort
-             D4F              1BC2  insertProgramLine.skipLink
-             D5D              1BD0  insertProgramLine.first
-             D6F              1BE2  insertProgramLine.exit
-             D75              1BE8  makeEditInteger
-             D88              1BFB  makeEditInteger.newVar
-             DB4              1C27  makeEditInteger.error
-             DC0              1C33  makeEditString
-             DFA              1C6D  makeEditString.strcopy
-             E0E              1C81  makeEditString.error
-             E1A              1C8D  terminatedstrcpy
-             E1B              1C8E  terminatedstrcpy.copy
-             E2B              1C9E  terminatedstrcpy.exit
-             E2D              1CA0  strcpy
-             E36              1CA9  strlen
-             E3A              1CAD  strlen.search
-             E41              1CB4  strlen.exit
-             E44              1CB7  memoryDetection
-             E4D              1CC0  memoryDetection.findStartAddr
-             E54              1CC7  memoryDetection.fsa1
-             E84              1CF7  memoryDetection.exit
-             E85              1CF8  memoryDetection.worstCase
-             EA6              1D19  prompt
-             EAB              1D1E  mainmsg
-             EBF              1D32  bytemsg
-             ECD              1D40  crlf
-             ED0              1D43  errmsg
-             ED8              1D4B  numbers
-             EE2              1D55  varChrs
-             F08              1D7B  noMem
-             F18              1D8B  syntax
-             F27              1D9A  typeError
-             F37              1DAA  lineNoXist
-             F4F              1DC2  breakmsg
-             F59              1DCC  stkOvflw
-             F6A              1DDD  nowend
-             F7F              1DF2  noWhile
-             F94              1E07  noFor
-             FA7              1E1A  noNext
-             FBA              1E2D  noReturn
-             FD1              1E44  uknowner
+             A6E              18E1  nextScan.error
+             A84              18F7  goto
+             A99              190C  forLoop
+             AC9              193C  forLoop.macroNotOverflow
+             ADC              194F  forLoop.critError
+             AE1              1954  next
+             AF3              1966  gosub
+             AFB              196E  return
+             B03              1976  while
+             B0B              197E  wend
+             B13              1986  handleIf
+             B40              19B3  handleIf.candidatethen
+             B47              19BA  handleIf.else
+             B71              19E4  handleIf.hi0
+             B9E              1A11  handleIf.noElse
+             B9F              1A12  handleIf.error
+             BAB              1A1E  decimalToHex
+             BB0              1A23  decimalToHex.processDigits
+             BCC              1A3F  decimalToHex.exit
+             BD3              1A46  printdecimalword
+             C03              1A76  printdecimalword.pdw0
+             C13              1A86  printdecimalword.pdw1
+             C2C              1A9F  allocateBlock
+             C2D              1AA0  allocateBlock.ab0
+             C5E              1AD1  allocateBlock.exit
+             C60              1AD3  allocateBlock.memoryFull
+             C6C              1ADF  allocateBlock.firstAllocation
+             C8C              1AFF  findVariable
+             CA1              1B14  findVariable.search
+             CAD              1B20  findVariable.invalid
+             CBC              1B2F  findVariable.varFound
+             CCB              1B3E  findVariable.datFound
+             CDD              1B50  findVariable.varNotFound
+             CE7              1B5A  findVariable.exit
+             CED              1B60  findFirstLine
+             CFC              1B6F  searchForProgramLine
+             D0C              1B7F  searchForProgramLine.search
+             D1F              1B92  searchForProgramLine.lineFound
+             D20              1B93  insertProgramLine
+             D40              1BB3  insertProgramLine.walk
+             D54              1BC7  insertProgramLine.candidate
+             D63              1BD6  insertProgramLine.sort
+             D76              1BE9  insertProgramLine.skipLink
+             D84              1BF7  insertProgramLine.first
+             D96              1C09  insertProgramLine.exit
+             D9C              1C0F  makeEditInteger
+             DAF              1C22  makeEditInteger.newVar
+             DDB              1C4E  makeEditInteger.error
+             DE7              1C5A  makeEditString
+             E21              1C94  makeEditString.strcopy
+             E35              1CA8  makeEditString.error
+             E41              1CB4  terminatedstrcpy
+             E42              1CB5  terminatedstrcpy.copy
+             E52              1CC5  terminatedstrcpy.exit
+             E54              1CC7  strcpy
+             E5D              1CD0  strlen
+             E61              1CD4  strlen.search
+             E68              1CDB  strlen.exit
+             E6B              1CDE  memoryDetection
+             E74              1CE7  memoryDetection.findStartAddr
+             E7B              1CEE  memoryDetection.fsa1
+             EAB              1D1E  memoryDetection.exit
+             EAC              1D1F  memoryDetection.worstCase
+             ECD              1D40  prompt
+             ED2              1D45  mainmsg
+             EE6              1D59  bytemsg
+             EF4              1D67  crlf
+             EF7              1D6A  errmsg
+             EFF              1D72  numbers
+             F09              1D7C  varChrs
+             F2F              1DA2  noMem
+             F3F              1DB2  syntax
+             F4E              1DC1  typeError
+             F5E              1DD1  lineNoXist
+             F76              1DE9  breakmsg
+             F80              1DF3  stkOvflw
+             F91              1E04  nowend
+             FA6              1E19  noWhile
+             FBB              1E2E  noFor
+             FCE              1E41  noNext
+             FE1              1E54  noReturn
+             FF8              1E6B  uknowner
 
 ---- Section programArea ------------------------------------------------------
 
 Real              Virtual           Name
-             FE5              1E58  ENDOFPROGRAM
+            100C              1E7F  ENDOFPROGRAM
 
 ---- Section dSeg -------------------------------------------------------------
 

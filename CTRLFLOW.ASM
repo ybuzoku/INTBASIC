@@ -10,6 +10,7 @@ nextScan:
 ; Gets the current line address and starts searching program from the current line
 ; for a NEXT
 ; Puts the packed specialQword into rdx if a NEXT is found
+; Returns rdx = -1 if an error occured with rbp pointing to the error string
     push rsi
     mov dx, word [currentLine]  ;pre-load dx with the current line number
     call searchForProgramLine   ;Get program block pointer into rbx
@@ -78,10 +79,12 @@ nextScan:
     ret
 .noNext:
     lea rbp, noNext
-    jmp criticalError
+    mov rdx, -1
+    jmp .exit
 .error:
     lea rbp, uknowner
-    jmp criticalError
+    mov rdx, -1
+    jmp .exit
 ;=======================================
 ;  ACTUAL CONTROL FLOW FUNCTIONS HERE  :
 ;=======================================
@@ -112,7 +115,9 @@ forLoop:
 ;------------Low stack addr------------
 ;rsp -> Return address
     ;First check we have a NEXT following this FOR
-
+    call nextScan
+    cmp rdx, -1
+    je .critError
     ;Here we make space on the stack.
     mov ecx, forStruct_size
     makeSpaceOnStack rcx  ;Make four qwords of space on the stack
@@ -122,7 +127,8 @@ forLoop:
 
     or byte [stateByte], ctrlFlow   ;Set branch bit
     ret
-
+.critError:
+    jmp criticalError
 next:
     ;Verify that the structure on the stack is as expected
     mov rbp, rsp    ;Dont need to save rbp so trash it
