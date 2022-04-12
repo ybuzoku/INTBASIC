@@ -47,6 +47,9 @@ funTbl:
     db 5, "FOR "
     dw forLoop - funTbl
 
+    db 6, "NEXT",0
+    dw next - funTbl
+
     db 6, "NEXT "
     dw next - funTbl
 
@@ -55,6 +58,8 @@ funTbl:
 
     db 6, "WEND "
     dw wend - funTbl    
+    db 6, "WEND",0
+    dw wend - funTbl   
 thenStr:
     db 6, "THEN "    ;DONE
     dw badCmd - funTbl

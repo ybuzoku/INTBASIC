@@ -21,11 +21,12 @@ nextScan:
     push rsi    ;Save the first point after the FOR itself
     call findOtherExpressionsOnLine     ;Get the first : or ASCII NUL
     movzx eax, word [rbx + progLineBlock.wLineNum]  ;Get the line number
-    shl eax, 8  ;Make space for Offset byte
     lea rcx, qword [rbx + progLineBlock.sLine]  ;Load ptr to start of string in rsi
     sub rsi, rcx    ;Compute difference from start of string
     mov ecx, esi    ;Should just be low byte of si so cl
-    mov al, cl      ;Save the byte into al
+    and ecx, 0FFh   ;Save only bottom byte just in case of garbage
+    shl ecx, 2*8    ;Move to the third byte in the dword
+    or eax, ecx     ;Add byte three to eax
     mov edx, eax    ;Save in edx
     shl rdx, 5*8    ;Shift three bytes to top of qword
     pop rsi
@@ -33,13 +34,11 @@ nextScan:
     ;First look for a : or a ASCII NUL to leave the FOR part of the line
     cmp byte [rsi], 0
     je .gotoNextLine
-    inc rsi ;Now search up until the end of the line for a NEXT
     cmp dword [rsi], "NEXT"
-    jne .initialSearch
-    cmp byte [rsi + 4], " " ;NEXT must have a space after it
-    jne .initialSearch
-    ;"NEXT " found here!
-    jmp short .wordFound
+    je .wordFound
+    inc rsi ;Now search up until the end of the line for a NEXT
+    ;"NEXT" found here!
+    jmp short .initialSearch
 .gotoNextLine:
     mov rbx, qword [rbx + progLineBlock.qPtr] ;Get pointer to next program line
     cmp rbx, -1 ;Now, when walking if it gives a value of -1, no NEXT found
@@ -52,11 +51,12 @@ nextScan:
     call findOtherExpressionsOnLine 
     ;make rsi point to next expression on the line or the end of the line
     movzx eax, word [rbx + progLineBlock.wLineNum]  ;Get the line number
-    shl eax, 8  ;Make space for Offset byte
     lea rcx, qword [rbx + progLineBlock.sLine]  ;Load ptr to start of string in rsi
     sub rsi, rcx    ;Compute difference from start of string
     mov ecx, esi    ;Should just be low byte of si so cl
-    mov al, cl      ;Save the byte into al
+    and ecx, 0FFh   ;Save only bottom byte just in case of garbage
+    shl ecx, 2*8    ;Move to the third byte in the dword
+    or eax, ecx     ;Add byte three to eax
     shl rax, 8*2    ;Shift three bytes to byte 4 of qword
     or rdx, rax     ;Add bytes [4:2] to rdx
     ;Compute checksum now
@@ -72,7 +72,6 @@ nextScan:
     dec ecx
     jnz .csumLoop
     neg al ;Get twos compliment of sum (FFh - al)
-    inc al
     mov dh, al  ;Save in checksum byte
 .exit:
     pop rsi
@@ -106,35 +105,143 @@ forLoop:
 ;limitValue (qword), to which value do we loop
 ;ptr to counter variable (qword)
 ;Special qword:
-; Bytes[7:6] = Line number of portion after FOR (either FOR line or line after FOR)
-; Byte 5 = Offset into the line for next instruction
-; Bytes[4:3] = Line number of portion after NEXT (either NEXT line or line after NEXT)
-; Byte 2 = Offset into the line for next instruction
+; Byte 7 = Offset into the line for next instruction
+; Bytes[6:5] = Line number of portion after FOR (either FOR line or line after FOR)
+; Byte 4 = Offset into the line for next instruction
+; Bytes[3:2] = Line number of portion after NEXT (either NEXT line or line after NEXT)
 ; Byte 1 = Parity check sum for the qword, makes the sum of the bytes in qword 0
 ; Byte 0 = FOR signature
 ;------------Low stack addr------------
 ;rsp -> Return address
     ;First check we have a NEXT following this FOR
     call nextScan
+
     cmp rdx, -1
     je .critError
     ;Here we make space on the stack.
-    mov ecx, forStruct_size
+    mov ecx, forStruct_size/8
     makeSpaceOnStack rcx  ;Make four qwords of space on the stack
     mov rbp, rsp
     add rbp, 8  ;Make rbp point to the base of the new struc
-
-
+    mov qword [rbp + forStruct.specQword], rdx  ;Move rdx into its place on the stack
+    push rsi   ;rsi points to first byte after FOR. The first word should now be a var
+    mov eax, " TO " ;First find the TO and STEP values
+.flScanTo:
+    cmp byte [rsi], 0   ;ASCII null w/o a TO? Syntax Error
+    je .syntaxError
+    cmp byte [rsi], ":" ;Save for a next statement delimiter
+    je .syntaxError
+    cmp dword [rsi], eax
+    je .flToFound
+    inc rsi ;Go forwards by a byte
+    jmp short .flScanTo
+.flToFound:
+    ;rsi points to the preceeding space so add 3 to go to trailing space
+    add rsi, 3
+    xchg bx, bx
+    call spaceSkip  ;Go to expression to evaluate
+    call handleAlgebraicExpression  ;Get in rax the limit value
+    mov qword [rbp + forStruct.limitValue], rax
+    ;rsi now points to the next word, this should be step, otherwise ignore the word
+    lodsd   ;Get the word in eax
+    cmp eax, "STEP"
+    jne .defaultStep
+    ;Check it is a "STEP "
+    lodsb
+    cmp al, " "
+    jne .defaultStep
+    ;rsi points to a "STEP "
+    call spaceSkip  ;Go to expression to evaluate
+    call handleAlgebraicExpression  ;Get in rax the step value
+    mov qword [rbp + forStruct.stepValue], rax
+.flVariable:
+    pop rsi ;Get back OG rsi position immediately after FOR
+    call spaceSkip ;Skip intermediate spaces
+    push rsi
+    call variableAssignment ;Make the variable assignment, trashes rsi
+    pop rsi ;rsi points to the start of the variable again
+    call getVarNameLength
+    call findVariable   ;Get the variable pointer in rbx
+    mov qword [rbp + forStruct.cntrPtr], rbx    ;Save variable pointer
+    ;Now check whether we should run the loop at all?
+    mov rbx, qword [rbp + forStruct.cntrPtr]
+    mov rcx, qword [rbx + varBlock.qValue]  ;Get the variable value
+    mov rbx, qword [rbp + forStruct.limitValue]
+    ;if rcx >= rbx, branch to after NEXT
+    cmp rcx, rbx
+    jge .dontRunFor
+    mov rdx, qword [rbp + forStruct.specQword]
+    shr rdx, 5*8    ;Upper bytes will be cleared, needed for the "branch"
+.exit:
+    ;Recall edx must have the correct three bytes in it from the special qword
     or byte [stateByte], ctrlFlow   ;Set branch bit
     ret
+.defaultStep:
+    mov qword [rbp + forStruct.stepValue], 1
+    jmp short .flVariable
+.dontRunFor:
+    ;Move the bytes from the NEXT to edx 
+    mov rdx, qword [rbp + forStruct.specQword]
+    shr rdx, 2*8    ;Upper bytes will be cleared
+    or edx, edx     ;This should zero the upper dword
+    ;Need to also reclaim the stack space
+    mov ecx, forStruct_size/8
+    cleanSpaceOnStack rcx
+    jmp short .exit
+;Errors
+.unknownError:
+    lea rbp, uknowner
+    jmp short .critError
+.syntaxError:
+    lea rbp, syntax
 .critError:
+    ;called with rbp already pointing to error string
     jmp criticalError
+
 next:
-    ;Verify that the structure on the stack is as expected
+    ;Verify that the structure on the stack is a FOR structure
     mov rbp, rsp    ;Dont need to save rbp so trash it
     add rbp, 8  ;Make it point to the base of the struc past the return address
+    ;Read the qword on stack, verify it is a FORstruct and passes checksum test
+    mov rdx, qword [rbp + forStruct.specQword]
+    cmp dl, FORsig
+    jne .noForNext
+    ;Now compute checksum to verify its not an accident
+    xor al, al
+    mov ecx, 8
+.checksumTest:
+    add al, dl
+    shr rdx, 8
+    dec ecx
+    jnz .checksumTest
+    test al, al     ;This should be 0
+    jnz .noForNext
+    ;Now we are truly in a FOR loop
+    mov rbx, qword [rbp + forStruct.cntrPtr]    ;Get variable pointer
+    mov rax, qword [rbx + varBlock.qValue]      ;Get variable value
+    cmp rax, qword [rbp + forStruct.limitValue] ;Compare current var value to limit
+    jge .noMoreLooping
+    add rax, qword [rbp + forStruct.stepValue]  ;Add the step
+    mov qword [rbx + varBlock.qValue], rax      ;Update the variable value
+    ;Now go back to line after FOR
+    mov rdx, qword [rbp + forStruct.specQword]
+    shr rdx, 5*8    ;Move upper three bytes to lower three bytes of edx
+.exit:
+    ;Recall edx must have the correct three bytes in it from the special qword
     or byte [stateByte], ctrlFlow   ;Set branch bit
     ret
+.noMoreLooping:
+    ;No need to update the variable, it is already above
+    mov rdx, qword [rbp + forStruct.specQword]
+    shr rdx, 2*8    ;Move bytes 4:2 to lower three bytes of edx
+    or edx, edx     ;Remove upper bits
+    ;Need to also reclaim the stack space
+    mov ecx, forStruct_size/8
+    cleanSpaceOnStack rcx
+    jmp short .exit
+.noForNext:
+    lea rbp, noFor
+    jmp criticalError
 
 gosub:
     or byte [stateByte], ctrlFlow   ;Set branch bit

@@ -58,10 +58,10 @@ struc forStruct
     .limitValue resq 1  ;At what value, or after, do we stop the loop 
     .stepValue  resq 1  ;By how much do we increase on each iteration
 ;Special qword:
-; Bytes[7:6] = Line number of portion after FOR (either FOR line or line after FOR)
-; Byte 5 = Offset into the line for next instruction
-; Bytes[4:3] = Line number of portion after NEXT (either NEXT line or line after NEXT)
-; Byte 2 = Offset into the line for next instruction
+; Byte 7 = Offset into the line for next instruction after FOR
+; Bytes[6:5] = Line number of portion after FOR (either FOR line or line after FOR)
+; Byte 4 = Offset into the line for next instruction after NEXT
+; Bytes[3:2] = Line number of portion after NEXT (either NEXT line or line after NEXT)
 ; Byte 1 = Parity check sum for the qword, makes the sum of the bytes in qword 0
 ; Byte 0 = FOR signature
 endstruc
@@ -69,10 +69,10 @@ endstruc
 struc whileStruct
     .specQword  resq 1  ;Special qword
 ;Special qword:
-; Bytes[7:6] = Line number of WHILE 
-; Byte 5 = Offset into the line for the condition to evaluate
-; Bytes[4:3] = Line number of WEND
-; Byte 2 = Offset in line for either first : after WEND or ASCII NULL (end of line)
+; Byte 7 = Offset into the line for the condition to evaluate
+; Bytes[6:5] = Line number of WHILE 
+; Byte 4 = Offset in line for either first : after WEND or ASCII NULL (end of line)
+; Bytes[3:2] = Line number of WEND
 ; Byte 1 = Parity check sum for the qword, makes the sum of the bytes in qword 0
 ; Byte 0 = WHILE signature
 endstruc
@@ -95,7 +95,8 @@ endstruc
     pop rax    ;Get the return address qword into rax
     shl %1, 3  ;Multiply argument register by 8
     sub rsp, %1 ;Clear space on the stack plus one qword for ret addr
-    cmp rsp, oflowbuff
+    lea rbp, stack
+    cmp rsp, rbp
     ja .macroNotOverflow ;If rsp above overflow buffer, its oki
     lea rbp, stkOvflw
     jmp criticalError
