@@ -4,6 +4,72 @@
 retScan:
 ;Gets the current line address and starts searching program from current prog line
 ; for a return
+    push rsi
+    mov dx, word [currentLine]  ;pre-load dx with the current line number
+    call searchForProgramLine   ;Get program block pointer into rbx
+    cmp rbx, -1 ;If for some reason line doesnt exist?
+    je .error   ;Unknown Error
+;Now pack for the first portion/line after the GOSUB
+;rsi points just after the GOSUB itself
+    push rsi    ;Save the first point after the WHILE itself
+    call findOtherExpressionsOnLine     ;Get the first : or ASCII NUL
+    movzx eax, word [rbx + progLineBlock.wLineNum]  ;Get the line number
+    lea rcx, qword [rbx + progLineBlock.sLine]  ;Load ptr to start of string in rsi
+    sub rsi, rcx    ;Compute difference from start of string
+    mov ecx, esi    ;Should just be low byte of si so cl
+    and ecx, 0FFh   ;Save only bottom byte just in case of garbage
+    shl ecx, 2*8    ;Move to the third byte in the dword
+    or eax, ecx     ;Add byte three to eax
+    mov edx, eax    ;Save in edx
+    shl rdx, 5*8    ;Shift three bytes to top of qword
+    pop rsi
+.initialSearch:
+    ;First look for a ASCII NUL or RETURN
+    cmp byte [rsi], 0
+    je .gotoNextLine
+    cmp dword [rsi], "RETU"
+    jne .notCandidate
+    cmp word [rsi + 4], "RN"
+    je .wordFound
+.notCandidate:
+    inc rsi ;Now search up until the end of the line for a RETURN
+    jmp short .initialSearch
+.gotoNextLine:
+    mov rbx, qword [rbx + progLineBlock.qPtr] ;Get pointer to next program line
+    cmp rbx, -1 ;Now, when walking if it gives a value of -1, no NEXT found
+    je .noRet
+    lea rsi, qword [rbx + progLineBlock.sLine] ;Load pointer to string rsi
+    jmp short .initialSearch
+.wordFound:
+    ;Here, RETURN found! Huzzah! Now pack edx correctly
+    ;Add 055AA55h in bytes 4:2
+    mov rax, 055AA550000h
+    or rdx, rax
+    ;Compute checksum now
+    xor eax, eax
+    mov al, GOSUBsig 
+    mov dx, ax  ;Zero checksum byte
+    xor eax, eax
+    mov ecx, 8  ;8 times
+.csumLoop:
+    ;Spin rdx 8 times adding each byte to al
+    add al, dl
+    rol rdx, 8  ;Rotate left by 8 bits
+    dec ecx
+    jnz .csumLoop
+    neg al ;Get twos compliment of sum (FFh - al)
+    mov dh, al  ;Save in checksum byte
+.exit:
+    pop rsi
+    ret
+.noRet:
+    lea rbp, noReturn
+    mov rdx, -1
+    jmp .exit
+.error:
+    lea rbp, uknowner
+    mov rdx, -1
+    jmp .exit
 
 wendScan:
 ; Gets the current line address and starts searching program from the current line
@@ -176,14 +242,47 @@ goto:
     ret
 
 gosub:
-    call goto   ;Goto does all the things we need, puts line number into dx
-    or byte [stateByte], ctrlFlow   ;Set branch bit
-    ret
+    call retScan
+    cmp rdx, -1
+    je .error
+    mov ecx, gosubStruct_size/8
+    makeSpaceOnStack rcx  ;Make four qwords of space on the stack
+    mov rbp, rsp
+    add rbp, 8  ;Make rbp point to the base of the new struc
+    mov qword [rbp + forStruct.specQword], rdx  ;Move rdx into its place on the stack
+    ;rsi points just past the GOSUB
+    jmp short goto ;Now behave like GOTO
+.error:
+    jmp criticalError
 
 return:
+;First verify the GOSUB struc is on the stack
+    mov rbp, rsp    ;Dont need to save rbp so trash it
+    add rbp, 8  ;Make it point to the base of the struc past the return address
+    ;Read the qword on stack, verify it is a GOSUBstruc and passes checksum test
+    mov rdx, qword [rbp + gosubStruct.specQword]
+    cmp dl, GOSUBsig
+    jne .noReturn
+    ;Now compute checksum to verify its not an accident
+    xor al, al
+    mov ecx, 8
+.checksumTest:
+    add al, dl
+    ror rdx, 8
+    dec ecx
+    jnz .checksumTest
+    test al, al     ;This should be 0
+    jnz .noReturn
+ ;Now we are truly in a RETURN
+    shr rdx, 5*8    ;Bring return information down to the lower three bytes
+    ;Clean the struc from the stack
+    mov ecx, gosubStruct_size/8
+    cleanSpaceOnStack rcx
     or byte [stateByte], ctrlFlow   ;Set branch bit
     ret
-
+.noReturn:
+    lea rbp, noReturn
+    jmp criticalError
 forLoop:
 ;This saves the following struc on the stack
 ;------------Hi stack addr-------------

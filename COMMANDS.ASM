@@ -5,7 +5,7 @@ funTbl:
 ; of the function table
 ;BASIC instructions are space terminated
 ;Interpreter instructions are null terminated
-    db 5, "LET "     ;DONE
+    db 4, "LET"     ;DONE
     dw oldSchoolAssignemnt - funTbl
 
     db 5, "NEW",0     ;DONE
@@ -42,6 +42,9 @@ funTbl:
     dw gosub - funTbl
 
     db 8, "RETURN "
+    dw return - funTbl
+
+    db 8, "RETURN",0
     dw return - funTbl
 
     db 5, "FOR "
@@ -86,11 +89,17 @@ elseStr:
 
     db 5, "END "     ;DONE
     dw endProg - funTbl
+    db 5, "END",0     ;DONE
+    dw endProg - funTbl
 
     db 6, "STOP "    ;DONE
     dw endProg - funTbl
+    db 6, "STOP",0    ;DONE
+    dw endProg - funTbl
 
     db 8, "ESCAPE "  ;DONE
+    dw endProg - funTbl
+    db 8, "ESCAPE",0  ;DONE
     dw endProg - funTbl
 
     db 7, "EPEEK "
