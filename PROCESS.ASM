@@ -123,4 +123,6 @@ runLine:
     call printdecimalword
     lea rbp, crlf
     call ttyOutString
+    ;Preserve only bit 2 of the state byte
+    and byte [stateByte], traceBit
     jmp mainLoop    ;Exit processing

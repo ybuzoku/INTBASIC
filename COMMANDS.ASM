@@ -132,7 +132,6 @@ memWrite:
 byteRead:
 byteWrite:
     ret
-
 oldSchoolAssignemnt:
 ;Assign with a LET directive
 ;rsi points to first char AFTER function name
