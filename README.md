@@ -1,4 +1,4 @@
-# SCR 64-INTBASIC
+# SCR INTBASIC/64
 
 A 64-Bit integer BASIC interpreter, written on top of SCP/BIOS from Scientific Computer Research. 
 Requires SCP/BIOS.
