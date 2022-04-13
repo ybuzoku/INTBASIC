@@ -12,8 +12,8 @@ Output file:  BASIC.BIN
 
 Vstart            Start             Stop              Length    Class     Name
                0                 0                83  00000083  progbits  .text
-             EF6                83              1712  0000168F  progbits  resSeg
-            2585              1712              1712  00000000  progbits  programArea
+             EF6                83              1715  00001692  progbits  resSeg
+            2588              1715              1715  00000000  progbits  programArea
                0                 0               EF6  00000EF6  nobits    dSeg
 
 -- Sections (detailed) --------------------------------------------------------
@@ -32,7 +32,7 @@ vfollows:  not defined
 ---- Section resSeg -----------------------------------------------------------
 
 class:     progbits
-length:                168F
+length:                1692
 start:                   83
 align:                    1
 follows:   .text
@@ -44,10 +44,10 @@ vfollows:  dSeg
 
 class:     progbits
 length:                   0
-start:                 1712
+start:                 1715
 align:                    1
 follows:   resSeg
-vstart:                2585
+vstart:                2588
 valign:                   1
 vfollows:  resSeg
 
@@ -402,28 +402,28 @@ Real              Virtual           Name
             15B2              2425  memoryDetection.worstCase
             15D3              2446  prompt
             15D8              244B  mainmsg
-            15EC              245F  bytemsg
-            15FA              246D  crlf
-            15FD              2470  errmsg
-            1605              2478  numbers
-            160F              2482  varChrs
-            1635              24A8  noMem
-            1645              24B8  syntax
-            1654              24C7  typeError
-            1664              24D7  lineNoXist
-            167C              24EF  breakmsg
-            1686              24F9  stkOvflw
-            1697              250A  noWend
-            16AC              251F  noWhile
-            16C1              2534  noFor
-            16D4              2547  noNext
-            16E7              255A  noReturn
-            16FE              2571  uknowner
+            15EF              2462  bytemsg
+            15FD              2470  crlf
+            1600              2473  errmsg
+            1608              247B  numbers
+            1612              2485  varChrs
+            1638              24AB  noMem
+            1648              24BB  syntax
+            1657              24CA  typeError
+            1667              24DA  lineNoXist
+            167F              24F2  breakmsg
+            1689              24FC  stkOvflw
+            169A              250D  noWend
+            16AF              2522  noWhile
+            16C4              2537  noFor
+            16D7              254A  noNext
+            16EA              255D  noReturn
+            1701              2574  uknowner
 
 ---- Section programArea ------------------------------------------------------
 
 Real              Virtual           Name
-            1712              2585  ENDOFPROGRAM
+            1715              2588  ENDOFPROGRAM
 
 ---- Section dSeg -------------------------------------------------------------
 

@@ -210,7 +210,7 @@
     21 0000001A 488D2D34150000      <1>     lea rbp, mainmsg
     22 00000021 E87A010000          <1>     call ttyOutString
     23 00000026 E8C3140000          <1>     call memoryDetection
-    24 0000002B 488D2D37150000      <1>     lea rbp, bytemsg
+    24 0000002B 488D2D3A150000      <1>     lea rbp, bytemsg
     25 00000032 E869010000          <1>     call ttyOutString
     26 00000037 E820090000          <1>     call newProgram         ;Use this to reset program pointers
     27                              <1> mainLoop:
@@ -258,7 +258,7 @@
     69 000000BF 5E                  <1>     pop rsi
     70 000000C0 EB9D                <1>     jmp short .ml0
     71                              <1> .lineDoesntExist:
-    72 000000C2 488D2D18150000      <1>     lea rbp, lineNoXist
+    72 000000C2 488D2D1B150000      <1>     lea rbp, lineNoXist
     73                              <1> ;For any error, syntax or otherwise, come here
     74                              <1> criticalError:
     75                              <1> ;Called with rbp pointing at error message
@@ -340,7 +340,7 @@
     61                              <1>     ; and arrow key support
     62 0000017D EBA1                <1>     jmp short .getChar
     63                              <1> .gliExit:
-    64 0000017F 488D2DF1130000      <1>     lea rbp, crlf
+    64 0000017F 488D2DF4130000      <1>     lea rbp, crlf
     65 00000186 E815000000          <1>     call ttyOutString
     66 0000018B C60700              <1>     mov byte [rdi], 0   ;Null terminate string here
     67 0000018E C3                  <1>     ret
@@ -479,7 +479,7 @@
    114 000002D4 4801C6              <1>     add rsi, rax    ;Add the offset into the string to rsi
    115 000002D7 EBCB                <1>     jmp short .gotoNextLineCommon
    116                              <1> .badLineNumber:
-   117 000002D9 488D2D01130000      <1>     lea rbp, lineNoXist
+   117 000002D9 488D2D04130000      <1>     lea rbp, lineNoXist
    118 000002E0 E9E4FDFFFF          <1>     jmp criticalError
    119                              <1> 
    120                              <1> .tron:
@@ -494,11 +494,11 @@
    129 00000307 E88FFEFFFF          <1>     call ttyOutChar
    130 0000030C E924FFFFFF          <1>     jmp .stringPortionProcess
    131                              <1> .break:
-   132 00000311 488D2DE1120000      <1>     lea rbp, breakmsg
+   132 00000311 488D2DE4120000      <1>     lea rbp, breakmsg
    133 00000318 E883FEFFFF          <1>     call ttyOutString
    134 0000031D 0FB705(F40E0000)    <1>     movzx eax, word [currentLine]
    135 00000324 E8100F0000          <1>     call printdecimalword
-   136 00000329 488D2D47120000      <1>     lea rbp, crlf
+   136 00000329 488D2D4A120000      <1>     lea rbp, crlf
    137 00000330 E86BFEFFFF          <1>     call ttyOutString
    138                              <1>     ;Preserve only bit 2 of the state byte
    139 00000335 8025(D90E0000)02    <1>     and byte [stateByte], traceBit
@@ -529,7 +529,7 @@
     36 0000034F 53                  <1>     push rbx
     37 00000350 52                  <1>     push rdx
     38 00000351 31D2                <1>     xor edx, edx    ;Clear counter of chars
-    39 00000353 488D1D32120000      <1>     lea rbx, varChrs    ;Get the list of valid variable name chars
+    39 00000353 488D1D35120000      <1>     lea rbx, varChrs    ;Get the list of valid variable name chars
     40                              <1> .search:
     41 0000035A 4889DF              <1>     mov rdi, rbx    ;Save pointer in rbx
     42 0000035D AC                  <1>     lodsb       ;Get the first char into al
@@ -916,10 +916,10 @@
    417 000006C0 48FFC6              <1>     inc rsi
    418 000006C3 E979FCFFFF          <1>     jmp spaceSkip
    419                              <1> .error:
-   420 000006C8 488D2DF30E0000      <1>     lea rbp, syntax
+   420 000006C8 488D2DF60E0000      <1>     lea rbp, syntax
    421 000006CF E9F5F9FFFF          <1>     jmp criticalError
    422                              <1> .stack:
-   423 000006D4 488D1D280F0000      <1>     lea rbx, stkOvflw
+   423 000006D4 488D1D2B0F0000      <1>     lea rbx, stkOvflw
    424 000006DB E9E9F9FFFF          <1>     jmp criticalError
    425                              <1> 
    426                              <1> 
@@ -947,7 +947,7 @@
    448 00000704 31C0                <1>     xor eax, eax
    449 00000706 EBF8                <1>     jmp short .exit
    450                              <1> .stringFoundError:
-   451 00000708 488D2DC20E0000      <1>     lea rbp, typeError
+   451 00000708 488D2DC50E0000      <1>     lea rbp, typeError
    452 0000070F E9B5F9FFFF          <1>     jmp criticalError
    453                              <1> 
    454                              <1> setNumericVariable:
@@ -975,7 +975,7 @@
    476 00000738 E8E20C0000          <1>     call makeEditInteger
    477 0000073D EBF5                <1>     jmp short .exit
    478                              <1> .stringFoundError:
-   479 0000073F 488D2D8B0E0000      <1>     lea rbp, typeError
+   479 0000073F 488D2D8E0E0000      <1>     lea rbp, typeError
    480 00000746 E97EF9FFFF          <1>     jmp criticalError
    481                              <1> 
    482                              <1> setStringVariable:
@@ -1129,7 +1129,7 @@
    138 000008A5 FF                  <1>     db -1    ;Demarkate the end of the table
    139                              <1> ;End of Table
    140                              <1> badCmd:
-   141 000008A6 488D2D150D0000      <1>     lea rbp, syntax
+   141 000008A6 488D2D180D0000      <1>     lea rbp, syntax
    142 000008AD E817F8FFFF          <1>     call criticalError 
    143                              <1> endProg:
    144 000008B2 E968010000          <1>     jmp runProgram.endProgramPoint
@@ -1205,10 +1205,10 @@
    214 00000943 C3                  <1>     ret
    215                              <1> 
    216                              <1> .syntaxError:
-   217 00000944 488D2D770C0000      <1>     lea rbp, syntax ;Syntax error, keyword a bit confused
+   217 00000944 488D2D7A0C0000      <1>     lea rbp, syntax ;Syntax error, keyword a bit confused
    218 0000094B E979F7FFFF          <1>     jmp criticalError
    219                              <1> .typError:
-   220 00000950 488D2D7A0C0000      <1>     lea rbp, typeError
+   220 00000950 488D2D7D0C0000      <1>     lea rbp, typeError
    221 00000957 E96DF7FFFF          <1>     jmp criticalError
    222                              <1> 
    223                              <1> 
@@ -1242,7 +1242,7 @@
    251                              <1> ;First print the line number, then add a space
    252 000009BE 488B1D(EA0E0000)    <1>     mov rbx, qword [firstLinPtr]    ;Get a pointer to the first program line
    253                              <1> .printLines:
-   254 000009C5 488D2DAB0B0000      <1>     lea rbp, crlf           ;New line
+   254 000009C5 488D2DAE0B0000      <1>     lea rbp, crlf           ;New line
    255 000009CC E8CFF7FFFF          <1>     call ttyOutString
    256 000009D1 4881FBFFFFFFFF      <1>     cmp rbx, -1
    257 000009D8 741F                <1>     je .exit
@@ -1323,7 +1323,7 @@
    332                              <1> .psvexitColon:
    333 00000A9D 48FFCE              <1>     dec rsi ;Go back a char
    334                              <1> .psvexit:
-   335 00000AA0 488D2DD00A0000      <1>     lea rbp, crlf
+   335 00000AA0 488D2DD30A0000      <1>     lea rbp, crlf
    336 00000AA7 E8F4F6FFFF          <1>     call ttyOutString
    337 00000AAC C3                  <1>     ret
    338                              <1> .closespeechmarks:
@@ -1355,7 +1355,7 @@
    364 00000AD8 84C0                <1>     test al, al     ;Is al null?
    365 00000ADA 75F7                <1>     jnz .cp0        ;No, keep searching for terminator
    366                              <1> .error:
-   367 00000ADC 488D2DDF0A0000      <1>     lea rbp, syntax
+   367 00000ADC 488D2DE20A0000      <1>     lea rbp, syntax
    368 00000AE3 E9E1F5FFFF          <1>     jmp criticalError
    369                              <1> .printCustomPrompt:
    370 00000AE8 4889FE              <1>     mov rsi, rdi    ;rsi points to the first char of the string
@@ -1448,7 +1448,7 @@
    456 00000BA7 B03B                <1>     mov al, 3Bh
    457 00000BA9 E835F5FFFF          <1>     call setHandler
    458                              <1>     
-   459 00000BAE 488D2DC2090000      <1>     lea rbp, crlf
+   459 00000BAE 488D2DC5090000      <1>     lea rbp, crlf
    460 00000BB5 E8E6F5FFFF          <1>     call ttyOutString
    461 00000BBA E97DF4FFFF          <1>     jmp mainLoop
     15                                  %include "CTRLFLOW.ASM"
@@ -1518,12 +1518,12 @@
     78 00000C54 5E                  <1>     pop rsi
     79 00000C55 C3                  <1>     ret
     80                              <1> .noRet:
-    81 00000C56 488D2D070A0000      <1>     lea rbp, noReturn
+    81 00000C56 488D2D0A0A0000      <1>     lea rbp, noReturn
     82 00000C5D 48BAFFFFFFFFFFFFFF- <1>     mov rdx, -1
     82 00000C66 FF                  <1>
     83 00000C67 E9E8FFFFFF          <1>     jmp .exit
     84                              <1> .error:
-    85 00000C6C 488D2D080A0000      <1>     lea rbp, uknowner
+    85 00000C6C 488D2D0B0A0000      <1>     lea rbp, uknowner
     86 00000C73 48BAFFFFFFFFFFFFFF- <1>     mov rdx, -1
     86 00000C7C FF                  <1>
     87 00000C7D E9D2FFFFFF          <1>     jmp .exit
@@ -1599,12 +1599,12 @@
    157 00000D26 5E                  <1>     pop rsi
    158 00000D27 C3                  <1>     ret
    159                              <1> .noWend:
-   160 00000D28 488D2DE5080000      <1>     lea rbp, noWend
+   160 00000D28 488D2DE8080000      <1>     lea rbp, noWend
    161 00000D2F 48BAFFFFFFFFFFFFFF- <1>     mov rdx, -1
    161 00000D38 FF                  <1>
    162 00000D39 E9E8FFFFFF          <1>     jmp .exit
    163                              <1> .error:
-   164 00000D3E 488D2D36090000      <1>     lea rbp, uknowner
+   164 00000D3E 488D2D39090000      <1>     lea rbp, uknowner
    165 00000D45 48BAFFFFFFFFFFFFFF- <1>     mov rdx, -1
    165 00000D4E FF                  <1>
    166 00000D4F E9D2FFFFFF          <1>     jmp .exit
@@ -1679,12 +1679,12 @@
    235 00000DF8 5E                  <1>     pop rsi
    236 00000DF9 C3                  <1>     ret
    237                              <1> .noNext:
-   238 00000DFA 488D2D50080000      <1>     lea rbp, noNext
+   238 00000DFA 488D2D53080000      <1>     lea rbp, noNext
    239 00000E01 48BAFFFFFFFFFFFFFF- <1>     mov rdx, -1
    239 00000E0A FF                  <1>
    240 00000E0B E9E8FFFFFF          <1>     jmp .exit
    241                              <1> .error:
-   242 00000E10 488D2D64080000      <1>     lea rbp, uknowner
+   242 00000E10 488D2D67080000      <1>     lea rbp, uknowner
    243 00000E17 48BAFFFFFFFFFFFFFF- <1>     mov rdx, -1
    243 00000E20 FF                  <1>
    244 00000E21 E9D2FFFFFF          <1>     jmp .exit
@@ -1717,7 +1717,7 @@
    102 00000E56 488D2D(50000000)    <2>  lea rbp, stack
    103 00000E5D 4839EC              <2>  cmp rsp, rbp
    104 00000E60 770C                <2>  ja .macroNotOverflow
-   105 00000E62 488D2D9A070000      <2>  lea rbp, stkOvflw
+   105 00000E62 488D2D9D070000      <2>  lea rbp, stkOvflw
    106 00000E69 E95BF2FFFF          <2>  jmp criticalError
    107                              <2> .macroNotOverflow:
    108                              <2> 
@@ -1762,7 +1762,7 @@
    296 00000EBE 800D(D90E0000)08    <1>     or byte [stateByte], ctrlFlow   ;Set branch bit
    297 00000EC5 C3                  <1>     ret
    298                              <1> .noReturn:
-   299 00000EC6 488D2D97070000      <1>     lea rbp, noReturn
+   299 00000EC6 488D2D9A070000      <1>     lea rbp, noReturn
    300 00000ECD E9F7F1FFFF          <1>     jmp criticalError
    301                              <1> forLoop:
    302                              <1> ;This saves the following struc on the stack
@@ -1795,7 +1795,7 @@
    102 00000EF1 488D2D(50000000)    <2>  lea rbp, stack
    103 00000EF8 4839EC              <2>  cmp rsp, rbp
    104 00000EFB 770C                <2>  ja .macroNotOverflow
-   105 00000EFD 488D2DFF060000      <2>  lea rbp, stkOvflw
+   105 00000EFD 488D2D02070000      <2>  lea rbp, stkOvflw
    106 00000F04 E9C0F1FFFF          <2>  jmp criticalError
    107                              <2> .macroNotOverflow:
    108                              <2> 
@@ -1874,10 +1874,10 @@
    388 00000FC7 EBD4                <1>     jmp short .exit
    389                              <1> ;Errors
    390                              <1> .unknownError:
-   391 00000FC9 488D2DAB060000      <1>     lea rbp, uknowner
+   391 00000FC9 488D2DAE060000      <1>     lea rbp, uknowner
    392 00000FD0 EB07                <1>     jmp short .critError
    393                              <1> .syntaxError:
-   394 00000FD2 488D2DE9050000      <1>     lea rbp, syntax
+   394 00000FD2 488D2DEC050000      <1>     lea rbp, syntax
    395                              <1> .critError:
    396                              <1>     ;called with rbp already pointing to error string
    397 00000FD9 E9EBF0FFFF          <1>     jmp criticalError
@@ -1929,7 +1929,7 @@
    118 00001043 50                  <2>  push rax
    439 00001044 EBDE                <1>     jmp short .exit
    440                              <1> .noForNext:
-   441 00001046 488D2DF1050000      <1>     lea rbp, noFor
+   441 00001046 488D2DF4050000      <1>     lea rbp, noFor
    442 0000104D E977F0FFFF          <1>     jmp criticalError
    443                              <1> 
    444                              <1> while:
@@ -1949,7 +1949,7 @@
    102 0000106D 488D2D(50000000)    <2>  lea rbp, stack
    103 00001074 4839EC              <2>  cmp rsp, rbp
    104 00001077 770C                <2>  ja .macroNotOverflow
-   105 00001079 488D2D83050000      <2>  lea rbp, stkOvflw
+   105 00001079 488D2D86050000      <2>  lea rbp, stkOvflw
    106 00001080 E944F0FFFF          <2>  jmp criticalError
    107                              <2> .macroNotOverflow:
    108                              <2> 
@@ -2047,10 +2047,10 @@
    531 0000115D 09D2                <1>     or edx, edx     ;Zero the rest of it
    532 0000115F EBE2                <1>     jmp short .exit
    533                              <1> .error:
-   534 00001161 488D2D13050000      <1>     lea rbp, uknowner
+   534 00001161 488D2D16050000      <1>     lea rbp, uknowner
    535 00001168 E95CEFFFFF          <1>     jmp criticalError
    536                              <1> .noWhile:
-   537 0000116D 488D2DB5040000      <1>     lea rbp, noWhile
+   537 0000116D 488D2DB8040000      <1>     lea rbp, noWhile
    538 00001174 E950EFFFFF          <1>     jmp criticalError
    539                              <1> 
    540                              <1> handleIf:
@@ -2105,7 +2105,7 @@
    589                              <1> ;If no else, simply return
    590 00001204 C3                  <1>     ret
    591                              <1> .error:
-   592 00001205 488D1DB6030000      <1>     lea rbx, syntax
+   592 00001205 488D1DB9030000      <1>     lea rbx, syntax
    593 0000120C E9B8EEFFFF          <1>     jmp criticalError
     16                                  %include "MATH.ASM"
     17                              <1> decimalToHex:
@@ -2399,7 +2399,7 @@
    210 0000145C 5F                  <1>     pop rdi
    211 0000145D C3                  <1>     ret
    212                              <1> .error:
-   213 0000145E 488D2D4D010000      <1>     lea rbp, noMem
+   213 0000145E 488D2D50010000      <1>     lea rbp, noMem
    214 00001465 E95FECFFFF          <1>     jmp criticalError
    215                              <1> makeEditString:
    216                              <1> ;Will make a string if it is new name, or replace the string. Strings are null termin
@@ -2433,7 +2433,7 @@
    244 000014B6 5F                  <1>     pop rdi
    245 000014B7 C3                  <1>     ret
    246                              <1> .error:
-   247 000014B8 488D2DF3000000      <1>     lea rbp, noMem
+   247 000014B8 488D2DF6000000      <1>     lea rbp, noMem
    248 000014BF E905ECFFFF          <1>     jmp criticalError
    249                              <1> ;------------------------------------------------:
    250                              <1> ;  The below are misc memory related functions   :
@@ -2521,22 +2521,22 @@
    330                              <1> 
     18                                  %include "BASICDAT.ASM"
     19 00001550 4F6B0A0D00          <1> prompt  db "Ok",0Ah,0Dh,0
-    20 00001555 5343522036342D4241- <1> mainmsg db "SCR 64-BASIC v0.1",0Ah,0Dh,0
-    20 0000155E 5349432076302E310A- <1>
-    20 00001567 0D00                <1>
-    21 00001569 204279746573206672- <1> bytemsg db " Bytes free",0Ah,0Dh,0
-    21 00001572 65650A0D00          <1>
-    22 00001577 0A0D00              <1> crlf    db 0Ah,0Dh,0
-    23 0000157A 4572726F720A0D00    <1> errmsg  db "Error",0Ah,0Dh,0
-    24 00001582 303132333435363738- <1> numbers db "0123456789"
-    24 0000158B 39                  <1>
+    20 00001555 53435220494E544241- <1> mainmsg db "SCR INTBASIC/64 v0.1",0Ah,0Dh,0
+    20 0000155E 5349432F3634207630- <1>
+    20 00001567 2E310A0D00          <1>
+    21 0000156C 204279746573206672- <1> bytemsg db " Bytes free",0Ah,0Dh,0
+    21 00001575 65650A0D00          <1>
+    22 0000157A 0A0D00              <1> crlf    db 0Ah,0Dh,0
+    23 0000157D 4572726F720A0D00    <1> errmsg  db "Error",0Ah,0Dh,0
+    24 00001585 303132333435363738- <1> numbers db "0123456789"
+    24 0000158E 39                  <1>
     25                              <1> ;startVarChars db "ABCDEFGHIJKLMNOPQRSTUVWXYZ" ;Valid starting chars for a var name
     26                              <1> ;numStartVarChars equ $ - startVarChars
-    27 0000158C 414243444546474849- <1> varChrs db "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789%$" ;Valid inner chars for var name
-    27 00001595 4A4B4C4D4E4F505152- <1>
-    27 0000159E 535455565758595A30- <1>
-    27 000015A7 313233343536373839- <1>
-    27 000015B0 2524                <1>
+    27 0000158F 414243444546474849- <1> varChrs db "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789%$" ;Valid inner chars for var name
+    27 00001598 4A4B4C4D4E4F505152- <1>
+    27 000015A1 535455565758595A30- <1>
+    27 000015AA 313233343536373839- <1>
+    27 000015B3 2524                <1>
     28                              <1> numVarChars equ $ - varChrs
     29                              <1> ;% => Integer variable (8 bytes)
     30                              <1> ;! => Single-Precision, Unused and ignored
@@ -2544,37 +2544,37 @@
     32                              <1> ;$ => String variable
     33                              <1> 
     34                              <1> ;Error Messages
-    35 000015B2 4F7574206F66206D65- <1> noMem   db "Out of memory",0Ah,0Dh,0
-    35 000015BB 6D6F72790A0D00      <1>
-    36 000015C2 53796E746178206572- <1> syntax  db "Syntax error",0Ah,0Dh,0
-    36 000015CB 726F720A0D00        <1>
-    37 000015D1 54797065206D69736D- <1> typeError   db "Type mismatch",0Ah,0Dh,0
-    37 000015DA 617463680A0D00      <1>
-    38 000015E1 556E646566696E6564- <1> lineNoXist  db "Undefined line number",0Ah,0Dh,0
-    38 000015EA 206C696E65206E756D- <1>
-    38 000015F3 6265720A0D00        <1>
-    39 000015F9 427265616B20696E20- <1> breakmsg db "Break in ",0
-    39 00001602 00                  <1>
-    40 00001603 537461636B206F7665- <1> stkOvflw db "Stack overflow",0Ah,0Dh,0
-    40 0000160C 72666C6F770A0D00    <1>
+    35 000015B5 4F7574206F66206D65- <1> noMem   db "Out of memory",0Ah,0Dh,0
+    35 000015BE 6D6F72790A0D00      <1>
+    36 000015C5 53796E746178206572- <1> syntax  db "Syntax error",0Ah,0Dh,0
+    36 000015CE 726F720A0D00        <1>
+    37 000015D4 54797065206D69736D- <1> typeError   db "Type mismatch",0Ah,0Dh,0
+    37 000015DD 617463680A0D00      <1>
+    38 000015E4 556E646566696E6564- <1> lineNoXist  db "Undefined line number",0Ah,0Dh,0
+    38 000015ED 206C696E65206E756D- <1>
+    38 000015F6 6265720A0D00        <1>
+    39 000015FC 427265616B20696E20- <1> breakmsg db "Break in ",0
+    39 00001605 00                  <1>
+    40 00001606 537461636B206F7665- <1> stkOvflw db "Stack overflow",0Ah,0Dh,0
+    40 0000160F 72666C6F770A0D00    <1>
     41                              <1> 
-    42 00001614 5748494C4520776974- <1> noWend   db "WHILE without WEND", 0Ah, 0Dh, 0
-    42 0000161D 686F75742057454E44- <1>
-    42 00001626 0A0D00              <1>
-    43 00001629 57454E442077697468- <1> noWhile  db "WEND without WHILE", 0Ah, 0Dh, 0
-    43 00001632 6F7574205748494C45- <1>
-    43 0000163B 0A0D00              <1>
-    44 0000163E 4E4558542077697468- <1> noFor    db "NEXT without FOR", 0Ah, 0Dh, 0
-    44 00001647 6F757420464F520A0D- <1>
-    44 00001650 00                  <1>
-    45 00001651 464F5220776974686F- <1> noNext   db "FOR without NEXT", 0Ah, 0Dh, 0
-    45 0000165A 7574204E4558540A0D- <1>
-    45 00001663 00                  <1>
-    46 00001664 52455455524E207769- <1> noReturn db "RETURN without GOSUB", 0Ah, 0Dh, 0
-    46 0000166D 74686F757420474F53- <1>
-    46 00001676 55420A0D00          <1>
-    47 0000167B 556E7072696E746162- <1> uknowner db "Unprintable error", 0Ah, 0Dh, 0
-    47 00001684 6C65206572726F720A- <1>
-    47 0000168D 0D00                <1>
+    42 00001617 5748494C4520776974- <1> noWend   db "WHILE without WEND", 0Ah, 0Dh, 0
+    42 00001620 686F75742057454E44- <1>
+    42 00001629 0A0D00              <1>
+    43 0000162C 57454E442077697468- <1> noWhile  db "WEND without WHILE", 0Ah, 0Dh, 0
+    43 00001635 6F7574205748494C45- <1>
+    43 0000163E 0A0D00              <1>
+    44 00001641 4E4558542077697468- <1> noFor    db "NEXT without FOR", 0Ah, 0Dh, 0
+    44 0000164A 6F757420464F520A0D- <1>
+    44 00001653 00                  <1>
+    45 00001654 464F5220776974686F- <1> noNext   db "FOR without NEXT", 0Ah, 0Dh, 0
+    45 0000165D 7574204E4558540A0D- <1>
+    45 00001666 00                  <1>
+    46 00001667 52455455524E207769- <1> noReturn db "RETURN without GOSUB", 0Ah, 0Dh, 0
+    46 00001670 74686F757420474F53- <1>
+    46 00001679 55420A0D00          <1>
+    47 0000167E 556E7072696E746162- <1> uknowner db "Unprintable error", 0Ah, 0Dh, 0
+    47 00001687 6C65206572726F720A- <1>
+    47 00001690 0D00                <1>
     19                                  Segment programArea follows=resSeg align=1 vfollows=resSeg valign=1
     20                                  ENDOFPROGRAM:

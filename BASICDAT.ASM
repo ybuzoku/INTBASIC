@@ -1,5 +1,5 @@
 prompt  db "Ok",0Ah,0Dh,0
-mainmsg db "SCR 64-BASIC v0.1",0Ah,0Dh,0
+mainmsg db "SCR INTBASIC/64 v0.1",0Ah,0Dh,0
 bytemsg db " Bytes free",0Ah,0Dh,0
 crlf    db 0Ah,0Dh,0
 errmsg  db "Error",0Ah,0Dh,0
