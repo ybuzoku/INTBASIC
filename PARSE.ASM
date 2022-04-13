@@ -68,6 +68,7 @@ handleAlgebraicExpression:
 ;Declares a syntax error if weird chars found
 ;Declares a type error if a string variable found
     ;Handle Logical Connectives here
+    jmp .handleThirdLevel
     ;call .handleThirdLevel
     cmp word [rsi], "NO"
     jne .hae0
@@ -87,29 +88,114 @@ handleAlgebraicExpression:
 ;    je .xor
 .hae2:
     cmp word [rsi], "IM"
-    jne .relationals
+    jne .parseRelationals
     cmp byte [rsi + 2], "P"
 ;    je .implicaton
 ;Level 3, Relational Connectives
-;.handleThirdLevel:
-;   call .handleSecondLevel
-.relationals:
+.handleThirdLevel:
+   call .handleSecondLevel
+.parseRelationals:
     ;Handle Relational connectives
     cmp byte [rsi], "="
-;    je .equivalence
+    je .processEq
     cmp word [rsi], "<>"
-;    je .neq
+    je .processNeq
     cmp word [rsi], "><"
-;    je .neq
+    je .processNeq
     cmp byte [rsi], "<"
-;    je .less
+    je .processLess
     cmp byte [rsi], ">"
-;    je .greater
-    cmp word [rsi], "<="
-;    je .leq
-    cmp word [rsi], ">="
-;    je .geq
+    jne .exit
+.processGreater:
+    cmp byte [rsi + 1], "=" ;Is this a GEQ
+    je .processGeq
+    push rax
+    call .handleSecondLevelSkip
+    pop rcx ;lhs, rax has rhs of >
+
+    push rbx
+    xor ebx, ebx
+    cmp rcx, rax
+    mov rax, -1 ;Default to true
+    cmovle rax, rbx  ;Move the false value if less than
+    pop rbx
+    jmp .parseRelationals
+.processLess:
+    cmp byte [rsi + 1], "=" ;Is this a LEQ
+    je .processLeq
+    push rax
+    call .handleSecondLevelSkip
+    pop rcx ;lhs, rax has rhs of <
+
+    push rbx
+    xor ebx, ebx
+    cmp rcx, rax
+    mov rax, -1 ;Default to true
+    cmovge rax, rbx  ;Move the false value if greater than or equal to
+    pop rbx
+    jmp .parseRelationals
+
+.processGeq:
+;Symbol has two chars so skip second char
+    inc rsi ;Skip first symbol
+    push rax
+    call .handleSecondLevelSkip
+    pop rcx ;lhs, rax has rhs of >=
+
+    push rbx
+    xor ebx, ebx
+    cmp rcx, rax
+    mov rax, -1 ;Default to true
+    cmovl rax, rbx  ;Move the false value if less than
+    pop rbx
+    jmp .parseRelationals
+
+.processLeq:
+;Symbol has two chars so skip second char
+    inc rsi
+    push rax
+    call .handleSecondLevelSkip
+    pop rcx ;lhs, rax has rhs of <=
+
+    push rbx
+    xor ebx, ebx
+    cmp rcx, rax
+    mov rax, -1 ;Default to true
+    cmovg rax, rbx  ;Move the false value if greater than
+    pop rbx
+    jmp .parseRelationals
+
+.processEq:
+    push rax
+    call .handleSecondLevelSkip
+    pop rcx ;lhs, rax has rhs of =
+
+    push rbx 
+    xor ebx, ebx
+    cmp rcx, rax
+    mov rax, -1
+    cmovne rax, rbx ;Only set rax to 0 if not equal
+    pop rbx
+    jmp .parseRelationals
+
+.processNeq:
+;Symbol has two chars so skip second char
+    inc rsi
+    push rax
+    call .handleSecondLevelSkip
+    pop rcx ;lhs, rax has rhs of <>
+
+    push rbx 
+    xor ebx, ebx
+    cmp rcx, rax
+    mov rax, -1 ;Assume true, not equal
+    cmove rax, rbx ;Only set rax to 0 if equal
+    pop rbx
+    jmp .parseRelationals
+
 ;Level 2, Addition and Subtraction
+.handleSecondLevelSkip:
+    inc rsi
 .handleSecondLevel:
     call .handleFirstLevel
 .parseAdditiveOperators:    
