@@ -3,83 +3,121 @@ funTbl:
 ;Use PASCAL strings to know how long the comparisons need to be
 ;All function pointers are saved as distances from the head
 ; of the function table
+;BASIC instructions are space terminated
+;Interpreter instructions are null terminated
     db 4, "LET"     ;DONE
     dw oldSchoolAssignemnt - funTbl
 
-    db 4, "NEW"     ;DONE
+    db 5, "NEW",0     ;DONE
     dw newProgram - funTbl 
 
-    db 6, "CLEAR"   ;DONE
+    db 7, "CLEAR",0   ;DONE
     dw newProgram - funTbl 
 
-    db 5, "LIST"    ;DONE
+    db 6, "LIST",0    ;DONE
     dw listProgram - funTbl 
 
-    db 4, "RUN"     ;DONE
+    db 5, "RUN",0     ;DONE
     dw runProgram - funTbl
 
-    db 7, "PRINT$"    ;Not implemented yet
+    db 8, "PRINT$ "    ;Not implemented yet
     dw printStatement - funTbl
 
-    db 6, "PRINT"    ;DONE
+    db 7, "PRINT "    ;DONE
     dw printStatement - funTbl
 
-    db 2, "?"        ;DONE, alias Print
+    db 3, "? "        ;DONE, alias Print
     dw printStatement - funTbl
 
-    db 6, "INPUT"
+    db 7, "INPUT "
     dw getInput - funTbl
 
-    db 3, "IF"      ;DONE, needs to be tested
+    db 4, "IF "      ;DONE, needs to be tested
     dw handleIf - funTbl
 
-    db 5, "GOTO"    ;DONE
-    dw fancyJmp - funTbl
+    db 6, "GOTO "    ;DONE
+    dw goto - funTbl
 
-    db 7, "SYSTEM"  ;DONE
-    dw returnToDOS - funTbl
+    db 7, "GOSUB "
+    dw gosub - funTbl
 
-    db 4, "FOR"
+    db 8, "RETURN "
+    dw return - funTbl
+
+    db 8, "RETURN",0
+    dw return - funTbl
+
+    db 5, "FOR "
     dw forLoop - funTbl
 
-    db 4, "CLS"     ;DONE
-    dw cls - funTbl
+    db 6, "NEXT",0
+    dw next - funTbl
 
-    db 6, "DEBUG"   ;DONE
-    dw dbgr - funTbl
+    db 6, "NEXT "
+    dw next - funTbl
 
-    db 5, "TRON"    ;DONE
-    dw tron - funTbl
+    db 7
+whileStr:
+    db "WHILE "
+    dw while - funTbl
 
-    db 6, "TROFF"   ;DONE
-    dw troff - funTbl
-
-    db 4, "END"     ;DONE
-    dw endProg - funTbl
-
-    db 5, "STOP"    ;DONE
-    dw endProg - funTbl
-
-    db 7, "ESCAPE"  ;DONE
-    dw endProg - funTbl
+    db 6, "WEND "
+    dw wend - funTbl    
+    db 6, "WEND",0
+    dw wend - funTbl   
 thenStr:
-    db 5, "THEN"    ;DONE
+    db 6, "THEN "    ;DONE
     dw badCmd - funTbl
 elseStr:
-    db 5, "ELSE"    ;DONE
+    db 6, "ELSE "    ;DONE
     dw badCmd - funTbl
 
-    db 6, "EPEEK"
+    db 8, "SYSTEM",0  ;DONE
+    dw returnToDOS - funTbl
+
+    db 5, "CLS",0     ;DONE
+    dw cls - funTbl
+
+    db 7, "DEBUG",0   ;DONE
+    dw dbgr - funTbl
+
+    db 6, "TRON",0    ;DONE
+    dw tron - funTbl
+
+    db 7, "TROFF",0   ;DONE
+    dw troff - funTbl
+
+    db 5, "END "     ;DONE
+    dw endProg - funTbl
+    db 5, "END",0     ;DONE
+    dw endProg - funTbl
+
+    db 6, "STOP "    ;DONE
+    dw endProg - funTbl
+    db 6, "STOP",0    ;DONE
+    dw endProg - funTbl
+
+    db 8, "ESCAPE "  ;DONE
+    dw endProg - funTbl
+    db 8, "ESCAPE",0  ;DONE
+    dw endProg - funTbl
+
+    db 7, "EPEEK "
     dw memRead - funTbl
 
-    db 6, "EPOKE"
+    db 7, "EPOKE "
     dw memWrite - funTbl
 
-    db 5, "PEEK"
+    db 6, "PEEK "
     dw byteRead - funTbl
 
-    db 5, "POKE"
+    db 6, "POKE "
     dw byteWrite - funTbl
+
+    db 5, "REM "
+    dw remark - funTbl
+    db 3, "' "
+    dw remark - funTbl
 
     db -1    ;Demarkate the end of the table
 ;End of Table
@@ -87,26 +125,86 @@ badCmd:
     lea rbp, syntax
     call criticalError 
 endProg:
-    jmp mainLoop
+    jmp runProgram.endProgramPoint
 tron:
     or byte [stateByte], traceBit   ;Set the traceBit
     ret
 troff:
     and byte [stateByte], ~traceBit ;Clear the traceBit
     ret
+notWrapper:
+    xchg bx, bx
+    jmp handleAlgebraicExpression.not
 memRead:
 memWrite:
 byteRead:
 byteWrite:
     ret
+remark:
+;Comment code, keep looping until end of line
+    lodsb
+    test al, al 
+    jnz remark
+    dec rsi ;When al = 0, rsi points past it, move it back by one
+    ret
 
 oldSchoolAssignemnt:
-;
-    movzx ecx, byte [rdi]
-    dec ecx
-    add rsi, rcx
+;Assign with a LET directive
+;rsi points to first char AFTER function name
     call spaceSkip  ;Goto var assignment as if at start of line
-    jmp executeExpression.variableAssignment
+variableAssignment: ;Assignment without a LET directive
+    ;Establish if the string is a variable assignment or not
+    ;rsi points to start of string
+    call getVarNameLength   ;Get the variable name length
+    mov rdi, rsi    ;Save ptr to start of string in rdi
+    add rsi, rcx    ;Go to end of string
+    call spaceSkip  ;Skip spaces after the end of the var name
+    lodsb   ;Get the first char after the spaces. This must be a =
+    cmp al, "="
+    jne .syntaxError
+    mov rsi, rdi    ;Return rsi to the start of the string name
+    add rsi, rcx    ;Go to end of var name
+    dec rsi
+    lodsb   ;Get last char into al and inc rsi
+    cmp al, "$"
+    je .stringAssignment
+    call spaceSkip  ;Skip any spaces
+    inc rsi         ;Go past the equality sign
+    call spaceSkip  ;Skip any spaces
+    cmp byte [rsi], 22h ;Open speech mark
+    je .typError    ;Integers cant have speechmarks
+    call handleAlgebraicExpression  ;Get the result of the expression into rax
+    mov rsi, rdi    ;Return the start of the string into rsi
+    call setNumericVariable
+    ret
+.stringAssignment:
+;This simply copies the string which is either speech mark, 0 or : terminated
+;First allocate a string
+;rsi = First char after the end of the variable name
+;rdi = start of variable name 
+;rcx = char count for var name
+    call spaceSkip  ;Skip any spaces
+    inc rsi         ;Go past the equality sign
+    call spaceSkip  ;Skip any spaces
+    cmp byte [rsi], 22h ;Open speechmark check again
+    jne .typError    ;Assigning a number to a string is a type error
+    ;rsi now points to the start of the string to save
+    inc rsi ;Go past the speech mark
+    mov rdx, rsi    ;save start of string data in rdx
+    mov rsi, rdi
+    push rdi
+    call setStringVariable
+    pop rsi ;Save the start of the assignment in rsi
+    ret
+
+.syntaxError:
+    lea rbp, syntax ;Syntax error, keyword a bit confused
+    jmp criticalError
+.typError:
+    lea rbp, typeError
+    jmp criticalError
+
+
 newProgram: 
 ;Simply reset the program pointers
     lea rax, section.programArea.vstart
@@ -152,38 +250,27 @@ listProgram:
 .exit:
     ret
 runProgram:
-;Go to each line, one at a time, skip the line number and execute the expr
-;First thing it does, resets the stack 
-; and takes the first line number and moves it to current line number
-    lea rsp, stacktop
-    mov rbx, qword [firstLinPtr]    ;Get a pointer to the first program line
-.runLines:
-    cmp rbx, -1 ;Are we at the end?
-    je .exit    ;Yes, return to the prompt
-    movzx eax, word [rbx + progLineBlock.wLineNum]
-    mov word [currentLine], ax  ;Gone to new line
-    lea rsi, qword [rbx + progLineBlock.sLine]  ;Point to the instruction
-    call spaceSkip  ;Goto first char
-    ;xchg bx, bx
-    call mainProcessing
-.rl0:
-    mov rbx, qword [rbx + progLineBlock.qPtr]   ;Walk list of program lines
-    jmp short .runLines
-.exit:
-    jmp mainLoop
+    ;Runs the machine in indirect mode
+    or byte [stateByte], indirectBit    ;Entering indirect mode
+    ;rsi must point to the first line
+    mov dx, word [firstLinNum]
+    mov word [currentLine], dx ;Reset the current line back to the start
+    mov rbx, qword [firstLinPtr]
+    lea rsi, qword [rbx + progLineBlock.sLine]
+    call runLine
+.endProgramPoint:
+    and byte [stateByte], ~indirectBit  ;Exit indirect mode
+    jmp mainLoop    ;Resets the stack if exit mid loop to avoid stkoverflow
 
 printStatement:
 ;Strings must be "" delimited or a string variable must be used
-;rdi points to the command length
-    movzx ecx, byte [rdi]
-    dec ecx ;This gives instruction name + 1
-    add rsi, rcx
+;rsi points to first char AFTER function name
 .printStart:
     call spaceSkip  ;move rsi to the start of the expression
     lodsb
+
     test al, al     ;Is this a null string?
     jz .psvexit
-
     cmp al, 022h    ;22h = ASCII Speechmarks
     je .stringPrint
     ;Here we check if the first char is ASCII, if it is, check if its a string var
@@ -199,7 +286,7 @@ printStatement:
     call spaceSkip
     jmp short .stringPrint
 .printStringVar:
-    ;Check if it is a string var
+    ;Check if it is a string var or a unary function
     dec rsi
     call getVarNameLength
     call getVarType
@@ -245,10 +332,8 @@ printStatement:
 getInput:
 ;Take a string as a prompt
 ;rdi points just past the end of the command line
+;rsi points to first char AFTER function name
 ;Input prompt strings must be speech mark delimited on both sides!
-    movzx ecx, byte [rdi]
-    dec ecx
-    add rsi, rcx
     call spaceSkip
     ;Now check to see if the user has specified a custom prompt
     lodsb   ;Get first symbol and go past it
@@ -294,6 +379,8 @@ getInput:
     push rdi    ;rdi points to first char of variable
     push rcx
     call getLineInput   ;Get input from the user in inString, null terminated
+    ;This will sanitise in direct mode meaning input cannot have any more statements
+    ; after it.
     pop rcx
     pop rdi 
     mov rsi, rdi    ;Save the start of the var name in rsi
@@ -304,11 +391,10 @@ getInput:
     cmp al, "$"
     je .handleString
 .handleNumeric:
-    xchg bx, bx
     call handleAlgebraicExpression  ;Get the result of the expression into rax
     mov rsi, rdi    ;Return the start of the string into rsi
     call setNumericVariable
-    ret
+    jmp short .commonExit
 .handleString:
     ;IF a string variable, come here
     ;rdi has the start of the variable name
@@ -318,86 +404,9 @@ getInput:
     mov rdx, rsi
     mov rsi, rdi    ;Return start of user name in rsi
     call setStringVariable
+.commonExit:
     ret
-handleIf:
-;Evaluate the string. The IF,THEN/GOTO,ELSE statement must ALL be on one line
-;IF exp1 THEN statement ELSE statement
-;IF exp1 GOTO linenumber ELSE statement
-    movzx ecx, byte [rdi]
-    dec ecx
-    add rsi, rcx
 
-    call spaceSkip
-    call handleAlgebraicExpression
-;THIS WORKS ON CONTRALOGIC. If the algebraic expression evaluates to 0,
-; it is currently taken to be true (as that is a condition I can test for
-; easily). Once Proper logical operators are introduced, then I will have to
-; switch it so that test rax, rax -> jz .else
-    test rax, rax  ;If this is NOT 0, go to the else
-    jnz .else   ;CONTRALOGIC, TO BE SWITCHED IN LATER VERSIONS TO JZ 
-    call spaceSkip
-    ;Now check if it is a THEN or a GOTO
-    ;If it is a THEN, go past the then and let mainProcessing handle it
-    ;If it is a GOTO, dont go past the GOTO and let mainProcessing handle it
-    ;In both cases JUMP to mainProcessing to avoid stack growth
-    ;If no GOTO or THEN, then syntax error
-    lodsd   ;Get the whole word
-    cmp eax, "THEN"
-    je .mp0   ; Go past THEN, to process statement
-    cmp eax, "GOTO"
-    jne .error
-    sub rsi, 4  ;Go back four spaces to process GOTO
-.mp0:
-    lea rax, mainProcessing
-    push rax
-    ret 3*8 ;Align stack as expected
-.else:
-    mov eax, "ELSE" ;Lucky for us, ELSE fits in eax
-.e0:
-    inc rsi
-    cmp byte [rsi], 0   ;End of command line?
-    jz .noElse
-    cmp byte [rsi], ":" ;End of command line portion?
-    jz .noElse0
-    cmp dword [rsi], eax
-    jne .e0
-;If we are else, first move rsi past the else
-    add rsi, 4  ;We are past the else now
-    call spaceSkip
-    ret 3*8 ;Align stack as expected
-.noElse0:
-;If there is no ELSE, simply ret
-    dec rsi ;Ensure it is caught by the main findOtherExpressionsOnLine command
-.noElse:
-    ret
-.error:
-    lea rbx, syntax
-    jmp criticalError
-
-fancyJmp:
-;GOTO
-;rdi points just past the end of the command line
-    movzx ecx, byte [rdi]
-    dec ecx
-    add rsi, rcx
-    call spaceSkip  ;Skip all preceeding spaces
-    call handleAlgebraicExpression  ;Turn the expression into a number in ax
-    movzx edx, ax   ;Line number into dx
-    call searchForProgramLine   ;Get pointer to line in rbx
-    cmp rbx, -1
-    je .unknownLineNumber
-
-    lea rdx, runProgram.runLines    ;New line pointer in rbx
-    push rdx    ;Run lines return address
-    ;xchg bx, bx 
-    ret 3*8     ;pop three qwords off of the stack (old return addresses)
-.unknownLineNumber:
-    lea rbp, lineNoXist
-    call ttyOutString
-    jmp mainLoop
-forLoop:
-    mov al, 9
-    ret
 ;==========================================================:
 ;==========================================================:
 ;==========================================================:

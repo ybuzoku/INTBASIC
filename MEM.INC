@@ -37,10 +37,79 @@ struc stringBlock
 endstruc
 
 ;Variable equates
-intEquate  equ 0
-strEquate  equ 1
+intEquate   equ 0
+strEquate   equ 1
 
-;Status Equates
+;State byte equates
 breakBit    equ 1    ;Set means on
 traceBit    equ 2    ;Set means TRON, Clear means TROFF
-indirectBit equ 3    ;Set means indirect/program mode, Clear means direct/line mode
+indirectBit equ 4    ;Set means indirect/program mode, Clear means direct/line mode
+ctrlFlow    equ 8    ;Set means do not find other expression on current line
+
+;Control Instruction Signatures
+WHILEsig    equ 055h
+FORsig      equ 05Ah
+GOSUBsig    equ 0A5h
+;Control stack data structures
+
+struc forStruct
+    .specQword  resq 1  ;Special qword (see function description)
+    .cntrPtr    resq 1  ;Pointer to counter variable
+    .limitValue resq 1  ;At what value, or after, do we stop the loop 
+    .stepValue  resq 1  ;By how much do we increase on each iteration
+;Special qword:
+; Byte 7 = Offset into the line for next instruction after FOR
+; Bytes[6:5] = Line number of portion after FOR (either FOR line or line after FOR)
+; Byte 4 = Offset into the line for next instruction after NEXT
+; Bytes[3:2] = Line number of portion after NEXT (either NEXT line or line after NEXT)
+; Byte 1 = Parity check sum for the qword, makes the sum of the bytes in qword 0
+; Byte 0 = FOR signature
+endstruc
+
+struc whileStruct
+    .specQword  resq 1  ;Special qword
+;Special qword:
+; Byte 7 = Offset into the line for the condition to evaluate
+; Bytes[6:5] = Line number of WHILE 
+; Byte 4 = Offset in line for either first : after WEND or ASCII NULL (end of line)
+; Bytes[3:2] = Line number of WEND
+; Byte 1 = Parity check sum for the qword, makes the sum of the bytes in qword 0
+; Byte 0 = WHILE signature
+endstruc
+
+struc gosubStruct
+    .specQword  resq 1  ;Special qword
+;Special qword:
+; Byte 7 =  Offset in line for either first : after GOSUB or ASCII NULL (end of line)
+; Bytes[6:5] = Line number of GOSUB 
+; Bytes[4:2] = 055AA55h space filler signature
+; Byte 1 = Parity check sum for the qword, makes the sum of the bytes in qword 0
+; Byte 0 = GOSUB signature
+endstruc
+
+;Stack based macros
+%macro makeSpaceOnStack 1
+    ;The argument is to specify how much space to make on the stack
+    ;It will check to ensure that we dont go past the stack minimum.
+    ;If we do, call stack overflow!
+    pop rax    ;Get the return address qword into rax
+    shl %1, 3  ;Multiply argument register by 8
+    sub rsp, %1 ;Clear space on the stack plus one qword for ret addr
+    lea rbp, stack
+    cmp rsp, rbp
+    ja .macroNotOverflow ;If rsp above overflow buffer, its oki
+    lea rbp, stkOvflw
+    jmp criticalError
+.macroNotOverflow:
+    ;rsp now points to the start of the cleared space
+    ;Put the return address back on the stack
+    push rax
+%endmacro
+
+%macro cleanSpaceOnStack 1
+    ;The argument is to specify how much space to reclaim from the stack
+    pop rax
+    shl %1, 3   ;Multiply argument register by 8
+    add rsp, %1
+    push rax
+%endmacro

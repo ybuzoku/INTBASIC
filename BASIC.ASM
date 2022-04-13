@@ -12,6 +12,7 @@ Segment resSeg follows=.text align=1 vfollows=dSeg valign=1
 %include "PROCESS.ASM"
 %include "PARSE.ASM"
 %include "COMMANDS.ASM"
+%include "CTRLFLOW.ASM"
 %include "MATH.ASM"
 %include "MEMORY.ASM"
 %include "BASICDAT.ASM"
