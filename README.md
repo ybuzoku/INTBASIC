@@ -49,37 +49,37 @@ The short version is as follows.
 ### BASIC Keywords supported
 The following BASIC keywords are supported:
 
-- LET [varname] = [expression]  
+- LET [varname] = [expression]    
     Assigns the result of the expression to the variable or the string to the string variable
-- [varname] = [expression]  
+- [varname] = [expression]    
     Same as LET
 - IF [condition] THEN [statement] ELSE [statement]  
     If the condition is true, then execute the THEN statement, else the ELSE statement
-- IF [condition] GOTO [expression] ELSE [statement] 
+- IF [condition] GOTO [expression] ELSE [statement]  
     If the condition is true, then goto the line number that is the result of the expression, else as above.
 - WHILE [condition] ... WEND  
-
     While the condition is true execute the expressions between the WHILE and WEND
-- GOTO [expression]           
+- GOTO [expression]  
     Unconditionally branch to the line number that is the result of the expression
-- GOSUB [expression] ... RETURN 
-
+- GOSUB [expression] ... RETURN  
     Goto the line number that is the result of the expression. When RETURN is encountered, return to the next expression after GOSUB
-- PRINT [list of expressions][;] 
+- PRINT [list of expressions][;]  
     Print a line of expressions, either results of operations or strings. Multiple things can be printed on the same line, separated by a ;
-- ? [list of expressions][;]     
+- ? [list of expressions][;]  
     Short hand form of the above
-- REM [comment]   
+- REM [comment]  
     A REMark or comment. All instructions on the line will be ignored, even if split with a :
-- ' [comment]    
+- ' [comment]  
     Short hand form of the above
-- INPUT[;][prompt string;] variable
-
+- INPUT[;][prompt string;] variable  
     Will accept a prompt string, enclosed in speechmarks. A semicolon after the prompt string supresses the default ? prompt. 
     Provide a variable to store the response in
-- CLS  - Clears the screen
-- END  - Ends the program early. A program may terminate when there are no lines left to execute.
-- RND  - Generates a very bad, random 8-bit value. This will improved in later versions to give a good signed 64 bit random number.
+- CLS  
+    Clears the screen
+- END  
+    Ends the program early. A program may terminate when there are no lines left to execute.
+- RND  
+    Generates a very bad, random 8-bit value. This will improved in later versions to give a good signed 64 bit random number.
 
 ### Logical operators
 Logical operators are available for use with numbers and numerical variables. All logical operators are binary except for NOT which is unary, and takes
