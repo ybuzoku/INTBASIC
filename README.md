@@ -1,7 +1,7 @@
 # SCR INTBASIC/64
 
 A 64-Bit integer BASIC interpreter, written on top of SCP/BIOS from Scientific Computer Research. 
-Requires SCP/BIOS.
+Requires SCP/BIOS. Assembled using NASM 2.15.05.
 
 Currently in pre-release and needs to be extensively tested. Syntactically as close to GW-BASIC as I could muster. 
 The set of keywords recognised by the interpreter is a strict subset of GW-BASIC.
@@ -134,6 +134,13 @@ are doing, I would refrain from using the following instructions in anything oth
 - TRON, TRace ON, starts program tracing when the program is run
 - TROFF, TRace OFF, ends program tracing when the program is run
 
+### Installation
+
+If using the disk image in the repository (MyDisk.ima or MyDiskMSD.ima), you may flash it directly to a SCP/BIOS compatible USB stick and boot from it.
+The BASIC program uses the built in bootloader. 
+You may also use emulators such as QEMU or BOCHS to run this program. 
+You may also assemble the source code yourself using the makefile provided. In that case however, the disk image generated however will NOT have SCP/BIOS on it. You will have to source it yourself.
+All details of how to run SCP/BIOS and programs in conjunction with SCP/BIOS can be found in the SCP/BIOS manual.
 
 ### Final remarks
 If you find any bugs, please let me know by either submitting a issue on Github or contacting me directly. 
