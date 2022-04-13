@@ -529,12 +529,8 @@ handleIf:
 ;rsi points to first char AFTER function name
     call spaceSkip
     call handleAlgebraicExpression
-;THIS WORKS ON CONTRALOGIC. If the algebraic expression evaluates to 0,
-; it is currently taken to be true (as that is a condition I can test for
-; easily). Once Proper logical operators are introduced, then I will have to
-; switch it so that test rax, rax -> jz .else
-    test rax, rax  ;If this is NOT 0, go to the else
-    jnz .else   ;CONTRALOGIC, TO BE SWITCHED IN LATER VERSIONS TO JZ 
+    test rax, rax  ;If this is 0, go to the else
+    jz .else
     call spaceSkip
     lodsd   ;Get the whole word, must be either "THEN " or "GOTO "
     cmp eax, "THEN"

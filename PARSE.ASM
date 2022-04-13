@@ -137,7 +137,6 @@ handleAlgebraicExpression:
     jmp .parseLogicals
 
 .not:
-    ;xor rax, rax    ;Zero rax
     call .handleThirdLevelSkip  ;Get result in rax
     not rax ;Save 1's compliment in rax
     jmp .parseLogicals
@@ -279,9 +278,9 @@ handleAlgebraicExpression:
 .handleSecondLevel:
     call .handleFirstLevel
 .parseAdditiveOperators:    
-    cmp byte [rsi], '-'
+    cmp byte [rsi], "-"
     je .processMinus
-    cmp byte [rsi], '+'
+    cmp byte [rsi], "+"
     jne .exit              ;No operators, expression evaluated, exit
     push rax
     call .handleFirstLevelSkip   ;Parse first level
@@ -295,16 +294,18 @@ handleAlgebraicExpression:
     neg rax              ;Change a - b to a + -b
     jmp short .processAdd
 
-;Level 1, Division and multiplication
+;Level 1, Exponent, Division and multiplication
 
 .handleFirstLevelSkip:
     inc rsi              ;Skip the op symbol
 .handleFirstLevel:
     call .handleZerothLevel      ;Call third level
-.parseProductOperators:   
-    cmp byte [rsi], '/'
+.parseProductOperators:
+    cmp byte [rsi], "^"
+    je .exponentFound
+    cmp byte [rsi], "/"
     je .processDiv
-    cmp byte [rsi], '*'
+    cmp byte [rsi], "*"
     jne .exit           ;Neither multiplication or division, return up a level
 
     push rax
@@ -322,6 +323,25 @@ handleAlgebraicExpression:
     idiv rcx             ;Signed division
     jmp .parseProductOperators         ;Search again for * or /
 
+.exponentFound:
+    ;rax has the number to exponentiate
+    xchg bx, bx
+    push rax
+    call .handleZerothLevelSkip  ;Parse the inner expression
+    pop rcx
+    xchg rcx, rax
+    ;rax has the number to exponentiate, rcx has the number of times to loop imul
+    push rbx
+    mov rbx, rax    ;Save a copy of rax in rbx
+    dec rcx
+.imulLoop:
+    xor edx, edx
+    imul rbx
+    dec rcx
+    jnz .imulLoop
+    pop rbx
+    jmp .parseProductOperators
+
 ;Level 0, Brackets, numbers and vars.
 
 .handleZerothLevelSkip:
@@ -330,15 +350,12 @@ handleAlgebraicExpression:
     call spaceSkip
     lodsb               ;Read char and adv rsi
     cmp al, '('
-    jne .notBracket
+    jne .varConstCheck
     call handleAlgebraicExpression  ;Parse the inner expression
     cmp byte [rsi], ')'   
     je .closeBracket     ;If close bracket, goto skip spaces
-    jmp short .error     ;Otherwise, error
-
-.notBracket:    
-    cmp al, "^"
-    je .exponentFound
+    jmp .error     ;Otherwise, error
+  
 .varConstCheck:
     cmp al, "A"       ;Alphabetical first char?
     jae .varOrRNDFound      ;Yes, variable found or rnd function or error
@@ -366,8 +383,7 @@ handleAlgebraicExpression:
     movzx rax, al
 .exit:
     ret                ;Return
-.exponentFound:
-   jmp short .varConstCheck
+
 .varFound:    
     dec rsi ;Back a char
     push rcx

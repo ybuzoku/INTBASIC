@@ -77,6 +77,8 @@ elseStr:
 
     db 5, "CLS",0     ;DONE
     dw cls - funTbl
+    db 5, "CLS "      ;DONE
+    dw cls - funTbl
 
     db 7, "DEBUG",0   ;DONE
     dw dbgr - funTbl
