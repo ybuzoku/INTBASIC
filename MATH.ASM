@@ -42,7 +42,7 @@ printdecimalword:
     pop rax
     pop rcx
     pop rdi
-    xchg bx, bx
+
     push rax    ;Save rax for the sign bit later
     rol rax, 1  ;Test the sign bit
     test al, 1

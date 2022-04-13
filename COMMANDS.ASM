@@ -118,7 +118,7 @@ elseStr:
     dw remark - funTbl
     db 3, "' "
     dw remark - funTbl
-    
+
     db -1    ;Demarkate the end of the table
 ;End of Table
 badCmd:
@@ -132,6 +132,9 @@ tron:
 troff:
     and byte [stateByte], ~traceBit ;Clear the traceBit
     ret
+notWrapper:
+    xchg bx, bx
+    jmp handleAlgebraicExpression.not
 memRead:
 memWrite:
 byteRead:
@@ -268,7 +271,6 @@ printStatement:
 
     test al, al     ;Is this a null string?
     jz .psvexit
-
     cmp al, 022h    ;22h = ASCII Speechmarks
     je .stringPrint
     ;Here we check if the first char is ASCII, if it is, check if its a string var
@@ -284,7 +286,7 @@ printStatement:
     call spaceSkip
     jmp short .stringPrint
 .printStringVar:
-    ;Check if it is a string var
+    ;Check if it is a string var or a unary function
     dec rsi
     call getVarNameLength
     call getVarType

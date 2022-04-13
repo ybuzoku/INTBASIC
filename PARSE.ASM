@@ -69,14 +69,12 @@ handleAlgebraicExpression:
 ;Declares a type error if a string variable found
     ;Handle Logical Connectives here
 .handleFourthLevel:
-    ;jmp .handleThirdLevel
+;Evaluate UNARY operators here in reverse stack order of importance
+    cmp dword [rsi], "NOT "
+    je .not
+    ;Else handle binary operators
     call .handleThirdLevel
 .parseLogicals:
-    cmp word [rsi], "NO"
-    jne .hae0
-    cmp byte [rsi + 2], "T"
-    je .not
-.hae0:
     cmp word [rsi], "AN"
     jne .hae1
     cmp byte [rsi + 2], "D"
@@ -143,7 +141,9 @@ handleAlgebraicExpression:
     jmp .parseLogicals
 
 .not:
+    ;xor rax, rax    ;Zero rax
     call .handleThirdLevelSkip  ;Get result in rax
+
     not rax ;Save 1's compliment in rax
     jmp .parseLogicals
 .and:
