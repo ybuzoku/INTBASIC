@@ -67,7 +67,14 @@ handleAlgebraicExpression:
 ;Output: rax = Result of said expression
 ;Declares a syntax error if weird chars found
 ;Declares a type error if a string variable found
-    ;Handle Logical Connectives here
+;Declares a stack overflow if less than 20 stack words available
+    push rax
+    lea rax, stack
+    add rax, 10*8   ;Be extra careful
+    cmp rsp, rax
+    ;if rsp is below rax, fail
+    jb .stack
+    pop rax
 .handleFourthLevel:
     call .handleThirdLevel
 .parseLogicals:
@@ -398,6 +405,9 @@ handleAlgebraicExpression:
     jmp spaceSkip
 .error:
     lea rbp, syntax
+    jmp criticalError
+.stack:
+    lea rbx, stkOvflw
     jmp criticalError
 
 
