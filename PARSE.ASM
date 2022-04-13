@@ -68,30 +68,115 @@ handleAlgebraicExpression:
 ;Declares a syntax error if weird chars found
 ;Declares a type error if a string variable found
     ;Handle Logical Connectives here
-    jmp .handleThirdLevel
-    ;call .handleThirdLevel
+.handleFourthLevel:
+    ;jmp .handleThirdLevel
+    call .handleThirdLevel
+.parseLogicals:
     cmp word [rsi], "NO"
     jne .hae0
     cmp byte [rsi + 2], "T"
-;    je .not
+    je .not
 .hae0:
     cmp word [rsi], "AN"
     jne .hae1
     cmp byte [rsi + 2], "D"
-;    je .and
+    je .and
 .hae1:
     cmp word [rsi], "OR"
-;    je .or
+    je .or
+
     cmp word [rsi], "XO"
     jne .hae2
     cmp byte [rsi + 2], "R"
-;    je .xor
+    je .xor
 .hae2:
-    cmp word [rsi], "IM"
-    jne .parseRelationals
-    cmp byte [rsi + 2], "P"
-;    je .implicaton
+    cmp dword [rsi], "IMP "
+    je .imp
+    cmp dword [rsi], "ROL "
+    je .leftRoll
+    cmp dword [rsi], "ROR "
+    je .rightRoll
+    cmp dword [rsi], "SHL "
+    je .leftShift
+    cmp dword [rsi], "SHR "
+    jne .exit
+.rightShift:
+;Shift count is truncated to between 1 and 255 for shift and Roll
+    push rax
+    call .handleThirdLevelSkip
+    pop rcx
+    xchg rax, rcx   ;Move count into rcx, and shift target to rax
+    shr rax, cl
+    jmp .parseLogicals
+
+.leftShift:
+    push rax
+    call .handleThirdLevelSkip
+    pop rcx
+    xchg rax, rcx   ;Move count into rcx, and shift target to rax
+    shl rax, cl
+    jmp .parseLogicals
+
+.rightRoll:
+    push rax
+    call .handleThirdLevelSkip
+    pop rcx
+    xchg rax, rcx   ;Move count into rcx, and shift target to rax
+    ror rax, cl
+    jmp .parseLogicals
+
+.leftRoll:
+    push rax
+    call .handleThirdLevelSkip
+    pop rcx
+    xchg rax, rcx   ;Move count into rcx, and shift target to rax
+    rol rax, cl
+    jmp .parseLogicals
+
+.imp:
+    ;A => B == ¬A OR B
+    push rax
+    call .handleThirdLevelSkip
+    pop rcx ;rcx has A
+    not rcx
+    or rax, rcx
+    jmp .parseLogicals
+
+.not:
+    call .handleThirdLevelSkip  ;Get result in rax
+    not rax ;Save 1's compliment in rax
+    jmp .parseLogicals
+.and:
+    push rax
+    call .handleThirdLevelSkip
+    pop rcx
+    and rax, rcx
+    jmp .parseLogicals
+.or:
+    dec rsi ;handle third level skips skips one too many for or
+    push rax
+    call .handleThirdLevelSkip
+    pop rcx
+    or rax, rcx
+    jmp .parseLogicals
+.xor:
+    push rax
+    call .handleThirdLevelSkip
+    pop rcx
+    xor rax, rcx
+    jmp .parseLogicals
+.eqv:
+;Not XOR, ie only if the two bits are equal do we set it
+    push rax
+    call .handleThirdLevelSkip
+    pop rcx
+    xor rax, rcx
+    not rax
+    jmp .parseLogicals
+
 ;Level 3, Relational Connectives
+.handleThirdLevelSkip:
+    add rsi, 3  ;Go past the end of the word
 .handleThirdLevel:
    call .handleSecondLevel
 .parseRelationals:
