@@ -13,6 +13,7 @@ The set of keywords recognised by the interpreter is a strict subset of GW-BASIC
 - String variable names MUST be terminated with a $, i.e. name$ = "Player name"
 - Line tracing features via TRON and TROFF instructions
 - Access to SCP/BIOS Debugger via the DEBUG instruction
+- Line numbers up to 65535 allowed.
 
 
 ## Upcoming features:
@@ -98,8 +99,6 @@ A number of bit shift operations have also been implemented. They can shift up t
 If a larger number is used for the bit shift, only the value MOD 255 is taken
 - SHL, Left shift, used as follows: A SHL B => Shift A left number of bits by the amount described by the expression in B
 - SHR, Right shift, used as follows: A SHR B => Shift A right number of bits by the amount described by the expression in B
-- ROL, Roll left, used as in SHL, except any overflowing bits are rotated back into to the bottom of the number (i.e. -1 ROL 1 evaluates to 1)
-- ROR, Roll right, used as in SHR, except any underflowing bits rotated back into the top of the number (i.e. 1 ROR 1 evaluates to -1)
 
 ### Relational operators
 
@@ -131,6 +130,8 @@ are doing, I would refrain from using the following instructions in anything oth
 - DEBUG, starts the SCP/BIOS debugger
 - NEW, deletes the currently executing program
 - LIST, lists the current stored program listing.
+- TRON, TRace ON, starts program tracing when the program is run
+- TROFF, TRace OFF, ends program tracing when the program is run
 
 
 ### Final remarks
