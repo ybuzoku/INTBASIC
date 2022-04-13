@@ -12,8 +12,8 @@ Output file:  BASIC.BIN
 
 Vstart            Start             Stop              Length    Class     Name
                0                 0                83  00000083  progbits  .text
-             EF6                83              1698  00001615  progbits  resSeg
-            250B              1698              1698  00000000  progbits  programArea
+             EF6                83              16B8  00001635  progbits  resSeg
+            252B              16B8              16B8  00000000  progbits  programArea
                0                 0               EF6  00000EF6  nobits    dSeg
 
 -- Sections (detailed) --------------------------------------------------------
@@ -32,7 +32,7 @@ vfollows:  not defined
 ---- Section resSeg -----------------------------------------------------------
 
 class:     progbits
-length:                1615
+length:                1635
 start:                   83
 align:                    1
 follows:   .text
@@ -44,10 +44,10 @@ vfollows:  dSeg
 
 class:     progbits
 length:                   0
-start:                 1698
+start:                 16B8
 align:                    1
 follows:   resSeg
-vstart:                250B
+vstart:                252B
 valign:                   1
 vfollows:  resSeg
 
@@ -354,73 +354,75 @@ Real              Virtual           Name
             123C              20AF  decimalToHex.processDigits
             1258              20CB  decimalToHex.exit
             125F              20D2  printdecimalword
-            128F              2102  printdecimalword.pdw0
-            129F              2112  printdecimalword.pdw1
-            12B8              212B  allocateBlock
-            12B9              212C  allocateBlock.ab0
-            12EA              215D  allocateBlock.exit
-            12EC              215F  allocateBlock.memoryFull
-            12F8              216B  allocateBlock.firstAllocation
-            1318              218B  findVariable
-            132D              21A0  findVariable.search
-            1339              21AC  findVariable.invalid
-            1348              21BB  findVariable.varFound
-            1357              21CA  findVariable.datFound
-            1369              21DC  findVariable.varNotFound
-            1373              21E6  findVariable.exit
-            1379              21EC  findFirstLine
-            1388              21FB  searchForProgramLine
-            1398              220B  searchForProgramLine.search
-            13AB              221E  searchForProgramLine.lineFound
-            13AC              221F  insertProgramLine
-            13CC              223F  insertProgramLine.walk
-            13E0              2253  insertProgramLine.candidate
-            13EF              2262  insertProgramLine.sort
-            1402              2275  insertProgramLine.skipLink
-            1410              2283  insertProgramLine.first
-            1422              2295  insertProgramLine.exit
-            1428              229B  makeEditInteger
-            143B              22AE  makeEditInteger.newVar
-            1467              22DA  makeEditInteger.error
-            1473              22E6  makeEditString
-            14AD              2320  makeEditString.strcopy
-            14C1              2334  makeEditString.error
-            14CD              2340  terminatedstrcpy
-            14CE              2341  terminatedstrcpy.copy
-            14DE              2351  terminatedstrcpy.exit
-            14E0              2353  strcpy
-            14E9              235C  strlen
-            14ED              2360  strlen.search
-            14F4              2367  strlen.exit
-            14F7              236A  memoryDetection
-            1500              2373  memoryDetection.findStartAddr
-            1507              237A  memoryDetection.fsa1
-            1537              23AA  memoryDetection.exit
-            1538              23AB  memoryDetection.worstCase
-            1559              23CC  prompt
-            155E              23D1  mainmsg
-            1572              23E5  bytemsg
-            1580              23F3  crlf
-            1583              23F6  errmsg
-            158B              23FE  numbers
-            1595              2408  varChrs
-            15BB              242E  noMem
-            15CB              243E  syntax
-            15DA              244D  typeError
-            15EA              245D  lineNoXist
-            1602              2475  breakmsg
-            160C              247F  stkOvflw
-            161D              2490  noWend
-            1632              24A5  noWhile
-            1647              24BA  noFor
-            165A              24CD  noNext
-            166D              24E0  noReturn
-            1684              24F7  uknowner
+            1287              20FA  printdecimalword.noCompliment
+            12A4              2117  printdecimalword.pdw0
+            12B4              2127  printdecimalword.pdw1
+            12C9              213C  printdecimalword.printString
+            12D8              214B  allocateBlock
+            12D9              214C  allocateBlock.ab0
+            130A              217D  allocateBlock.exit
+            130C              217F  allocateBlock.memoryFull
+            1318              218B  allocateBlock.firstAllocation
+            1338              21AB  findVariable
+            134D              21C0  findVariable.search
+            1359              21CC  findVariable.invalid
+            1368              21DB  findVariable.varFound
+            1377              21EA  findVariable.datFound
+            1389              21FC  findVariable.varNotFound
+            1393              2206  findVariable.exit
+            1399              220C  findFirstLine
+            13A8              221B  searchForProgramLine
+            13B8              222B  searchForProgramLine.search
+            13CB              223E  searchForProgramLine.lineFound
+            13CC              223F  insertProgramLine
+            13EC              225F  insertProgramLine.walk
+            1400              2273  insertProgramLine.candidate
+            140F              2282  insertProgramLine.sort
+            1422              2295  insertProgramLine.skipLink
+            1430              22A3  insertProgramLine.first
+            1442              22B5  insertProgramLine.exit
+            1448              22BB  makeEditInteger
+            145B              22CE  makeEditInteger.newVar
+            1487              22FA  makeEditInteger.error
+            1493              2306  makeEditString
+            14CD              2340  makeEditString.strcopy
+            14E1              2354  makeEditString.error
+            14ED              2360  terminatedstrcpy
+            14EE              2361  terminatedstrcpy.copy
+            14FE              2371  terminatedstrcpy.exit
+            1500              2373  strcpy
+            1509              237C  strlen
+            150D              2380  strlen.search
+            1514              2387  strlen.exit
+            1517              238A  memoryDetection
+            1520              2393  memoryDetection.findStartAddr
+            1527              239A  memoryDetection.fsa1
+            1557              23CA  memoryDetection.exit
+            1558              23CB  memoryDetection.worstCase
+            1579              23EC  prompt
+            157E              23F1  mainmsg
+            1592              2405  bytemsg
+            15A0              2413  crlf
+            15A3              2416  errmsg
+            15AB              241E  numbers
+            15B5              2428  varChrs
+            15DB              244E  noMem
+            15EB              245E  syntax
+            15FA              246D  typeError
+            160A              247D  lineNoXist
+            1622              2495  breakmsg
+            162C              249F  stkOvflw
+            163D              24B0  noWend
+            1652              24C5  noWhile
+            1667              24DA  noFor
+            167A              24ED  noNext
+            168D              2500  noReturn
+            16A4              2517  uknowner
 
 ---- Section programArea ------------------------------------------------------
 
 Real              Virtual           Name
-            1698              250B  ENDOFPROGRAM
+            16B8              252B  ENDOFPROGRAM
 
 ---- Section dSeg -------------------------------------------------------------
 
