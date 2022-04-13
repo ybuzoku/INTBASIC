@@ -15,13 +15,17 @@ start:
     call ttyOutString
     call newProgram         ;Use this to reset program pointers
 mainLoop:
+;Entering here resets the program counter but doesnt remove the program from memory
+    mov ax, word [firstLinNum]  ;Error occured, restart the program counter
+    mov word [currentLine], ax
+
     cld                 ;Set default string op direction
     lea rsp, stacktop    ;Reinitialize stack pointer
-    lea rax, mainLoop
     and byte [stateByte], 0FEh  ;Clear the break bit
-    push rax    ;Save address on stack
     lea rbp, prompt
     call ttyOutString
+    lea rax, mainLoop
+    push rax    ;Save address on stack
 .ml0:
 ;This section will execute an input line if it is an interactive expression
 ; or store it in the program if it has a line number.

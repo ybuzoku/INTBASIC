@@ -228,6 +228,7 @@ newProgram:
     mov ecx, maxLineLen
     rep stosb
     mov byte [currentLine], 10  ;Default to line 10
+    xor eax, eax,
     dec rax ;rax = -1
     mov qword [firstLinPtr], rax ;No program in memory
     mov word [firstLinNum], ax
