@@ -72,6 +72,7 @@ The following BASIC keywords are supported:
 - ' [comment]    
     Short hand form of the above
 - INPUT[;][prompt string;] variable
+
     Will accept a prompt string, enclosed in speechmarks. A semicolon after the prompt string supresses the default ? prompt. 
     Provide a variable to store the response in
 - CLS  - Clears the screen
