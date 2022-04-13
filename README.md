@@ -58,10 +58,12 @@ The following BASIC keywords are supported:
 - IF [condition] GOTO [expression] ELSE [statement] 
     If the condition is true, then goto the line number that is the result of the expression, else as above.
 - WHILE [condition] ... WEND  
+
     While the condition is true execute the expressions between the WHILE and WEND
 - GOTO [expression]           
     Unconditionally branch to the line number that is the result of the expression
 - GOSUB [expression] ... RETURN 
+
     Goto the line number that is the result of the expression. When RETURN is encountered, return to the next expression after GOSUB
 - PRINT [list of expressions][;] 
     Print a line of expressions, either results of operations or strings. Multiple things can be printed on the same line, separated by a ;
