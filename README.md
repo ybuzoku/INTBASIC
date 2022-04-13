@@ -1,6 +1,7 @@
-# INTBASIC
+# SCR 64-INTBASIC
 
-A 64-BIT integer BASIC interpreter, written on top of SCP/BIOS. Requires SCP/BIOS.
+A 64-Bit integer BASIC interpreter, written on top of SCP/BIOS from Scientific Computer Research. 
+Requires SCP/BIOS.
 
 Currently in pre-release and needs to be extensively tested. Syntactically as close to GW-BASIC as I could muster. 
 The set of keywords recognised by the interpreter is a strict subset of GW-BASIC.
