@@ -25,7 +25,7 @@ The set of keywords recognised by the interpreter is a strict subset of GW-BASIC
 
 ## Known issues:
 - Replacing the start line might cause you to lose the second line in the program.
-- Cannot do logical operations on strings.
+- Cannot do relational operations on strings.
 - All text is capitalised, even in strings.
 - Division by 0 will trigger a SCP/BIOS exception screen.
 - Probably many others; if you find them, please submit an issue report on this repository
