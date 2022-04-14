@@ -2,6 +2,7 @@
 
 A 64-Bit integer BASIC interpreter, written on top of SCP/BIOS by Yll Buzoku. 
 Requires SCP/BIOS. Assembled using NASM 2.15.05.
+SCP/BIOS may be acquired here: https://github.com/ybuzoku/Standalone-SCPBIOS
 
 Currently in pre-release and needs to be extensively tested. Syntactically as close to GW-BASIC as I could muster. 
 The set of keywords recognised by the interpreter is a strict subset of GW-BASIC.
