@@ -919,7 +919,7 @@
    415 000006D7 488D2DFC0E0000      <1>     lea rbp, syntax
    416 000006DE E9F4F9FFFF          <1>     jmp criticalError
    417                              <1> .stack:
-   418 000006E3 488D1D310F0000      <1>     lea rbx, stkOvflw
+   418 000006E3 488D2D310F0000      <1>     lea rbp, stkOvflw
    419 000006EA E9E8F9FFFF          <1>     jmp criticalError
    420                              <1> 
    421                              <1> 

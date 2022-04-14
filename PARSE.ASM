@@ -402,7 +402,7 @@ handleAlgebraicExpression:
     lea rbp, syntax
     jmp criticalError
 .stack:
-    lea rbx, stkOvflw
+    lea rbp, stkOvflw
     jmp criticalError
 
 
