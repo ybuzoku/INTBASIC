@@ -28,7 +28,7 @@ The set of keywords recognised by the interpreter is a strict subset of GW-BASIC
 - Replacing the start line might cause you to lose the second line in the program.
 - Cannot do relational operations on strings.
 - All text is capitalised, even in strings.
-- Probably many others; if you find them, please submit an issue report on this repository
+- Probably many others; if you find them, please submit an issue immediately with as much information as you can about what caused the bug.
 
 
 This program can be built using the makefile to build a disk image which can run on SCP/BIOS capable machines.
