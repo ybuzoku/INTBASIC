@@ -308,8 +308,21 @@ handleAlgebraicExpression:
     cmp byte [rsi], "/"
     je .processDiv
     cmp byte [rsi], "*"
-    jne .exit           ;Neither multiplication or division, return up a level
+    je .processMult
+    cmp dword [rsi], "MOD "
+    jne .exit     ;Neither exp, multiplication, division or MOD, return up a level
 
+    add rsi, 3  ;Skip the MOD part
+    push rax
+    call .handleZerothLevelSkip   ;Call zeroth level
+    pop rcx
+    xchg rax, rcx
+    xor edx, edx         ;Clear rdx for rdx:rax
+    idiv rcx             ;Signed division
+    mov rax, rdx         ;Save remainder in rax
+    jmp .parseProductOperators         ;Search again for * or /
+    
+.processMult:
     push rax
     call .handleZerothLevelSkip   ;Call zeroth level
     pop rcx
@@ -327,7 +340,6 @@ handleAlgebraicExpression:
 
 .exponentFound:
     ;rax has the number to exponentiate
-    xchg bx, bx
     push rax
     call .handleZerothLevelSkip  ;Parse the inner expression
     pop rcx
