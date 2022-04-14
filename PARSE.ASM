@@ -78,7 +78,7 @@ handleAlgebraicExpression:
 .handleFourthLevel:
     call .handleThirdLevel
 .parseLogicals:
-    cmp word [rsi], "AND "
+    cmp dword [rsi], "AND "
     je .and
     cmp word [rsi], "OR"
     je .or
