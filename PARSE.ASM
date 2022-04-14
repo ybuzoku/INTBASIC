@@ -316,6 +316,8 @@ handleAlgebraicExpression:
     push rax
     call .handleZerothLevelSkip   ;Call zeroth level
     pop rcx
+    test rax, rax        ;Dividend is returned in rax
+    jz .divByZero
     xchg rax, rcx
     xor edx, edx         ;Clear rdx for rdx:rax
     idiv rcx             ;Signed division
@@ -333,10 +335,25 @@ handleAlgebraicExpression:
     push rax
     call .handleZerothLevelSkip   ;Call zeroth level
     pop rcx
+    xchg bx, bx 
+    test rax, rax        ;Dividend is returned in rax
+    jz .divByZero
     xchg rax, rcx
     xor edx, edx         ;Clear rdx for rdx:rax
     idiv rcx             ;Signed division
     jmp .parseProductOperators         ;Search again for * or /
+.divByZero:
+    ;If a division by zero occurs, print the message and return
+    ; result as signed 64 bit MAX or MIN + 1 depending on if the 
+    ; number being divided is positive or negative
+    push rbp
+    lea rbp, divZer
+    call ttyOutString   ;Print the message
+    mov eax, 1 ;Get 1 in ebp and clear upper bits
+    ror rax, 1 ;Put the bit in bit 63
+    not rax    ;Set all other bits and clear sign bit
+    pop rbp
+    jmp .parseProductOperators
 
 .exponentFound:
     ;rax has the number to exponentiate
@@ -355,6 +372,7 @@ handleAlgebraicExpression:
     jnz .imulLoop
     pop rbx
     jmp .parseProductOperators
+
 
 ;Level 0, Brackets, numbers and vars.
 
