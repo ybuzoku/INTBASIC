@@ -335,7 +335,6 @@ handleAlgebraicExpression:
     push rax
     call .handleZerothLevelSkip   ;Call zeroth level
     pop rcx
-    xchg bx, bx 
     test rax, rax        ;Dividend is returned in rax
     jz .divByZero
     xchg rax, rcx
