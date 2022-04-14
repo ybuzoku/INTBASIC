@@ -78,19 +78,14 @@ handleAlgebraicExpression:
 .handleFourthLevel:
     call .handleThirdLevel
 .parseLogicals:
-    cmp word [rsi], "AN"
-    jne .hae1
-    cmp byte [rsi + 2], "D"
+    cmp word [rsi], "AND "
     je .and
-.hae1:
     cmp word [rsi], "OR"
     je .or
-
-    cmp word [rsi], "XO"
-    jne .hae2
-    cmp byte [rsi + 2], "R"
+    cmp dword [rsi], "XOR "
     je .xor
-.hae2:
+    cmp dword [rsi], "EQV "
+    je .eqv
     cmp dword [rsi], "IMP "
     je .imp
     cmp dword [rsi], "ROL "

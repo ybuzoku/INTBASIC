@@ -326,7 +326,7 @@ printStatement:
     call spaceSkip
     lodsb
     cmp al, ";" ;only exception to exiting if next non space char is a semicolon
-    je .stringPrint
+    je .printStart
     dec rsi ;Go back a step
     jmp short .psvexit
 .continue:
