@@ -1,7 +1,8 @@
 # SCR INTBASIC/64
 
-A 64-Bit integer BASIC interpreter, written on top of SCP/BIOS from Scientific Computer Research. 
+A 64-Bit integer BASIC interpreter, written on top of SCP/BIOS by Yll Buzoku. 
 Requires SCP/BIOS. Assembled using NASM 2.15.05.
+SCP/BIOS may be acquired here: https://github.com/ybuzoku/Standalone-SCPBIOS
 
 Currently in pre-release and needs to be extensively tested. Syntactically as close to GW-BASIC as I could muster. 
 The set of keywords recognised by the interpreter is a strict subset of GW-BASIC.
@@ -27,8 +28,7 @@ The set of keywords recognised by the interpreter is a strict subset of GW-BASIC
 - Replacing the start line might cause you to lose the second line in the program.
 - Cannot do relational operations on strings.
 - All text is capitalised, even in strings.
-- Division by 0 will trigger a SCP/BIOS exception screen.
-- Probably many others; if you find them, please submit an issue report on this repository
+- Probably many others; if you find them, please submit an issue immediately with as much information as you can about what caused the bug.
 
 
 This program can be built using the makefile to build a disk image which can run on SCP/BIOS capable machines.
@@ -114,10 +114,11 @@ The following relational operators are available:
 
 ### Arithmetic operators
 
-Arithmetic operators are available for use with numbers and numeriacal variables. They follow the BODMAS rules of arithemtic. 
+Arithmetic operators are available for use with numbers and numeriacal variables. They follow the BODMAS rules of arithemtic. One additional added operation 
+is the modulus operation, which computes the remainder of a quotient, i.e. 5 MOD 3 resolves to 2.
 If a open bracket is found without a close bracket, a syntax error will occur.
-Also, currently a division by zero will trigger the default SCP/BIOS error handler Blue Screen. Please attempt to refrain from dividing by 0.
-This will be fixed in future versions.
+Division by 0 or attempting to compute a number modulo 0 will trigger an error message on the screen and the result of the division will be either 2^63 - 1 
+or -(2^63 - 1) depending on the sign of the Dividend.
 
 ### Interpreter commands
 
@@ -148,8 +149,6 @@ Pull requests will be considered but not without first submitting an issue (so t
 I am also happy to accept feature improvements and new keywords too as well as general comments on the interpreter!
 
 Enjoy programming in BASIC!
-
-
 
 
 
