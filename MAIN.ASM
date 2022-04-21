@@ -14,6 +14,7 @@ start:
     lea rbp, bytemsg
     call ttyOutString
     call newProgram         ;Use this to reset program pointers
+    mov byte [stateByte], 0 ;Init the byte to 0
 mainLoop:
 ;Entering here resets the program counter but doesnt remove the program from memory
     mov ax, word [firstLinNum]  ;Error occured, restart the program counter
