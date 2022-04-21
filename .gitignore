@@ -1,3 +1,13 @@
-bochsrcBASIC.bxrc
-*.txt
-*.bak
+*
+*.*
+!*/
+!*.ASM
+!*.INC
+!COPYING
+!COPYING.LESSER
+!scpbios.*
+!*.ima
+!*.vhd
+!makefile
+!*.bin
+!*.BIN
