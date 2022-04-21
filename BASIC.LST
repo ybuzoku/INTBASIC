@@ -136,7 +136,7 @@
      9 00000002 B801E80000          <1>     mov eax, 0E801h ;Get low memory count in ax
     10 00000007 CD35                <1>     int 35h
     11 00000009 663D0008            <1>     cmp ax, 200000h/400h ;Divide 2Mb into 1Kb chunks.
-    12 0000000D 722A                <1>     jb bad
+    12 0000000D 722D                <1>     jb bad
     13 0000000F B9000100C0          <1>     mov ecx, 0C0000100h ;Read FS MSR
     14 00000014 0F32                <1>     rdmsr
     15 00000016 89D7                <1>     mov edi, edx        ;Get the hi dword, and clear the upper bytes
@@ -146,21 +146,22 @@
     19 00000021 488D35(00000000)    <1>     lea rsi, section.resSeg.start
     20 00000028 4881C7[F60E0000]    <1>     add rdi, bssLen
     21 0000002F B900100000          <1>     mov ecx, 1000h
-    22 00000034 F348A5              <1>     rep movsq
-    23 00000037 FFE0                <1>     jmp qword rax
-    24                              <1> bad:
-    25 00000039 488D2D0D000000      <1>     lea rbp, badmsg
-    26 00000040 B804130000          <1>     mov eax, 1304h
-    27 00000045 CD30                <1>     int 30h
-    28 00000047 30E4                <1>     xor ah, ah
-    29 00000049 CD36                <1>     int 36h
-    30 0000004B CD38                <1>     int 38h
-    31 0000004D 4E6F7420456E6F7567- <1> badmsg: db "Not Enough Memory. Press any key to enter SYSDEBUG...",0
-    31 00000056 68204D656D6F72792E- <1>
-    31 0000005F 20507265737320616E- <1>
-    31 00000068 79206B657920746F20- <1>
-    31 00000071 656E74657220535953- <1>
-    31 0000007A 44454255472E2E2E00  <1>
+    22 00000034 4889F8              <1>     mov rax, rdi    ;Move rax after the BSS area
+    23 00000037 F348A5              <1>     rep movsq
+    24 0000003A FFE0                <1>     jmp qword rax
+    25                              <1> bad:
+    26 0000003C 488D2D0D000000      <1>     lea rbp, badmsg
+    27 00000043 B804130000          <1>     mov eax, 1304h
+    28 00000048 CD30                <1>     int 30h
+    29 0000004A 30E4                <1>     xor ah, ah
+    30 0000004C CD36                <1>     int 36h
+    31 0000004E CD38                <1>     int 38h
+    32 00000050 4E6F7420456E6F7567- <1> badmsg: db "Not Enough Memory. Press any key to enter SYSDEBUG...",0
+    32 00000059 68204D656D6F72792E- <1>
+    32 00000062 20507265737320616E- <1>
+    32 0000006B 79206B657920746F20- <1>
+    32 00000074 656E74657220535953- <1>
+    32 0000007D 44454255472E2E2E00  <1>
      7                                  Segment dSeg nobits align=1 start=0
      8                                  %include "BSS.ASM"
      9 00000000 <res 50h>           <1> oflowbuff   resq 10        ;10 Qwords of overflow buffer

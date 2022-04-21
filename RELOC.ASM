@@ -13,6 +13,7 @@
     lea rsi, section.resSeg.start
     add rdi, bssLen
     mov ecx, 1000h
+    mov rax, rdi    ;Move rax after the BSS area
     rep movsq
     jmp qword rax
 bad:
