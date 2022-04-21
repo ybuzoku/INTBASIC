@@ -3,11 +3,12 @@
 !*/
 !*.ASM
 !*.INC
-!COPYING
-!COPYING.LESSER
 !scpbios.*
 !*.ima
 !*.vhd
 !makefile
 !*.bin
 !*.BIN
+!*.md
+!LICENSE
+*.bxrc
