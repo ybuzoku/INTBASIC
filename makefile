@@ -8,7 +8,7 @@ assemble:
 loader:
 	nasm ./Source/Boot/LOADER.ASM -o ./Binaries/LOADER.BIN -f bin -l ./Source/Boot/LOADER.LST -O0
 	dd if=./Binaries/LOADER.BIN of=./Images/MyDisk.ima bs=512 count=1 conv=notrunc
-	cp ./MyDisk.ima ./MyDiskMSD.ima
+	cp ./Images/MyDisk.ima ./Images/MyDiskMSD.ima
 
 #Create a fresh disk image
 fresh:
@@ -22,4 +22,9 @@ fresh:
 	nasm ./Source/Boot/LOADER.ASM -o ./Binaries/LOADER.BIN -f bin -l ./Source/Boot/LOADER.LST -O0
 	dd if=./Binaries/LOADER.BIN of=./Images/MyDisk.ima bs=512 count=1 conv=notrunc
 
-	cp ./MyDisk.ima ./MyDiskMSD.ima
+	cp ./Images/MyDisk.ima ./Images/MyDiskMSD.ima
+
+#Replace BIOS
+bios:
+	dd if=./Binaries/scpbios.bin of=./Images/MyDisk.ima bs=512 seek=33 conv=notrunc
+	cp ./Images/MyDisk.ima ./Images/MyDiskMSD.ima
